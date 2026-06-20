@@ -1,3 +1,7 @@
+# OS / cruft
 .DS_Store
 *.log
 Thumbs.db
+
+# Working research material — corpora + digests are not published
+/topics-corpora/

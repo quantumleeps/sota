@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--
+  PER-PAGE SKELETON for a SotA microsite. Copy this for each page and fill the
+  placeholders. The look/provenance classes come from styles.css (bundled) — see
+  reference/provenance-conventions.md for the full markup vocabulary, and
+  reference/site-structure.md for which pages exist and what each covers.
+
+  Replace:
+    {{PAGE_TITLE}}   browser tab title
+    {{BRAND}}        nav brand, e.g. Codified&nbsp;<span>Context</span> · SotA
+    {{NAV}}          the <a class="nav" ...> list — SAME on every page; mark the
+                     current page with class="nav active". Generate this once to
+                     match THIS corpus's page set, then reuse verbatim across pages.
+    {{KICKER}}       small overline, e.g. "01 · Foundations"
+    {{H1}} {{LEDE}}  page headline + standfirst
+    {{CONTENT}}      the page body (h2/h3, prose, callouts, tables, quotes)
+    {{PREV}} {{NEXT}} pager links (href + label)
+    {{FOOTER}}       footer line
+  Use class="wrap wide" instead of "wrap" for table-heavy pages (e.g. Evidence, Corpus).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{PAGE_TITLE}}</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">{{BRAND}}</a>
+  {{NAV}}
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">{{KICKER}}</p>
+  <h1>{{H1}}</h1>
+  <p class="lede">{{LEDE}}</p>
+
+  {{CONTENT}}
+
+  <div class="pager">
+    <a href="{{PREV}}">← {{PREV_LABEL}}</a>
+    <a href="{{NEXT}}">{{NEXT_LABEL}} →</a>
+  </div>
+</div>
+
+<footer class="site">{{FOOTER}}</footer>
+</body>
+</html>
+
+<!-- ============================================================
+     QUICK-REFERENCE SNIPPETS (delete in real pages; full list in
+     reference/provenance-conventions.md)
+
+  Citation chip (provenance):
+    <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a>
+
+  Claim-type tags:
+    <span class="tag emp">Empirical</span> <span class="tag thy">Theory</span>
+    <span class="tag prop">Proposal</span> <span class="tag def">Definition</span>
+
+  A finding from the papers (blue):
+    <div class="box finding"><p class="box-h">▦ ...</p><p>...</p></div>
+
+  My inference — NOT from the papers (amber):
+    <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p><p>...</p></div>
+
+  Open problem / caveat (grey):
+    <div class="box gap"><p class="box-h">◇ ...</p><p>...</p></div>
+
+  Risk / security (rose):
+    <div class="box risk"><p class="box-h">⚠ ...</p><p>...</p></div>
+
+  Verbatim quote from a paper (teal):
+    <blockquote class="q">...<span class="src">— Title <a class="cite" href="corpus.html#p-XXXX">Author+&nbsp;'YY</a>, §Section</span></blockquote>
+
+  Stat card:
+    <div class="card stat"><div class="big green">−28.6%</div><div class="lbl">... <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a></div></div>
+     ============================================================ -->

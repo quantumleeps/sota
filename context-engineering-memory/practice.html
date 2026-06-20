@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice — Context Engineering × Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;&amp;&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav active" href="practice.html">Practice</a>
+  <a class="nav" href="memory-systems.html">Memory&nbsp;Systems</a>
+  <a class="nav" href="memory-hierarchy.html">Memory&nbsp;Hierarchy</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="failure-modes.html">Failure&nbsp;Modes</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">02 · Practice</p>
+  <h1>The working-memory toolkit</h1>
+  <p class="lede">How practitioners actually manage a context window mid-run. By 2026 the toolkit has consolidated into a small set of composable levers — compaction, tool-result clearing, external memory, just-in-time retrieval, sub-agent isolation — plus a newer idea: let the context itself <em>evolve</em>. Much of this page is industry guidance; it is labelled as such.</p>
+
+  <div class="box gap"><p class="box-h">◇ Read these as practices, not proofs</p>
+  <p>The lab writeups in this section are informed engineering guidance, not controlled studies. Their token/latency figures come from single illustrative demo runs; they show what a primitive does, not how much it helps on average. The decision frameworks are explicitly offered as "hypotheses to test on your own agent" <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a>.</p></div>
+
+  <h2>Three primitives that compose, not compete</h2>
+  <p>The Anthropic cookbook draws the cleanest distinction between the three first-party context-management primitives, separating them on three axes — scope of operation, lossiness, and persistence <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a> <span class="tag def">Definition</span>:</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Primitive</th><th>Scope</th><th>Lossiness</th><th>Persistence</th><th>Use when…</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Compaction</strong></td><td>whole transcript → summary</td><td>lossy by design</td><td>in-session</td><td>bloat is dialogue/reasoning that can't be re-fetched</td></tr>
+      <tr><td><strong>Tool-result clearing</strong></td><td>sub-transcript (drops payloads)</td><td>lossless if re-fetchable; zero inference</td><td>in-session</td><td>bloat is large, re-fetchable tool output</td></tr>
+      <tr><td><strong>Memory tool</strong> (file-backed)</td><td>moves info out of the window</td><td>lossless on what was saved</td><td>cross-session</td><td>knowledge must survive into a new session</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <blockquote class="q">compaction compresses the whole window when it grows too large, clearing drops stale re-fetchable data inside the window, and memory moves information out of the window so it survives across sessions.
+    <span class="src">— Anthropic Cookbook <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a>, "How the Three APIs Map to the Problem"</span>
+  </blockquote>
+
+  <p>The cookbook's reframing of the decision is the durable takeaway: not "should I use all three?" but "which of the three problems does my workload actually have?" <span class="tag prop">Proposal</span>. Its demo run is illustrative only — clearing held peak context to 173,137 tokens versus a 335,279-token baseline, and compaction probed 3/3 high-level facts preserved but 0/3 obscure appendix specifics <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a> <span class="tag emp">Empirical</span> <span class="note">(single demonstration trajectory, not a benchmark)</span>.</p>
+
+  <h2>Just-in-time retrieval over up-front stuffing</h2>
+  <p>The retrieval stance has shifted. Rather than embedding and pre-loading everything, agents keep "lightweight identifiers (file paths, stored queries, web links)" and load data at runtime via tools <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a> <span class="tag prop">Proposal</span>. This enables <strong>progressive disclosure</strong> — discovering context incrementally through exploration — and a hybrid default (Claude Code keeps CLAUDE.md in context up front, but uses glob/grep to pull files just-in-time, bypassing stale indexes).</p>
+
+  <h2>Sub-agent isolation</h2>
+  <p>A specialized sub-agent works in its own clean context window and "returns only a condensed, distilled summary of its work (often 1,000–2,000 tokens)" while having consumed "tens of thousands of tokens or more" internally <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a> <span class="tag prop">Proposal</span>. The general principle — isolate work in a separate context, return only the distillate — recurs at the systems level too (see SideQuest's parallel auxiliary thread on the <a href="memory-hierarchy.html">Memory Hierarchy</a> page).</p>
+
+  <h2>External memory as structured notes</h2>
+  <p>The cross-session lever is note-taking: the agent writes notes "persisted to memory outside of the context window" and pulls them back later <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a> <span class="tag def">Definition</span>. OpenAI's cookbook turns this into a full lifecycle for personalization — a local-first <strong>state object</strong> (structured profile + free-form notes), with four moves <a class="cite" href="corpus.html#p-openai-memory">OpenAI '26</a> <span class="tag prop">Proposal</span>:</p>
+  <ul class="clean">
+    <li><strong>Distill</strong> candidate notes during a run via a <span class="mono">save_memory_note(...)</span> tool;</li>
+    <li><strong>Consolidate</strong> asynchronously at session end — dedup, conflict-resolve, and forget;</li>
+    <li><strong>Inject</strong> curated slices into the system prompt under explicit precedence rules ("the user's latest message … overrides everything");</li>
+    <li><strong>Forget</strong> on purpose — promote durable notes, prune the rest.</li>
+  </ul>
+
+  <blockquote class="q">Forgetting is not a bug—it is essential.
+    <span class="src">— OpenAI Cookbook <a class="cite" href="corpus.html#p-openai-memory">OpenAI '26</a>, "Memory Consolidation"</span>
+  </blockquote>
+  <p>The same source flags the cost: because notes are injected straight into the system prompt, "memory systems are a high-value attack surface" needing guardrails at every stage <a class="cite" href="corpus.html#p-openai-memory">OpenAI '26</a> — a theme the <a href="failure-modes.html">Failure Modes</a> page returns to.</p>
+
+  <h2>The newer idea: let the context evolve</h2>
+  <p>ACE pushes past static curation: treat the context as an evolving <strong>playbook</strong> of itemized strategies that "continuously accumulate, refine, and organize" over time, updated by a Generator/Reflector/Curator loop with small, localized delta edits rather than monolithic rewrites <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a> <span class="tag prop">Proposal</span>. Its central warning is against over-compression — <strong>context collapse</strong>:</p>
+
+  <blockquote class="q">at step 60 the context contained 18,282 tokens … but at the very next step it collapsed to just 122 tokens, with accuracy dropping to 57.1.
+    <span class="src">— Agentic Context Engineering <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a>, §Background</span>
+  </blockquote>
+  <p>ACE argues that, unlike humans, LLMs benefit from long, detailed contexts and "can distill relevance autonomously," so domain heuristics should be preserved rather than summarized away — and reports +10.6% (agents) / +8.6% (domain) gains with large adaptation-cost reductions (see <a href="evidence.html">Evidence</a>) <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a> <span class="tag emp">Empirical</span>.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>Put the levers on one axis and a design rule falls out: <strong>curate by default, compress only when re-fetch is impossible.</strong> Clearing (re-fetchable) and just-in-time retrieval keep fidelity for free; ACE argues against compressing what the model could distill itself; the cookbook says reach for lossy compaction only when the bloat is reasoning you can't reconstruct. The corpus doesn't state this rule as such — it is my reconciliation of the cookbook's decision framework <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a> with ACE's anti-collapse stance <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a>.</p></div>
+
+  <div class="pager">
+    <a href="foundations.html">← Foundations</a>
+    <a href="memory-systems.html">Memory Systems →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering × Agent Memory · a state-of-the-art review of 16 sources · every chip → the <a href="corpus.html">corpus</a> → the original source. Amber callouts are the author's inference, not the papers' claims.</footer>
+</body>
+</html>

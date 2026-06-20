@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence — Context Engineering × Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;&amp;&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="practice.html">Practice</a>
+  <a class="nav" href="memory-systems.html">Memory&nbsp;Systems</a>
+  <a class="nav" href="memory-hierarchy.html">Memory&nbsp;Hierarchy</a>
+  <a class="nav active" href="evidence.html">Evidence</a>
+  <a class="nav" href="failure-modes.html">Failure&nbsp;Modes</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">05 · Evidence</p>
+  <h1>What's actually been measured</h1>
+  <p class="lede">A ledger of the corpus's <em>primary</em> measured effects — each paper's own results, not numbers it quotes from others. The final column is my appraisal of how much weight each result can bear, and it is mine, not the papers'.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My confidence scale — not from the papers</p>
+  <p>The "confidence" column rates how robustly each effect is established, on my own three-point scale:
+  <strong>Strong</strong> = multiple datasets and baselines, ideally with replication or significance testing;
+  <strong>Moderate</strong> = solid single-team empirical work with baselines but limited scope (one model family / one benchmark / no significance tests);
+  <strong>Indicative</strong> = single-user, observational, or not-yet-validated-at-scale — suggestive, not conclusive.
+  Almost everything below is Moderate or Indicative: this is a young, fast-moving, largely single-team literature.</p></div>
+
+  <h2>Headline measured effects</h2>
+  <div class="grid g3">
+    <div class="card stat"><div class="big green">−92%</div><div class="lbl">Mem0 p95 latency vs full-context on LOCOMO (1.44s vs 17.12s), &gt;90% fewer tokens — but accuracy sits just below full-context, single benchmark, vendor authors. <a class="cite" href="corpus.html#p-2504-19413">Chhikara+ '25 (Mem0)</a></div></div>
+    <div class="card stat"><div class="big green">3.5–20×</div><div class="lbl">ReadAgent effective-context increase while beating retrieval and full-context QA baselines — strongest multi-dataset result, but on PaLM 2-L (2024). <a class="cite" href="corpus.html#p-2402-09727">Lee+ '24 (ReadAgent)</a></div></div>
+    <div class="card stat"><div class="big green">+83.9%</div><div class="lbl">SideQuest serving throughput on one H100 from model-driven KV eviction, for ≤2–5% accuracy loss — single model, single team. <a class="cite" href="corpus.html#p-2602-22603">Kariyappa &amp; Suh '26</a></div></div>
+  </div>
+
+  <h2>The ledger</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>What was measured</th><th>Result</th><th>Method &amp; scale</th><th>Source</th><th>My confidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Mem0 vs full-context — accuracy &amp; cost (LOCOMO, LLM-judge)</td>
+        <td class="num">J <strong>66.9%</strong> vs 72.9%; <span class="pos">−92%</span> p95 latency; <span class="pos">&gt;90%</span> tokens</td>
+        <td>10 convs, GPT-4o-mini, 10 runs ± SD</td>
+        <td><a class="cite" href="corpus.html#p-2504-19413">Chhikara+ '25 (Mem0)</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>ACE evolving context vs base/optimizer baselines</td>
+        <td class="num"><span class="pos">+10.6%</span> agents / <span class="pos">+8.6%</span> domain; AppWorld <span class="pos">+17.0</span> (59.4 vs 42.4); adaptation latency <span class="pos">−86.9%</span></td>
+        <td>AppWorld + finance + StreamBench; DeepSeek-V3.1; no significance tests</td>
+        <td><a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>AgeMem learned memory vs heuristic memory baselines</td>
+        <td class="num">Best avg over 5 benchmarks; <span class="pos">+8.5</span> from RL; <span class="pos">+4.8/+8.6</span> over Mem0/A-Mem</td>
+        <td>5 long-horizon benchmarks; Qwen2.5-7B / Qwen3-4B; trained on HotpotQA only</td>
+        <td><a class="cite" href="corpus.html#p-2601-01885">Yu+ '26 (AgeMem)</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>MemSkill quality &amp; cost vs memory baselines</td>
+        <td class="num">LoCoMo L-J <strong>53.82</strong> (best); <span class="pos">215</span> vs 1,288 LLM calls</td>
+        <td>LoCoMo / LongMemEval / ALFWorld; LLaMA-70B, Qwen; no significance tests</td>
+        <td><a class="cite" href="corpus.html#p-2602-02474">Zhang+ '26 (MemSkill)</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>BudgetMem accuracy–cost control vs 7 baselines</td>
+        <td class="num">Best F1 &amp; judge at lower cost; latency <span class="pos">3,881→1,167 ms</span> via cost weight</td>
+        <td>LoCoMo / LongMemEval / HotpotQA; LLaMA-70B; 3 seeds</td>
+        <td><a class="cite" href="corpus.html#p-2602-06025">Zhang+ '26 (BudgetMem)</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>ReadAgent gist memory vs retrieval / full-context</td>
+        <td class="num"><span class="pos">3.5–20×</span> context; NarrativeQA <span class="pos">+12.97%</span> rating, <span class="pos">+31.98%</span> ROUGE-L; QuALITY 86.2 vs 85.8</td>
+        <td>QuALITY / NarrativeQA / QMSum; PaLM 2-L; 3 runs</td>
+        <td><a class="cite" href="corpus.html#p-2402-09727">Lee+ '24 (ReadAgent)</a></td>
+        <td>Moderate–Strong</td>
+      </tr>
+      <tr>
+        <td>SideQuest model-driven KV eviction — efficiency vs accuracy</td>
+        <td class="num">Peak tokens <span class="pos">−56–65%</span>; throughput <span class="pos">+83.9%</span>; accuracy <span class="neg">−2% / −5%</span> (in-/out-of-dist.)</td>
+        <td>FRAMES / BrowseComp; gpt-oss-20b; single H100; 215 training traces</td>
+        <td><a class="cite" href="corpus.html#p-2602-22603">Kariyappa &amp; Suh '26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Demand paging — context waste &amp; recoverable cost (production)</td>
+        <td class="num"><strong>21.8%</strong> structural waste; <strong>84.4×</strong> median amplification; <span class="pos">−45%</span> cumulative tokens (88-turn session)</td>
+        <td>857 sessions, 1 power user, Claude Code/Opus; LLM-judge non-inferiority (detection p=0.14, n.s.)</td>
+        <td><a class="cite" href="corpus.html#p-2603-09023">Mason '26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>CMV structurally lossless trimming — token reduction</td>
+        <td class="num">Mean <span class="pos">−20%</span> (median −12%, max −86%); mixed-tool sessions −39%; break-even ~35 turns</td>
+        <td>76 sessions, 1 user, Claude Opus 4.6; byte/4 token heuristic</td>
+        <td><a class="cite" href="corpus.html#p-2602-22402">Santoni '26 (CMV)</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>MemoryArena — does external memory help agents act?</td>
+        <td class="num">Best overall SR only <strong>0.23</strong>; <span class="neg">near-zero SR</span> on 2/4 envs; external memory + RAG = <span class="neg">no consistent gain</span> over long context; SR@k decays for all</td>
+        <td>766 interdependent multi-session tasks, 4 envs; task agent GPT-5.1-mini; 12 systems</td>
+        <td><a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a></td>
+        <td>Indicative–Moderate</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box gap"><p class="box-h">◇ Secondary-cited figures — kept out of the ledger</p>
+  <p>The surveys quote striking numbers from <em>other</em> works that are not their own evidence, so they don't belong above. Used carefully and attributed, they include: a 15.3× drop in Voyager's skill-acquisition speed without its skill library, Generative Agents degrading within 48 simulated hours without reflection, GAIA scores of 92% (human) vs 15% (GPT-4), and a reported ~30% accuracy degradation on LongMemEval over long interactions — all cited by <a class="cite" href="corpus.html#p-2603-07670">Du '26</a> / <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a> from primary sources outside this corpus.</p></div>
+
+  <h2>Appraisal</h2>
+  <div class="box inference"><p class="box-h">⟡ My reading of the evidence — not from the papers</p>
+  <p><strong>Most consistent:</strong> the <em>cost</em> story. Independently, Mem0, ACE, MemSkill, BudgetMem, SideQuest, Demand Paging and CMV all show that curating the window cuts tokens/latency substantially while holding quality roughly flat. That direction is robust because so many different teams and levels reach it.</p>
+  <p><strong>Weaker:</strong> the <em>quality-improvement</em> story. The "+X% accuracy" claims are almost all single-team, single-model-family, no-significance-test results on benchmarks the authors helped shape. And the one adversarial, decision-focused benchmark — MemoryArena — finds that bolting memory onto an agent gives no reliable accuracy gain at all. So "memory makes agents smarter" is, on this corpus, much thinner than "memory makes agents cheaper."</p>
+  <p><strong>Thinnest:</strong> the memory-hierarchy systems (Demand Paging, CMV) rest on single-user corpora and token-estimation heuristics — genuinely novel framings with genuinely preliminary evidence.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ What would raise confidence (from the papers' own future work)</p>
+  <ul class="clean">
+    <li>Multi-team, cross-backbone replication and significance testing — almost none exists today.</li>
+    <li>A standardized harness that reports <em>cost alongside accuracy</em> and tests forgetting, called for by both surveys <a class="cite" href="corpus.html#p-2603-07670">Du '26</a> <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a>.</li>
+    <li>Co-training memory representation <em>with</em> the agent, per MemoryArena's diagnosis of representation/training mismatch <a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a>.</li>
+    <li>Multi-user, comparative corpora for the systems papers (vs Cursor/Copilot/others) <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a> <a class="cite" href="corpus.html#p-2602-22402">Santoni '26 (CMV)</a>.</li>
+  </ul></div>
+
+  <div class="pager">
+    <a href="memory-hierarchy.html">← Memory Hierarchy</a>
+    <a href="failure-modes.html">Failure Modes →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering × Agent Memory · a state-of-the-art review of 16 sources · every chip → the <a href="corpus.html">corpus</a> → the original source. Amber callouts are the author's inference, not the papers' claims.</footer>
+</body>
+</html>

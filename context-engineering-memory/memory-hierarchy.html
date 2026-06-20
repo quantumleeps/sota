@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory Hierarchy — Context Engineering × Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;&amp;&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="practice.html">Practice</a>
+  <a class="nav" href="memory-systems.html">Memory&nbsp;Systems</a>
+  <a class="nav active" href="memory-hierarchy.html">Memory&nbsp;Hierarchy</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="failure-modes.html">Failure&nbsp;Modes</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">04 · Memory Hierarchy</p>
+  <h1>The context window as a cache</h1>
+  <p class="lede">The boldest move in the 2026 corpus is to stop treating the context window as "the memory" and start treating it as the fast, scarce top of a hierarchy — borrowing demand paging, virtual memory, and cache management directly from operating systems. Three papers build this at three different levels.</p>
+
+  <h2>The thesis: context is L1 cache, not memory</h2>
+  <p>The framing paper states it flatly: the context window "is not memory. It is L1 cache — a small, fast, expensive resource that the field treats as the entire memory system" <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a> <span class="tag thy">Theory</span>. The contribution is a precise mapping of OS abstractions onto agent context:</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>OS concept</th><th>Agent-context equivalent</th></tr></thead>
+    <tbody>
+      <tr><td>Physical memory</td><td>the context window (~200K tokens)</td></tr>
+      <tr><td>Virtual memory</td><td>persistent state (disk, databases)</td></tr>
+      <tr><td>Page fault</td><td>model re-requests evicted content</td></tr>
+      <tr><td>MMU</td><td>a proxy layer between client and API</td></tr>
+      <tr><td>Working set</td><td>the currently relevant context subset</td></tr>
+      <tr><td>Thrashing</td><td>evict/fault cycle exceeding useful work</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Source: the VM-analogy table in <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a> <span class="tag def">Definition</span>. The paper proposes a four-level hierarchy (L1 generation window → L2 working set → L3 session history → L4 cross-session memory), of which only the upper levels are built and measured.</p>
+
+  <p>The empirical backbone is rare production data: across 857 sessions and 4.45 billion input tokens, <strong>21.8% of tokens are structural waste</strong>, and stale tool results are reprocessed at a median <strong>84.4×</strong> amplification <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a> <span class="tag emp">Empirical</span>. A deployed proxy ("Pichay") recovers context — one steady-state session went from 7% to 43% free.</p>
+
+  <h3>Why LLM memory management is not classical VM</h3>
+  <p>The sharpest theoretical insight is the <strong>inverted cost model</strong>. In classical virtual memory, keeping a page is free and faulting is expensive, so you minimize faults. With LLMs, every retained token costs money <em>every turn</em>, while re-fetching is cheap — so the economics flip <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a> <span class="tag thy">Theory</span>:</p>
+  <blockquote class="q">when keeping is expensive and faulting is cheap, aggressive eviction is correct by default.
+    <span class="src">— The Missing Memory Hierarchy <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a>, Discussion</span>
+  </blockquote>
+  <p>With one twist: because attention cost is roughly quadratic, the paper argues eviction should become <em>more</em> conservative as the window fills — "the opposite of the naive instinct."</p>
+
+  <h2>Level: the conversation log — CMV's "Git for context"</h2>
+  <p>Contextual Memory Virtualisation works one level down, on the raw JSONL log. It models session history as a DAG of immutable snapshots and branches — "effectively a Git-like workflow for conversational memory" — and adds a three-pass <strong>structurally lossless trimmer</strong> that strips mechanical bloat (raw tool dumps, base64 images, metadata) while keeping every user/assistant message verbatim <a class="cite" href="corpus.html#p-2602-22402">Santoni '26 (CMV)</a> <span class="tag prop">Proposal</span>. Its motivating observation is the destructiveness of native compaction:</p>
+  <blockquote class="q">[native autocompaction] reduced 132k tokens of accumulated message state to 2.3k — a 98% reduction.
+    <span class="src">— Contextual Memory Virtualisation <a class="cite" href="corpus.html#p-2602-22402">Santoni '26 (CMV)</a>, Introduction</span>
+  </blockquote>
+  <p>Trimming cut tokens by a mean 20% (max 86%) across 76 sessions <span class="tag emp">Empirical</span>, but the author is candid that "the dominant cost avoided … is not trimming but context rebuilding" — reloading an 84K-token mental model takes 10–20 turns, where a branch loads it in one prompt.</p>
+
+  <h2>Level: the KV cache — SideQuest's self-GC</h2>
+  <p>SideQuest operates at the lowest level — the GPU tensor state. Static KV-cache heuristics (H2O, SnapKV) assume past attention predicts future relevance, which breaks in agentic reasoning where "a low-importance token … may suddenly become critical … ten turns later" <a class="cite" href="corpus.html#p-2602-22603">Kariyappa &amp; Suh '26</a> <span class="tag thy">Theory</span>. Instead, the model manages its own cache: an auxiliary thread on the <em>shared</em> context reasons about which tool-output tokens are stale and evicts them, with no permanent token overhead to the main window <span class="tag prop">Proposal</span>.</p>
+  <blockquote class="q">SideQuest equips the model with a mechanism to selectively clear segments of its own KV cache, effectively allowing the model to perform its own memory garbage collection.
+    <span class="src">— SideQuest <a class="cite" href="corpus.html#p-2602-22603">Kariyappa &amp; Suh '26</a>, Introduction</span>
+  </blockquote>
+  <p>It cuts peak token utilization 56–65% and lifts serving throughput 83.9% on an H100, for ≤2% (in-distribution) to ≤5% (out-of-distribution) accuracy loss <span class="tag emp">Empirical</span> (see <a href="evidence.html">Evidence</a>).</p>
+
+  <div class="box gap"><p class="box-h">◇ The precursor everyone cites: MemGPT</p>
+  <p>All three surveys frame this thread as descending from MemGPT's OS-style virtual memory (main context / recall / archival storage). The memory survey's caution is worth carrying forward: the Achilles' heel of hierarchical memory is <em>orchestration</em>, whose failures are <strong>silent</strong> — a wrong eviction yields a slightly worse answer, not an error <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>These three aren't competitors — they tile one hierarchy at different granularities: SideQuest manages the KV tensors, CMV versions the conversation log, Demand Paging governs eviction across the whole stack. Read together they sketch a layered context OS, and each explicitly nods to the others as complementary. The open question I'd flag: every layer here is evaluated on a <em>single-user or single-model</em> setup, so the hierarchy is a compelling design pattern with thin external validity — promising architecture, early evidence.</p></div>
+
+  <div class="pager">
+    <a href="memory-systems.html">← Memory Systems</a>
+    <a href="evidence.html">Evidence →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering × Agent Memory · a state-of-the-art review of 16 sources · every chip → the <a href="corpus.html">corpus</a> → the original source. Amber callouts are the author's inference, not the papers' claims.</footer>
+</body>
+</html>

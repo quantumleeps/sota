@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Codified Context — The Artifacts &amp; Their Anatomy</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav active" href="codified-context.html">Codified Context</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="architecture.html">Architecture</a>
+  <a class="nav" href="failure-modes.html">Failure Modes</a>
+  <a class="nav" href="security.html">Security</a>
+  <a class="nav" href="adoption.html">Adoption</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">02 · Codified Context</p>
+  <h1>The artifacts &amp; their anatomy</h1>
+  <p class="lede">"Codified context" is documentation written for a machine reader. The anchor defines it precisely as "structured artifacts written explicitly for machine consumption — documents whose primary audience is an AI agent, not a developer," treated as "load-bearing artifacts that AI agents depend on to produce correct output" <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a> <span class="tag def">Definition</span>. This page covers the artifact family, the empirical anatomy of the files developers write, and the move from one flat file to tiered infrastructure.</p>
+
+  <h2>The artifact family</h2>
+  <p>The reverse-engineering of Claude Code gives the most complete map of the mechanisms, ordered (its framing) by how much context budget each costs <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>:</p>
+  <div class="grid g2">
+    <div class="card"><p class="ct">Instruction files</p><h3>CLAUDE.md / AGENTS.md</h3><p class="small">A four-level hierarchy — managed → user → project (incl. <span class="mono">.claude/rules/*.md</span>) → local — loaded in reverse priority so closer-to-CWD files get more attention. Delivered as a <em>user message</em>, so compliance is "probabilistic rather than guaranteed"; permission rules are the deterministic enforcement layer. <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Skills</p><h3>SKILL.md + frontmatter</h3><p class="small">A meta-tool injects skill instructions into the <em>current</em> context (low cost — only descriptions stay resident). Frontmatter carries allowed-tools, model override, execution context. <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Sub-agents</p><h3>.claude/agents/*.md</h3><p class="small">Spawn a <em>new isolated</em> context; the markdown body is the system prompt, frontmatter sets tools/model/permissions. They return summary-only text to the parent and write separate sidechain transcripts — agent teams cost ≈7× a standard session. <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Tool context</p><h3>MCP servers</h3><p class="small">The primary external integration and the highest-context-cost mechanism; deferred tool schemas load on demand to conserve the window. A "single unified API cannot span the full range," which is why four mechanisms coexist. <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a></p></div>
+  </div>
+  <p>Beyond Claude Code, the same artifact idea appears as Cursor's <span class="mono">.cursor/*.mdc</span> rule files (93% of rule-using repos place them in <span class="mono">.cursor/</span>) <a class="cite" href="corpus.html#p-2512-18925">Jiang&nbsp;&amp;&nbsp;Nam&nbsp;'26</a>, GitHub Copilot's <span class="mono">copilot-instructions.md</span> <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a>, and AGENTS.md as the cross-tool open format (60,000+ repos by the time of the controlled study) <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a>.</p>
+
+  <h2>What they actually look like — a convergent anatomy</h2>
+  <p>Four independent empirical studies, on different tools and disjoint repo samples, describe the same artifact. That convergence is itself the strongest signal in this part of the corpus.</p>
+
+  <h3>Structure: a shallow, predictable hierarchy</h3>
+  <p>CLAUDE.md files use "shallow hierarchies with one main heading and several subsections" — median 1 H1, 5 H2, 9 H3, with H4+ rare <a class="cite" href="corpus.html#p-2509-14744">Chatlatanagulchai+&nbsp;'25a</a> <span class="tag emp">Empirical</span>. The cross-tool follow-up confirms it across Claude/Codex/Copilot (median 1 H1; H2 6–7; H3 9–12) <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a>, and the independent UFMG study finds a median of 7 level-2 sections, with 36 of 328 files using no <span class="mono">##</span> sections at all <a class="cite" href="corpus.html#p-2511-09268">Santos+&nbsp;'25</a>.</p>
+
+  <h3>Content: heavy on "how," light on "how well"</h3>
+  <p>The content profile is functional and action-oriented — commands, implementation detail, architecture, tests — with a consistent neglect of non-functional requirements. The studies use different category schemes (so the numbers below are not strictly comparable cell-to-cell), but the <em>pattern</em> is robust across all of them.</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Dimension</th><th>CLAUDE.md · 253 files <a class="cite" href="corpus.html#p-2509-14744">'25a</a></th><th>Cross-tool · 2,303 files <a class="cite" href="corpus.html#p-2511-12884">'25b</a></th><th>CLAUDE.md · 328 files <a class="cite" href="corpus.html#p-2511-09268">Santos&nbsp;'25</a></th></tr></thead>
+    <tbody>
+      <tr><td>Architecture</td><td class="num">64.8%</td><td class="num">67.7%</td><td class="num">72.6%</td></tr>
+      <tr><td>Build / commands</td><td class="num">77.1%</td><td class="num">62.3%</td><td class="num">33.2%</td></tr>
+      <tr><td>Testing</td><td class="num">60.5%</td><td class="num">75.0%</td><td class="num">35.4%</td></tr>
+      <tr><td>Implementation detail</td><td class="num">71.9%</td><td class="num">69.9%</td><td class="num">—</td></tr>
+      <tr><td><strong>Security</strong></td><td class="num neg">8.7%</td><td class="num neg">14.5%</td><td class="num">—</td></tr>
+      <tr><td><strong>Performance</strong></td><td class="num neg">12.7%</td><td class="num neg">14.5%</td><td class="num">—</td></tr>
+      <tr><td><strong>UI / UX</strong></td><td class="num neg">8.3%</td><td class="num neg">8.7%</td><td class="num">—</td></tr>
+    </tbody>
+  </table></div>
+  <blockquote class="q">While developers use context files to make agents functional, they provide few guardrails to ensure that agent-written code is secure or performant.<span class="src">— Agent READMEs <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a>, Abstract</span></blockquote>
+  <p>The OSS cross-tool study reports the same hierarchy of concerns for AGENTS.md by raw counts (Conventions 50, Contribution guidelines 48, Architecture 47, Build commands 40… Security only 6) and notes "there is no established content structure yet" <a class="cite" href="corpus.html#p-2510-21413">Mohsenimofidi+&nbsp;'26</a>. It adds a second axis the others miss — a five-way <strong>style</strong> taxonomy orthogonal to topic: descriptive, prescriptive, prohibitive ("Never commit directly to main"), explanatory, conditional <span class="tag def">Definition</span>.</p>
+
+  <h3>Cursor rules: traditional docs plus a new directive class</h3>
+  <p>The Cursor-rules study finds developers largely "use cursor rules as an extension of traditional documentation," organised into five themes — Project, Convention, Guideline, LLM Directive, Example <a class="cite" href="corpus.html#p-2512-18925">Jiang&nbsp;&amp;&nbsp;Nam&nbsp;'26</a> <span class="tag def">Definition</span>. The genuinely new class — <strong>LLM Directives</strong> (behaviour, workflow, persona, output formatting) — is the least adopted (≈50% of repos vs 84–89% for the doc-like themes), "suggesting many developers may not yet be familiar with the practice of authoring these prompt-engineering strategies." And 28.7% of all rule lines are exact duplicates, much of it reused from templates like <span class="mono">awesome-cursorrules</span> <span class="tag emp">Empirical</span> — motivating their call for "context transparency": don't spend the budget on what the agent already knows.</p>
+
+  <h3>They behave like configuration code, not documentation</h3>
+  <p>The largest study reframes the whole artifact class: these files "are not static documentation but complex, difficult-to-read artifacts that evolve like configuration code, maintained through frequent, small additions" <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a> <span class="tag emp">Empirical</span>. Concretely: Claude files are long (median 485 words) and very hard to read — a Flesch Reading Ease of 16.6, "comparable to dense legal contracts"; 67.4% are touched in multiple commits; updates come as bursts of additions (median +57 words/commit) with negligible deletions. The OSS study corroborates the evolution shape — of 155 AGENTS.md files, half never changed and most changes "add" or "modify" instructions rather than restructure <a class="cite" href="corpus.html#p-2510-21413">Mohsenimofidi+&nbsp;'26</a>.</p>
+  <div class="box finding">
+    <p class="box-h">▦ The recommended mental model — and a new debt</p>
+    <p>"Developers should… treat files like CLAUDE.md or AGENTS.md with the same rigor applied to a Dockerfile or CI/CD workflow." The same paper names the failure mode of <em>not</em> doing so — <strong>context debt</strong>: low readability plus accreting length make files "unmaintainable and opaque to human collaborators." It proposes CODEOWNERS-style governance, CI linters that check documented build commands against <span class="mono">package.json</span>/<span class="mono">Makefile</span>, NFR scaffolds, and semantic-category-aware retrieval. <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a></p>
+  </div>
+
+  <h2>The single-file ceiling</h2>
+  <p>Every study above describes a single (or near-single) flat file, and the adoption data confirms that is the norm — most adopters keep one modest guidance file <a class="cite" href="corpus.html#p-2601-18341">Robbes+&nbsp;'26</a>. The anchor's premise is that this does not scale:</p>
+  <blockquote class="q">a 1,000-line prototype can be fully described in a single prompt, but a 100,000-line system cannot.<span class="src">— Codified Context <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>, Introduction</span></blockquote>
+
+  <h2>From file to infrastructure — the anchor's three tiers</h2>
+  <p>The anchor generalises the manifest into a tiered architecture, built solo over 283 Claude Code sessions on a 108,256-line C# multiplayer simulation. The whole thing reached ≈26,200 lines across 54 files — 24.2% of the codebase, which the paper is careful to call "project-specific, not a target or finding" <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a> <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span>.</p>
+  <div class="grid g3">
+    <div class="card"><p class="ct">Tier 1 · hot memory</p><h3>The Constitution</h3><p class="small">≈660 lines, always loaded. Code-quality standards, naming, build commands, architecture summaries, known failure modes, and orchestration / trigger-table protocols. A scaled CLAUDE.md whose governing constraint is conciseness.</p></div>
+    <div class="card"><p class="ct">Tier 2 · per-task</p><h3>Domain specialists</h3><p class="small">19 sub-agent specs (115–1,233 lines each, ≈9,300 total). Over half of each is embedded domain knowledge — they are "domain-priming mechanisms," not just routers. Emerged from observed failure patterns, not upfront design.</p></div>
+    <div class="card"><p class="ct">Tier 3 · cold memory</p><h3>Knowledge base</h3><p class="small">34 markdown files (≈16,250 lines), one subsystem each, written for AI consumption (explicit patterns, file paths, parameter names, failure-mode tables). Retrieved on demand.</p></div>
+  </div>
+  <p>Two pieces of connective tissue make it a system rather than a folder of docs:</p>
+  <ul class="clean">
+    <li><strong>An MCP retrieval service</strong> (≈1,600-line Python server) exposes five tools — <span class="mono">list_subsystems()</span>, <span class="mono">get_files_for_subsystem()</span>, <span class="mono">find_relevant_context()</span>, <span class="mono">search_context_documents()</span>, <span class="mono">suggest_agent()</span> — though retrieval is still keyword substring matching, with semantic retrieval flagged as future work <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>.</li>
+    <li><strong>Trigger tables + a context-drift detector.</strong> Tasks route to specialists on observable signals (the files being modified); a session-start hook diffs recent Git commits against the subsystem→file map and warns when source changed but specs did not — a direct mechanical answer to staleness.</li>
+  </ul>
+  <p>The reported behaviour: of 757 classifiable agent invocations, 57% went to project-specific specialists (most-used: code-reviewer 154×, network-protocol-designer 85×); over 80% of human prompts were ≤100 words (pre-loaded context replacing in-prompt explanation); and the most-referenced spec (the save system, 74 sessions) saw "no save-related bugs" across those sessions. The paper frames its own contribution against codebase indexers precisely:</p>
+  <blockquote class="q">These systems index code; the codified context infrastructure indexes knowledge about code — design intent, constraints, and failure modes.<span class="src">— Codified Context <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>, Related Work</span></blockquote>
+  <div class="box gap">
+    <p class="box-h">◇ How much to trust this</p>
+    <p>This is a single-developer, single-project, observational experience report — by the author's own statement "a systems paper and experience report," with no controlled comparison and confounds (e.g. the developer's own growing experience) unisolated. Treat the architecture as a well-documented existence proof and the metrics as descriptive, not causal. <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a></p>
+  </div>
+
+  <h2>The "living context" forms</h2>
+  <p>Two systems push codified context from <em>written-once</em> toward <em>self-maintaining</em>:</p>
+  <p><strong>ACE</strong> argues contexts "should function not as concise summaries, but as comprehensive, structured playbooks," represented as itemised bullets each carrying a unique ID and helpful/harmful counters, updated by incremental <em>deltas</em> rather than monolithic rewrites, with a Generator–Reflector–Curator loop and periodic de-duplication <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a> <span class="tag prop">Proposal</span>. This is the operational counter-argument to "summarise/compress" and the clearest blueprint for a context store that grows safely (see <a href="evidence.html">Evidence</a> for its gains and <a href="failure-modes.html">Failure Modes</a> for the collapse it prevents).</p>
+  <p><strong>Confucius</strong> backs working memory with a file-system tree of markdown leaf nodes plus a dedicated note-taking agent that distils each session into persistent notes — including "hindsight notes that capture failure modes," indexed by error message and stack trace for retrieval in future sessions <a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a> <span class="tag emp">Empirical</span>. Notably it separates the channel the agent sees (AX) from the human-facing trace (UX), warning that conflating them "[causes] context bloat, spurious anchors, and brittle debugging."</p>
+
+  <div class="box inference">
+    <p class="box-h">⟡ My read: three datable layers of the same idea</p>
+    <p>Reading these together, codified context has moved through three forms in roughly two years: <strong>(1) the flat manifest</strong> (what the file studies measure), <strong>(2) tiered, retrievable infrastructure</strong> (the anchor), and <strong>(3) self-evolving stores</strong> (ACE, Confucius notes). They are not competitors so much as increasing degrees of automation over the same substrate — and most teams in the wild are still firmly at layer 1. The <a href="synthesis.html">Synthesis</a> page argues these should be unified rather than chosen between.</p>
+  </div>
+
+  <div class="pager">
+    <a href="foundations.html">← Foundations</a>
+    <a href="evidence.html">Evidence →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · findings are cited; <span style="color:var(--amber)">amber blocks are my inference</span>.</footer>
+</body>
+</html>

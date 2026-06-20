@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foundations — Context Engineering × Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;&amp;&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav active" href="foundations.html">Foundations</a>
+  <a class="nav" href="practice.html">Practice</a>
+  <a class="nav" href="memory-systems.html">Memory&nbsp;Systems</a>
+  <a class="nav" href="memory-hierarchy.html">Memory&nbsp;Hierarchy</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="failure-modes.html">Failure&nbsp;Modes</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">01 · Foundations</p>
+  <h1>From prompt engineering to a managed context</h1>
+  <p class="lede">In 2025 the field gave itself a name. "Context engineering" reframes the prompt as just one part of a dynamically curated context, and "agent memory" reframes the store behind it as a persistent cognitive state. This page sets the definitions and shows where the two literatures meet — at the context window itself.</p>
+
+  <h2>What "context engineering" came to mean</h2>
+  <p>The foundational survey defines context engineering as a discipline that "transcends simple prompt design to encompass the systematic optimization of information payloads for LLMs" <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a> <span class="tag def">Definition</span>. It reconceives the context not as a static string but as a dynamically assembled set of components — system instructions, knowledge, tools, memory, state, and the query — optimized under a hard length budget.</p>
+
+  <blockquote class="q">Context Engineering re-conceptualizes the context C as a dynamically structured set of informational components, c₁, c₂, …, cₙ … orchestrated by a high-level assembly function, A.
+    <span class="src">— A Survey of Context Engineering <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a>, §3.1</span>
+  </blockquote>
+
+  <p>Industry arrived at the same framing from the practitioner side. Anthropic defines it as "the set of strategies for curating and maintaining the optimal set of tokens (information) during LLM inference" <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a> <span class="tag def">Definition</span>, and casts the goal as a search for economy:</p>
+
+  <blockquote class="q">good context engineering means finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome.
+    <span class="src">— Effective Context Engineering <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a>, "The anatomy of effective context"</span>
+  </blockquote>
+
+  <h2>Why the window is scarce: context rot and the attention budget</h2>
+  <p>The premise underneath everything is that adding tokens is not free. Anthropic popularized two terms for this. <strong>Context rot</strong>: "as the number of tokens in the context window increases, the model's ability to accurately recall information from that context decreases" <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a> <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a> <span class="tag def">Definition</span>. And a finite <strong>attention budget</strong> — every new token depletes it, a scarcity the post traces to the transformer's n² pairwise relationships over n tokens <span class="tag thy">Theory</span>.</p>
+  <p>The academic literature supplies the same constraints under other names: the "lost-in-the-middle" positional bias, and the O(n²) attention wall — the survey notes that scaling one 7B model from 4K to 128K tokens implies a "122-fold computational increase" (a figure it attributes to prior work, not its own measurement) <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a> <span class="tag thy">Theory</span>.</p>
+
+  <div class="box finding"><p class="box-h">▦ The shared premise</p>
+  <p>Across practitioner and academic sources, the context window is treated as a <em>finite resource with diminishing marginal returns</em> — "a performance gradient rather than a hard cliff" <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a>. This is the assumption that makes everything downstream — compaction, retrieval, memory hierarchies — necessary rather than optional.</p></div>
+
+  <h2>The other half: agent memory as persistent state</h2>
+  <p>If context engineering manages the window, agent memory manages what persists behind it. The memory survey defines it as the thing that "turns a stateless text generator into a genuinely adaptive agent," formalized as a write–manage–read loop and, more strongly, as a POMDP <strong>belief state</strong> — "a sufficient statistic of the interaction history for good action selection" <a class="cite" href="corpus.html#p-2603-07670">Du '26</a> <span class="tag thy">Theory</span>. Its provocative claim:</p>
+
+  <blockquote class="q">the gap between "has memory" and "does not have memory" is often larger than the gap between different LLM backbones.
+    <span class="src">— Memory for Autonomous LLM Agents <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>, "Memory as a differentiator"</span>
+  </blockquote>
+
+  <h2>Two literatures, one boundary</h2>
+  <p>The clearest statement of how the halves relate comes from the memory survey, which draws the line precisely <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a> <span class="tag def">Definition</span>:</p>
+
+  <blockquote class="q">context engineering operates at the level of resource allocation and interface correctness … agent memory governs what the agent knows, what it has experienced, and how these elements evolve.
+    <span class="src">— Memory in the Age of AI Agents <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a>, §2.3.3</span>
+  </blockquote>
+
+  <p>The overlap is <strong>working memory</strong>: the live management of the context window during a long interaction. That is exactly where this review concentrates — the techniques on the <a href="practice.html">Practice</a> and <a href="memory-hierarchy.html">Memory Hierarchy</a> pages are working-memory mechanisms; the stores on the <a href="memory-systems.html">Memory Systems</a> page are the persistent layer behind them.</p>
+
+  <h3>Three ways to carve the space</h3>
+  <p>The three surveys each impose an organizing taxonomy. They are complementary lenses, not competitors:</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Survey</th><th>Organizing axes (its own terms)</th><th>Where the context window sits</th></tr></thead>
+    <tbody>
+      <tr><td>Context Engineering <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a></td><td>Foundational Components (retrieval, processing, management) × System Implementations (RAG, memory, tools, multi-agent)</td><td>The constrained assembly C = A(c₁…cₙ), |C| ≤ L_max</td></tr>
+      <tr><td>Memory for Autonomous Agents <a class="cite" href="corpus.html#p-2603-07670">Du '26</a></td><td>Temporal scope × representational substrate × control policy (heuristic → prompted → learned)</td><td>Working memory = the buffer sharing the LLM's capacity bottleneck</td></tr>
+      <tr><td>Memory in the Age of AI Agents <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a></td><td>Forms (token / parametric / latent) × Functions (factual / experiential / working) × Dynamics (formation / evolution / retrieval)</td><td>Working-memory function; KV cache &amp; activations as "latent" memory</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Tags: each survey's taxonomy is its own [Definition] contribution; the table is a faithful summary of their stated axes, not a claim that they agree on one scheme.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>Read together, the corpus marks a convergence: by 2026 "context engineering" and "agent memory" are no longer separate conversations but two views of one system — the management of information across a tiered store whose fastest, scarcest level is the context window. The rest of this site treats them that way. No single paper makes this unification claim; it is the throughline I read across the three surveys and the systems papers, and I develop it as a reference model on the <a href="synthesis.html">Synthesis</a> page.</p></div>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="practice.html">Practice →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering × Agent Memory · a state-of-the-art review of 16 sources · every chip → the <a href="corpus.html">corpus</a> → the original source. Amber callouts are the author's inference, not the papers' claims.</footer>
+</body>
+</html>

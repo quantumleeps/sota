@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context Engineering × Agent Memory — State of the Art</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;&amp;&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav active" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="practice.html">Practice</a>
+  <a class="nav" href="memory-systems.html">Memory&nbsp;Systems</a>
+  <a class="nav" href="memory-hierarchy.html">Memory&nbsp;Hierarchy</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="failure-modes.html">Failure&nbsp;Modes</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">State of the Art · 16 sources · 2024–2026</p>
+  <h1>Context engineering &amp; agent memory</h1>
+  <p class="lede">Through 2025–2026, two conversations merged into one. "Context engineering" — the discipline of curating what goes into a finite context window — and "agent memory" — the persistent store behind it — are converging on a single idea: the context window is the fast, scarce top of a managed memory hierarchy. This site reads sixteen sources on that convergence and tries to separate what's measured from what's hoped.</p>
+
+  <div class="grid g3">
+    <div class="card stat"><div class="big green">−92%</div><div class="lbl">p95 latency of a purpose-built memory system vs stuffing the full context, on LOCOMO — memory is mostly a <em>cost</em> win. <a class="cite" href="corpus.html#p-2504-19413">Chhikara+ '25 (Mem0)</a></div></div>
+    <div class="card stat"><div class="big">21.8%</div><div class="lbl">of context tokens in a production agent corpus are structural waste, reprocessed up to 84.4× — the slack the hierarchy work targets. <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a></div></div>
+    <div class="card stat"><div class="big amber">0.23</div><div class="lbl">best overall success rate any memory method reaches on MemoryArena's interdependent multi-session tasks — we are far from solved. <a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a></div></div>
+  </div>
+
+  <div class="box finding"><p class="box-h">▦ How to read this site</p>
+  <p>Citation chips like <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a> follow every sourced claim and link to the <a href="corpus.html">corpus</a>, which links onward to arXiv or the publishing lab. Claim-type tags show how strong a claim is in its source: <span class="tag emp">Empirical</span> measured, <span class="tag thy">Theory</span> argued, <span class="tag prop">Proposal</span> proposed-not-validated, <span class="tag def">Definition</span> a coined term. <strong>Blue boxes</strong> are findings drawn from the papers; <strong>amber boxes are my inference</strong>, never a paper's claim; <em>teal quotes</em> are verbatim. The 2026 arXiv papers are preprints under review; three sources are industry writeups, not studies.</p></div>
+
+  <h2>The state of the art in six claims</h2>
+  <p>These are the positions with enough independent support across the corpus to count as where the field stands.</p>
+
+  <h3>1 · The context window is a finite resource, not a container <span class="tag def">Definition</span> <span class="tag thy">Theory</span></h3>
+  <p>Performance degrades as tokens accumulate ("context rot"), and models draw on a finite "attention budget" rooted in the transformer's n² cost — a gradient, not a cliff. This premise is shared by practitioners and surveys alike. <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a> <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a> <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a> → <a href="foundations.html">Foundations</a></p>
+
+  <h3>2 · Context engineering and agent memory are converging <span class="tag def">Definition</span></h3>
+  <p>The surveys now draw a clean line — context engineering manages the window's resources; memory governs persistent cognitive state — and locate their overlap at working memory. In practice they are two views of one tiered store. <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a> <a class="cite" href="corpus.html#p-2603-07670">Du '26</a> <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a> → <a href="foundations.html">Foundations</a></p>
+
+  <h3>3 · The practitioner toolkit has consolidated into a few composable primitives <span class="tag prop">Proposal</span></h3>
+  <p>Compaction, tool-result clearing, external memory/note-taking, just-in-time retrieval, and sub-agent isolation now cover most of what teams need — distinguished by scope, lossiness, and persistence, and chosen by which problem the workload actually has. <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a> <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a> <a class="cite" href="corpus.html#p-openai-memory">OpenAI '26</a> → <a href="practice.html">Practice</a></p>
+
+  <h3>4 · Memory management is moving from heuristic to learned and self-evolving <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span></h3>
+  <p>RL-trained memory operations (AgeMem), evolvable memory skills (MemSkill), evolving context playbooks (ACE) and query-aware budget routing (BudgetMem) are replacing hand-coded schedules — and beating them on quality and cost on long-horizon benchmarks. <a class="cite" href="corpus.html#p-2601-01885">Yu+ '26 (AgeMem)</a> <a class="cite" href="corpus.html#p-2602-02474">Zhang+ '26 (MemSkill)</a> <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a> <a class="cite" href="corpus.html#p-2602-06025">Zhang+ '26 (BudgetMem)</a> → <a href="memory-systems.html">Memory Systems</a></p>
+
+  <h3>5 · The window is being re-imagined as a memory hierarchy <span class="tag thy">Theory</span></h3>
+  <p>OS abstractions — demand paging, virtual memory, KV-cache garbage collection — are applied directly, with the context window cast as "L1 cache" atop a deeper store. The framing is powerful and the early production data is striking. <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a> <a class="cite" href="corpus.html#p-2602-22402">Santoni '26 (CMV)</a> <a class="cite" href="corpus.html#p-2602-22603">Kariyappa &amp; Suh '26</a> → <a href="memory-hierarchy.html">Memory Hierarchy</a></p>
+
+  <h3>6 · Memory cuts cost — but doesn't reliably make agents act better <span class="tag emp">Empirical</span></h3>
+  <p>Purpose-built memory reaches near-full-context quality at a fraction of the cost; yet the one adversarial, decision-focused benchmark finds external memory gives no consistent gain over raw long context, with success decaying as tasks deepen. The cost case is strong; the capability case is not. <a class="cite" href="corpus.html#p-2504-19413">Chhikara+ '25 (Mem0)</a> <a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a> → <a href="evidence.html">Evidence</a></p>
+
+  <h2>Map of the territory</h2>
+  <div class="grid g2">
+    <a class="card cardlink" href="foundations.html"><p class="ct">01 · Foundations</p><p>Definitions: what context engineering and agent memory mean, and where the window sits between them.</p></a>
+    <a class="card cardlink" href="practice.html"><p class="ct">02 · Practice</p><p>The working-memory toolkit — compaction, clearing, memory, just-in-time retrieval, sub-agents, evolving playbooks.</p></a>
+    <a class="card cardlink" href="memory-systems.html"><p class="ct">03 · Memory Systems</p><p>The persistent store: Mem0, ReadAgent, AgeMem, MemSkill, BudgetMem — and the shift to learned control.</p></a>
+    <a class="card cardlink" href="memory-hierarchy.html"><p class="ct">04 · Memory Hierarchy</p><p>The OS analogy: context as L1 cache, demand paging, "Git for context," model-driven KV management.</p></a>
+    <a class="card cardlink" href="evidence.html"><p class="ct">05 · Evidence</p><p>A ledger of primary measured effects, with my confidence rating on each.</p></a>
+    <a class="card cardlink" href="failure-modes.html"><p class="ct">06 · Failure Modes</p><p>Seven families of limitations — and the tension between building more machinery and using it.</p></a>
+    <a class="card cardlink" href="synthesis.html"><p class="ct">07 · Synthesis</p><p>My inference: one managed-context-stack reference model, five design bets, and where I'd hold back.</p></a>
+    <a class="card cardlink" href="corpus.html"><p class="ct">· Corpus</p><p>All sixteen sources, grouped by role, each linking to arXiv or the publishing lab.</p></a>
+  </div>
+
+  <h2>Timeline of the corpus</h2>
+  <div class="timeline">
+    <div class="tl-item"><div class="when">Feb 2024 · ICML</div><div class="what">ReadAgent — gist memory &amp; episode pagination for long-context reading. <a class="cite" href="corpus.html#p-2402-09727">Lee+ '24 (ReadAgent)</a></div></div>
+    <div class="tl-item"><div class="when">Apr 2025 · ECAI</div><div class="what">Mem0 — production extract/consolidate/retrieve long-term memory. <a class="cite" href="corpus.html#p-2504-19413">Chhikara+ '25 (Mem0)</a></div></div>
+    <div class="tl-item"><div class="when">Jul 2025</div><div class="what">A Survey of Context Engineering — the field is formally named. <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a></div></div>
+    <div class="tl-item"><div class="when">Sep 2025</div><div class="what">Anthropic: Effective Context Engineering — context rot, attention budget, the practitioner canon. <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a></div></div>
+    <div class="tl-item"><div class="when">Oct 2025 · ICLR'26</div><div class="what">ACE — contexts as evolving playbooks; context collapse &amp; brevity bias. <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a></div></div>
+    <div class="tl-item"><div class="when">Dec 2025</div><div class="what">Memory in the Age of AI Agents — the Forms–Functions–Dynamics taxonomy. <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a></div></div>
+    <div class="tl-item"><div class="when">Jan 2026</div><div class="what">AgeMem (RL-learned unified memory) · OpenAI personalization (memory notes). <a class="cite" href="corpus.html#p-2601-01885">Yu+ '26 (AgeMem)</a> <a class="cite" href="corpus.html#p-openai-memory">OpenAI '26</a></div></div>
+    <div class="tl-item"><div class="when">Feb 2026</div><div class="what">A burst: MemSkill · BudgetMem · MemoryArena · CMV · SideQuest. <a class="cite" href="corpus.html#p-2602-02474">Zhang+ '26 (MemSkill)</a> <a class="cite" href="corpus.html#p-2602-06025">Zhang+ '26 (BudgetMem)</a> <a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a> <a class="cite" href="corpus.html#p-2602-22402">Santoni '26 (CMV)</a> <a class="cite" href="corpus.html#p-2602-22603">Kariyappa &amp; Suh '26</a></div></div>
+    <div class="tl-item"><div class="when">Mar 2026</div><div class="what">Memory for Autonomous LLM Agents (survey) · Demand Paging · Anthropic Cookbook. <a class="cite" href="corpus.html#p-2603-07670">Du '26</a> <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a> <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a></div></div>
+  </div>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>I read three loose eras in this timeline — long-context reading &amp; first memory systems (2024–early 2025), the field naming itself (mid–late 2025), then learned &amp; OS-inspired memory meeting sober benchmarking (2026). The papers don't claim these eras; the grouping is mine, and the 2026 cluster is dense enough that the ordering within a month is essentially arbitrary.</p></div>
+
+  <div class="pager">
+    <a href="corpus.html">← Corpus</a>
+    <a href="foundations.html">Foundations →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering × Agent Memory · a state-of-the-art review of 16 sources · every chip → the <a href="corpus.html">corpus</a> → the original source. Amber callouts are the author's inference, not the papers' claims.</footer>
+</body>
+</html>

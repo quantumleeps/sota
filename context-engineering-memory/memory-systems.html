@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory Systems — Context Engineering × Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;&amp;&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="practice.html">Practice</a>
+  <a class="nav active" href="memory-systems.html">Memory&nbsp;Systems</a>
+  <a class="nav" href="memory-hierarchy.html">Memory&nbsp;Hierarchy</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="failure-modes.html">Failure&nbsp;Modes</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">03 · Memory Systems</p>
+  <h1>Building the store behind the window</h1>
+  <p class="lede">The persistent layer: systems that decide what to write down, how to maintain it, and what to pull back. The clearest trend across the corpus is a shift in <em>who decides</em> — from hand-coded heuristics toward learned, query-aware control of memory itself.</p>
+
+  <h2>A common spine: write → manage → read</h2>
+  <p>The memory survey gives the organizing loop every system here instantiates: a read operator and an update operator that "summarizes, deduplicates, scores, resolves contradictions, deletes — not a simple append operation" <a class="cite" href="corpus.html#p-2603-07670">Du '26</a> <span class="tag def">Definition</span>. Systems differ mainly in their <strong>control policy</strong> — heuristic, prompted, or learned.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>System</th><th>Write / manage / read mechanism</th><th>Control policy</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mem0</strong> <a class="cite" href="corpus.html#p-2504-19413">Chhikara+ '25 (Mem0)</a></td><td>LLM extracts salient facts; an LLM tool-call picks ADD/UPDATE/DELETE/NOOP; semantic + (optional) graph retrieval</td><td>Prompted (LLM-driven ops)</td></tr>
+      <tr><td><strong>ReadAgent</strong> <a class="cite" href="corpus.html#p-2402-09727">Lee+ '24 (ReadAgent)</a></td><td>Paginate into episodes; compress each to a "gist"; interactive look-up of verbatim pages on demand</td><td>Prompted (zero-shot)</td></tr>
+      <tr><td><strong>AgeMem</strong> <a class="cite" href="corpus.html#p-2601-01885">Yu+ '26 (AgeMem)</a></td><td>Six memory tools (LTM add/update/delete; STM retrieve/summarize/filter) as policy actions</td><td>Learned (RL, step-wise GRPO)</td></tr>
+      <tr><td><strong>MemSkill</strong> <a class="cite" href="corpus.html#p-2602-02474">Zhang+ '26 (MemSkill)</a></td><td>Evolvable "skill bank" of memory operations; controller selects, executor applies span-by-span, designer evolves</td><td>Learned (RL controller) + self-evolving</td></tr>
+      <tr><td><strong>BudgetMem</strong> <a class="cite" href="corpus.html#p-2602-06025">Zhang+ '26 (BudgetMem)</a></td><td>Defer extraction to query time; Low/Mid/High budget tiers per module, chosen by a router</td><td>Learned (RL router, query-aware)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>The production baseline: Mem0</h2>
+  <p>Mem0 is the reference for "external memory beats stuffing the window." It extracts dialogue facts, lets the LLM choose among four operations, and retrieves selectively; a graph variant (Mem0ᵍ) adds relational structure <a class="cite" href="corpus.html#p-2504-19413">Chhikara+ '25 (Mem0)</a> <span class="tag prop">Proposal</span>. On the LOCOMO benchmark it lands close to full-context accuracy (LLM-judge J ≈ 66.9%, vs full-context 72.9%) while cutting p95 latency ~91% and token cost &gt;90% <span class="tag emp">Empirical</span>. The honest caveat is baked into the same table: full-context still edges it on raw accuracy — memory buys efficiency, not a free accuracy win.</p>
+
+  <h2>Compaction as memory: ReadAgent's gist</h2>
+  <p>ReadAgent shows that a memory store can be built purely by prompting. It paginates long text at LLM-chosen "pause points," compresses each episode into a fuzzy <strong>gist</strong>, keeps the gist set in context as a navigable index, and re-expands verbatim pages only when a task needs them <a class="cite" href="corpus.html#p-2402-09727">Lee+ '24 (ReadAgent)</a> <span class="tag def">Definition</span>. A small but telling craft detail:</p>
+  <blockquote class="q">We use the word "shorten" in the prompt … Using the word "summarize" tended to produce a restructured summary in our experiments.
+    <span class="src">— ReadAgent <a class="cite" href="corpus.html#p-2402-09727">Lee+ '24 (ReadAgent)</a>, §Memory Gisting</span>
+  </blockquote>
+  <p>It extends effective context 3.5–20× while beating retrieval and full-context baselines (see <a href="evidence.html">Evidence</a>) <span class="tag emp">Empirical</span> — the two-tier "fuzzy index + verbatim look-up" pattern that recurs throughout the hierarchy work.</p>
+
+  <h2>The pivot: learned memory management</h2>
+  <p>Three 2026 systems make the management policy itself learned. <strong>AgeMem</strong> folds long- and short-term memory operations into the agent's own policy as tool actions and trains them end-to-end, broadcasting the final task reward to every intermediate memory decision via step-wise GRPO <a class="cite" href="corpus.html#p-2601-01885">Yu+ '26 (AgeMem)</a> <span class="tag prop">Proposal</span>. RL doesn't just tune — it changes behavior, shifting retrieval to be "more selective and query-driven" and adding +8.5 points over a no-RL ablation <span class="tag emp">Empirical</span>.</p>
+
+  <p><strong>MemSkill</strong> goes further and makes the <em>operations</em> learnable and evolvable — a shared "skill bank" that a designer grows from hard cases, so the agent discovers domain-specific memory tactics rather than inheriting fixed add/update/delete primitives <a class="cite" href="corpus.html#p-2602-02474">Zhang+ '26 (MemSkill)</a> <span class="tag prop">Proposal</span>:</p>
+  <blockquote class="q">the evolved skill bank reflects recurring information needs from the data, rather than a fixed notion of what to remember.
+    <span class="src">— MemSkill <a class="cite" href="corpus.html#p-2602-02474">Zhang+ '26 (MemSkill)</a>, §Case study</span>
+  </blockquote>
+  <p>Its span-level (not turn-level) extraction is also the efficiency story: comparable or better quality at 215 LLM calls where a strong baseline used 1,288 <span class="tag emp">Empirical</span>.</p>
+
+  <p><strong>BudgetMem</strong> attacks a different waste: building memory offline, query-agnostic, "build once, use always." Instead it defers computation until a query arrives and routes each pipeline module to a Low/Mid/High tier, learning when to spend compute <a class="cite" href="corpus.html#p-2602-06025">Zhang+ '26 (BudgetMem)</a> <span class="tag prop">Proposal</span> — yielding a controllable accuracy–cost frontier and tunable latency (3,881 ms → 1,167 ms as the cost weight rises) <span class="tag emp">Empirical</span>.</p>
+
+  <div class="box finding"><p class="box-h">▦ A real result worth holding onto</p>
+  <p>Across AgeMem, MemSkill, and BudgetMem, the same lever pays off: making memory management <em>learned and query-aware</em> beats fixed schedules on both quality and cost on long-horizon benchmarks <a class="cite" href="corpus.html#p-2601-01885">Yu+ '26 (AgeMem)</a> <a class="cite" href="corpus.html#p-2602-02474">Zhang+ '26 (MemSkill)</a> <a class="cite" href="corpus.html#p-2602-06025">Zhang+ '26 (BudgetMem)</a>. Note the shared limitation, though: all three are single-team evaluations on Qwen/LLaMA backbones with no significance testing.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>The arc is unmistakable: heuristic (Mem0) → prompted (ReadAgent) → learned (AgeMem, MemSkill, BudgetMem), with control migrating into the policy. But the benchmark page is where I'd temper the enthusiasm: <a href="evidence.html">MemoryArena</a> finds that bolting an external store onto an agent gives "no consistent gain" over raw long context. My read is that <em>how</em> memory is managed is advancing faster than <em>whether the agent can use it</em> — which is why the co-design lesson on the <a href="synthesis.html">Synthesis</a> page matters more than any single architecture here.</p></div>
+
+  <div class="pager">
+    <a href="practice.html">← Practice</a>
+    <a href="memory-hierarchy.html">Memory Hierarchy →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering × Agent Memory · a state-of-the-art review of 16 sources · every chip → the <a href="corpus.html">corpus</a> → the original source. Amber callouts are the author's inference, not the papers' claims.</footer>
+</body>
+</html>

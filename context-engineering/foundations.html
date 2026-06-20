@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foundations — Context Engineering: State of the Art</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav active" href="foundations.html">Foundations</a>
+  <a class="nav" href="codified-context.html">Codified Context</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="architecture.html">Architecture</a>
+  <a class="nav" href="failure-modes.html">Failure Modes</a>
+  <a class="nav" href="security.html">Security</a>
+  <a class="nav" href="adoption.html">Adoption</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">01 · Foundations</p>
+  <h1>From prompts to context engineering</h1>
+  <p class="lede">Before "codified context" can be a design discipline, the corpus has to agree on what context <em>is</em> and why engineering it is different from writing a clever prompt. Three definitional moves recur: context as an <strong>assembled set of typed components</strong>, context as an <strong>operating system</strong> for the agent, and prompts/specs as <strong>first-class software artifacts</strong>.</p>
+
+  <h2>The naming of a discipline</h2>
+  <p>The most cited move is to declare context engineering a discipline that supersedes prompt engineering. The 1,400-paper survey defines it as "a formal discipline that transcends simple prompt design to encompass the systematic optimization of information payloads for LLMs" <a class="cite" href="corpus.html#p-2507-13334">Mei+&nbsp;'25</a> <span class="tag def">Definition</span>, and frames the shift as one of register:</p>
+  <blockquote class="q">It shifts the focus from the "art" of prompt design to the "science" of information logistics and system optimization.<span class="src">— A Survey of Context Engineering for LLMs <a class="cite" href="corpus.html#p-2507-13334">Mei+&nbsp;'25</a>, §Comparison of Paradigms</span></blockquote>
+  <p>The code-generation survey says the same thing in operational terms — context engineering is "not merely an extension of prompt design, but rather a dynamic methodology whose core objective is to deliver the right information and tools to the model — at the right time and in the appropriate format" <a class="cite" href="corpus.html#p-2508-00083">Dong+&nbsp;'25</a> — and adds the consequential claim that "many failures of intelligent agents do not stem from the models themselves, but rather from defects in the ingested context" <span class="tag prop">Proposal</span>. The practical paper that coined the multi-tool framing defines it as "systematically constructing and supplying all relevant information needed for a coding task… via a coordinated multi-agent process" <a class="cite" href="corpus.html#p-2508-08322">Haseeb&nbsp;'25</a>.</p>
+
+  <h2>Context as an assembled set of components</h2>
+  <p>The survey gives the formalism the rest of the field implicitly uses. Where prompt engineering treats the context as a single static string, context engineering treats it as a dynamically assembled set produced by a high-level function <span class="mono">C = A(c₁, c₂, … cₙ)</span>, whose components map to distinct informational roles <a class="cite" href="corpus.html#p-2507-13334">Mei+&nbsp;'25</a> <span class="tag def">Definition</span>. That decomposition is the cleanest lattice onto which the codified artifacts of this thread fall.</p>
+
+  <div class="box inference">
+    <p class="box-h">⟡ My mapping — components → codified artifacts</p>
+    <p>The survey defines the components abstractly; the artifact ↔ component pairing below is mine, drawn by reading the survey's <span class="mono">c_*</span> taxonomy against the artifacts the other papers study. It is a lens, not a claim from any source.</p>
+  </div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Survey component <a class="cite" href="corpus.html#p-2507-13334" style="vertical-align:middle">Mei+&nbsp;'25</a></th><th>What it carries</th><th>Codified artifact in this thread</th></tr></thead>
+    <tbody>
+      <tr><td><span class="mono">c_instr</span></td><td>instructions, rules, conventions</td><td>CLAUDE.md / AGENTS.md / Cursor rules; the anchor's "constitution"</td></tr>
+      <tr><td><span class="mono">c_know</span></td><td>retrieved domain knowledge (RAG)</td><td>the anchor's cold "knowledge base"; repo-level RAG <a class="cite" href="corpus.html#p-2510-04905">Tao+&nbsp;'26</a></td></tr>
+      <tr><td><span class="mono">c_tools</span></td><td>tool definitions and signatures</td><td>MCP servers / tool specs; skill <span class="mono">allowed-tools</span></td></tr>
+      <tr><td><span class="mono">c_mem</span></td><td>persistent memory</td><td>memory-bank files; Confucius cross-session notes <a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a></td></tr>
+      <tr><td><span class="mono">c_state</span></td><td>user / world / multi-agent state</td><td>plan files, TASKS.md, sub-agent handoff payloads</td></tr>
+      <tr><td><span class="mono">c_query</span></td><td>the immediate request</td><td>the human turn / issue text</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The survey also separates foundational <strong>Components</strong> (retrieval &amp; generation, processing, management) from <strong>System Implementations</strong> (RAG, memory systems, tool-integrated reasoning, multi-agent systems) <a class="cite" href="corpus.html#p-2507-13334">Mei+&nbsp;'25</a> — a useful reminder that "codified context" is a Component concern that gets realised through those Implementations. It flags a structural asymmetry worth keeping in mind: models "demonstrate remarkable proficiency in understanding complex contexts" but "exhibit pronounced limitations in generating equally sophisticated, long-form outputs" <span class="tag thy">Theory</span> — i.e. feeding rich context is easier than getting rich output back.</p>
+
+  <h2>Context as the agent's operating system</h2>
+  <p>The corporate-scale paper pushes the metaphor furthest: context is "an active execution environment, not a passive buffer for prompts" — it "manages memory, allocates resources, isolates processes, provides a unified interface," i.e. it behaves like an OS for the agent <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a> <span class="tag thy">Theory</span>. It names three pressures any context manager must trade against — a <em>relevance</em> deficit, a <em>memory</em> deficit (finite window), and a <em>budget</em> deficit (every token costs) — and proposes five production-grade quality criteria for context:</p>
+  <div class="grid g3">
+    <div class="card"><p class="ct">Relevance</p><p class="small">the minimum sufficient for the decision, not "everything available."</p></div>
+    <div class="card"><p class="ct">Sufficiency</p><p class="small">enough to act without guessing.</p></div>
+    <div class="card"><p class="ct">Isolation</p><p class="small">processes/contexts kept from contaminating each other.</p></div>
+    <div class="card"><p class="ct">Economy</p><p class="small">token cost is a first-class constraint.</p></div>
+    <div class="card"><p class="ct">Provenance</p><p class="small">where each piece of context came from.</p></div>
+    <div class="card" style="background:var(--paper-2)"><p class="ct small">note <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a></p><p class="small">The paper states the last two "are not explicitly distinguished" in the Google/LangChain sources it builds on — i.e. it claims them as its own contribution.</p></div>
+  </div>
+  <blockquote class="q">Good context is not "everything available" but "the minimum sufficient for the decision."<span class="src">— From Prompts to Corporate Multi-Agent Architecture <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a>, §What Constitutes Good Context</span></blockquote>
+
+  <h3>The maturity Pyramid</h3>
+  <p>Its central scaffold is a cumulative four-level model where each discipline subsumes the one below as load-bearing foundation, not as a replacement <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a> <span class="tag prop">Proposal</span>:</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Level</th><th>Optimises</th><th>Horizon</th><th>Scale</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Prompt engineering</strong></td><td>query formulation</td><td>one call</td><td>individual</td></tr>
+      <tr><td><strong>Context engineering</strong></td><td>the information environment (the "OS")</td><td>hours–days</td><td>team / product</td></tr>
+      <tr><td><strong>Intent engineering</strong></td><td>goals, values, trade-off hierarchies</td><td>weeks–months</td><td>business unit</td></tr>
+      <tr><td><strong>Specification engineering</strong></td><td>machine-readable corpus of policy/standards</td><td>continuous</td><td>corporation / ecosystem</td></tr>
+    </tbody>
+  </table></div>
+  <p>The paper's slogan ties them together: "whoever controls the agent's context controls its behaviour; whoever controls its intent controls its strategy; whoever controls its specifications controls its scale," and frames specifications as "the constitution of a nation of agents" <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a>. It also draws a distinction the multi-agent pages lean on — <strong>delegation ≠ decomposition</strong>: decomposition splits a task into parts, delegation transfers authority and decision rights; conflate them and a multi-agent system "degenerates into a distributed monolith."</p>
+  <div class="box gap">
+    <p class="box-h">◇ The author's own caveat</p>
+    <p>This is explicitly a "conceptual framework." The paper concedes the central "emergence" hypothesis "has no formal proof yet… engineering intuition backed by practice rather than a mathematical theorem," that machine-readable specs scale poorly from PDF/verbal policy, and that measuring context quality "remains experimental territory" <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a>.</p>
+  </div>
+
+  <h2>Prompts and specs as software artifacts</h2>
+  <p>The third foundational move treats the artifacts themselves as software, subject to the full engineering lifecycle. "Promptware engineering" names a "promptware crisis": prompts are first-class software artifacts but built by "ad hoc… trial-and-error" <a class="cite" href="corpus.html#p-2503-02400">Chen+&nbsp;'25</a> <span class="tag def">Definition</span>. It supplies a C1–C10 taxonomy of what makes natural-language prompts resist traditional tooling (non-determinism, fuzzy correctness, capability boundaries, memory management) and a roadmap of 27 research opportunities across requirements → design → implementation → testing → evolution → deployment — including prompt versioning/traceability, pattern repositories, and even "prompt compilation." It is explicitly unvalidated and vision-stage.</p>
+  <p>The "Agentic SE" pillars paper makes the artifact turn concrete for coding: it calls for replacing "transient, informal prompts" with "durable machine-readable structured artifacts that serve as contracts and institutional memory" <a class="cite" href="corpus.html#p-2509-06216">Hassan+&nbsp;'25</a> <span class="tag prop">Proposal</span>, and proposes named, version-controlled artifacts — <em>BriefingScript</em> (the work order, an "evolution of literate programming"), <em>LoopScript</em> (declarative workflow/SOP), and <em>MentorScript</em> ("mentorship-as-code") — explicitly naming CLAUDE.md/AGENTS.md as the grassroots precursor to a codified MentorScript. It also notes the gap that motivates this whole thread:</p>
+  <blockquote class="q">[There is] no mainstream tool… [providing] adequate observability, archival, or unified revision control over the combined code + prompts + conversational context… [CLI agents leave context] only in a terminal's scroll-back buffer.<span class="src">— Agentic Software Engineering: Foundational Pillars <a class="cite" href="corpus.html#p-2509-06216">Hassan+&nbsp;'25</a>, §Discussion</span></blockquote>
+
+  <h3>Two kinds of knowledge to codify</h3>
+  <p>The Siemens framework gives the cleanest answer to <em>what</em> goes into codified context, by interviewing experts and finding their knowledge splits in two: <strong>explicit procedural rules</strong> (clear if-then logic, directly translatable into executable code/tools) and <strong>tacit design principles</strong> (contextual judgement that "couldn't be reduced to simple rules" and must enter through prompts/RAG) <a class="cite" href="corpus.html#p-2601-15153">Ulan&nbsp;uulu+&nbsp;'26</a> <span class="tag def">Definition</span>. Crucially, neither alone sufficed — "code lacked analytical insight while LLM-only solutions produced domain-inappropriate outputs."</p>
+  <div class="box inference">
+    <p class="box-h">⟡ Why this two-type split matters downstream</p>
+    <p>I read the explicit/tacit split as the theoretical justification for why a codified-context layer needs <em>both</em> executable artifacts (skills, scripts, MCP tools ≈ explicit rules) and prose guidance (CLAUDE.md/AGENTS.md ≈ tacit principles) — and why "just write better docs" or "just add more tools" each fail on their own. The other papers' empirical finding that context files are heavy on commands/architecture but light on the "why" (see <a href="codified-context.html">Codified Context</a>) looks, through this lens, like an over-investment in explicit rules and an under-investment in tacit principles.</p>
+  </div>
+
+  <h2>Where this leaves the foundations</h2>
+  <p>The corpus has converged on a shared premise — context is engineerable, and the engineering is a software discipline — without yet converging on a shared <em>schema</em>. The component formalism <a class="cite" href="corpus.html#p-2507-13334">Mei+&nbsp;'25</a>, the OS/maturity framing <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a>, and the artifact-lifecycle framing <a class="cite" href="corpus.html#p-2503-02400">Chen+&nbsp;'25</a> <a class="cite" href="corpus.html#p-2509-06216">Hassan+&nbsp;'25</a> are three vocabularies for the same object. The next page looks at what that object actually looks like once developers start writing it down.</p>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="codified-context.html">Codified Context →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · findings are cited; <span style="color:var(--amber)">amber blocks are my inference</span>.</footer>
+</body>
+</html>

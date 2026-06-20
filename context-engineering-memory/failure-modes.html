@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Failure Modes — Context Engineering × Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;&amp;&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="practice.html">Practice</a>
+  <a class="nav" href="memory-systems.html">Memory&nbsp;Systems</a>
+  <a class="nav" href="memory-hierarchy.html">Memory&nbsp;Hierarchy</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav active" href="failure-modes.html">Failure&nbsp;Modes</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">06 · Failure Modes &amp; open problems</p>
+  <h1>Where it breaks</h1>
+  <p class="lede">The corpus is unusually candid about its own limits. Collecting every paper's stated limitations and open problems, seven families recur — and they cut against some of the field's most confident instincts.</p>
+
+  <h2>1 · "More context" is not the cure</h2>
+  <p>The first instinct — just use a bigger window — is the one the corpus most consistently rejects. Context rot and the lost-in-the-middle bias mean recall degrades as tokens grow <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a> <a class="cite" href="corpus.html#p-2507-13334">Mei+ '25</a>, and the cookbook notes that bigger limits don't even slow accumulation <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a>:</p>
+  <blockquote class="q">Context rot and prefill latency scale with how much is in the window, not with the window's limit.
+    <span class="src">— Anthropic Cookbook <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a>, "On larger context windows"</span>
+  </blockquote>
+  <div class="box risk"><p class="box-h">⚠ Long context ≠ memory</p>
+  <p>The memory survey's cross-benchmark synthesis is blunt: long-context models "consistently underperform purpose-built memory systems on selective retrieval / active management" <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>. Scaling the window is a delay, not a fix.</p></div>
+
+  <h2>2 · Compression is lossy, and the loss is silent</h2>
+  <p>Every compaction technique trades fidelity for room, and the lost detail tends to matter later. ACE documents <strong>context collapse</strong> (a rewrite crushing 18K tokens to 122) and <strong>brevity bias</strong> <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a>; CMV measures native compaction destroying 98% of message state <a class="cite" href="corpus.html#p-2602-22402">Santoni '26 (CMV)</a>; the survey names <strong>summarization drift</strong>, where low-frequency, high-importance facts vanish after a few compression passes <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>. Anthropic's own caution:</p>
+  <blockquote class="q">overly aggressive compaction can lose subtle but critical context whose importance only becomes apparent later.
+    <span class="src">— Anthropic Cookbook <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a>, "Compaction"</span>
+  </blockquote>
+
+  <h2>3 · Memory systems don't reliably help agents <em>act</em></h2>
+  <div class="box risk"><p class="box-h">⚠ The "no 1+1&gt;2" result</p>
+  <p>MemoryArena's central finding is that pairing a strong agent with an external memory store "does not consistently outperform using the model's full long-context history alone," which it attributes to a <em>representation mismatch</em> (compressed memory misaligns with in-context reasoning) and a <em>training mismatch</em> (memory isn't co-trained with the agent) <a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a>. Worse, success decays with task depth for <em>every</em> method — "belief drift" with no flat region.</p></div>
+  <p>A related caution: when exact earlier facts must be reused, lightweight retrieval beats heavy consolidation — over-abstracting memory can hurt <a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a>.</p>
+
+  <h2>4 · Self-improving memory can self-poison</h2>
+  <p>The same loop that lets memory improve lets it degrade. ACE's gains "depend critically on feedback quality" — without reliable signals, the evolving context can become "noisy or even harmful" <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a>. The survey generalizes this as <strong>self-reinforcing error</strong>, whose severity scales with agent lifetime, and recommends grounding every reflection in specific episodic evidence <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>.</p>
+
+  <h2>5 · Maintenance, staleness, governance &amp; security</h2>
+  <ul class="clean">
+    <li><strong>Staleness / schema drift:</strong> stored tool-use patterns silently break when APIs change <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>; injected notes go stale when preferences change <a class="cite" href="corpus.html#p-openai-memory">OpenAI '26</a>.</li>
+    <li><strong>Forgetting is unsolved:</strong> selective forgetting under safety/compliance is open, and machine unlearning is "still far from production-ready," critical once memories enter fine-tuned weights <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>.</li>
+    <li><strong>Silent orchestration failures:</strong> in hierarchical memory a wrong eviction yields a slightly worse answer, not an error — hard to detect <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>.</li>
+  </ul>
+  <div class="box risk"><p class="box-h">⚠ Memory is an attack surface</p>
+  <p>Because memory is injected directly into the prompt, it is "a high-value attack surface" exposed to context poisoning and instruction injection, needing guardrails at every lifecycle stage <a class="cite" href="corpus.html#p-openai-memory">OpenAI '26</a>. The memory survey adds privacy, auditability, and verifiable forgetting as a "trustworthy memory" frontier <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a>.</p></div>
+
+  <h2>6 · Systems-level pathologies</h2>
+  <p>The hierarchy papers surface failure modes inherited from real systems. Demand paging observed <strong>thrashing</strong> — a 681-turn session hit a 97% fault rate and died on a rate limit, not a context limit — and noted that compacting/mutating context can invalidate the prompt cache (one collapse dropped cache hit-rate from 100% to 25% for a turn) <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a>. SideQuest shows fixed KV budgets fail on the long tail of complex queries while wasting memory on simple ones <a class="cite" href="corpus.html#p-2602-22603">Kariyappa &amp; Suh '26</a>.</p>
+
+  <h2>7 · Evaluation is fragmented</h2>
+  <div class="box gap"><p class="box-h">◇ The measurement problem</p>
+  <p>Benchmarks like LoCoMo are near-saturated yet don't predict agentic memory use <a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a>; many "agent memory" systems are still evaluated on RAG-style QA, blurring the boundary <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a>; classical IR metrics miss decision quality, staleness, and forgetting <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>; and almost no benchmark reports efficiency/cost alongside accuracy. The memory survey's one-liner lands hard:</p>
+  <blockquote class="q">Model selection gets months of careful benchmarking; memory architecture often gets an afternoon.
+    <span class="src">— Memory for Autonomous LLM Agents <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>, Conclusion</span>
+  </blockquote></div>
+
+  <h2>The cross-cutting tension</h2>
+  <div class="box inference"><p class="box-h">⟡ My synthesis — not from the papers</p>
+  <p>Two contradictions run through the corpus. First, the field is building ever-more-sophisticated memory <em>machinery</em> (learned routers, evolving skill banks, OS hierarchies) while its most adversarial benchmark says the binding constraint may be the agent's ability to <em>use</em> memory at all, not store it — capability is being added on the wrong side of the bottleneck. Second, the instinct to "remember everything" collides with the inverted economics: when keeping is expensive and re-fetching is cheap, the correct default is aggressive forgetting <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a>. The field's reflex is accumulation; the evidence argues for disciplined deletion. The <a href="synthesis.html">Synthesis</a> page is my attempt to reconcile these.</p></div>
+
+  <div class="pager">
+    <a href="evidence.html">← Evidence</a>
+    <a href="synthesis.html">Synthesis →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering × Agent Memory · a state-of-the-art review of 16 sources · every chip → the <a href="corpus.html">corpus</a> → the original source. Amber callouts are the author's inference, not the papers' claims.</footer>
+</body>
+</html>

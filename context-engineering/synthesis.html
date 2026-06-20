@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthesis — Toward a Context Spine</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  /* page-local: the layered reference-model diagram */
+  .stack { margin: 1.6em 0; }
+  .layer {
+    border-radius: 9px; padding: 13px 16px; margin: 7px 0;
+    border: 1px solid var(--line); background: var(--card);
+    display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: baseline;
+  }
+  .layer .ln { font-family: var(--sans); font-weight: 800; font-size: 0.82rem; letter-spacing: 0.02em; color: var(--ink); }
+  .layer .ld { font-size: 0.92rem; color: var(--ink-soft); }
+  .layer.hot   { background:#fcefe9; border-color:#f1cfc0; }
+  .layer.warm  { background:#fbf3e6; border-color:#eedcbf; }
+  .layer.cool  { background:#eef3fb; border-color:#cfddf4; }
+  .layer.cold  { background:#eef1f6; border-color:#d7dded; }
+  .layer.cross { background:#1b2333; border-color:#1b2333; color:#fff; }
+  .layer.cross .ln { color:#fff; } .layer.cross .ld { color:#c8cfde; }
+  @media (max-width:740px){ .layer{ grid-template-columns:1fr; gap:3px; } }
+</style>
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="codified-context.html">Codified Context</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="architecture.html">Architecture</a>
+  <a class="nav" href="failure-modes.html">Failure Modes</a>
+  <a class="nav" href="security.html">Security</a>
+  <a class="nav" href="adoption.html">Adoption</a>
+  <a class="nav active" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">08 · Synthesis <span class="tag prop" style="vertical-align:middle">inference throughout</span></p>
+  <h1>Toward a context spine</h1>
+
+  <div class="box inference" style="margin-top:0">
+    <p class="box-h">⟡ Read this page differently</p>
+    <p>Everything here is <strong>my</strong> synthesis — a reading <em>across</em> the corpus, an extrapolation, and a set of opinions. No single paper makes these claims. Citation chips still appear, but here they mark <em>what I'm reasoning from</em>, not a source that agrees with my conclusion. The findings live on the other eight pages; this is the argument I'd build on top of them.</p>
+  </div>
+
+  <h2>The claim</h2>
+  <p>The corpus is, collectively, groping toward one object without quite naming it. The file studies measure a flat manifest; the anchor builds tiers; ACE makes it self-evolving; Confucius adds memory; the surveys give it a formalism; the security and failure papers describe how it breaks. Read together, they describe a single missing layer: a <strong>context spine</strong> — the unified, version-controlled, layered, retrievable, self-refreshing context substrate that sits between the codebase and the agent and is owned by the team.</p>
+  <p>"Codified context" today is mostly the <em>top slice</em> of that spine (a CLAUDE.md), written by hand and rarely maintained. The thesis I draw from the corpus is that the spine should be the unit of design — not any one file, agent, or retrieval trick — because every paper's contribution is really a different layer or property of it.</p>
+
+  <h2>A reference model</h2>
+  <p>This is my attempt to fold the corpus into one picture. Each layer cites the work I'm generalising from; the colour runs hot (always-loaded) to cold (retrieved on demand), with one cross-cutting governance plane.</p>
+  <div class="stack">
+    <div class="layer hot"><div class="ln">Constitution<br><span class="small" style="font-weight:500">hot · always loaded</span></div><div class="ld">Conventions, build/test commands, architectural summaries, known failure modes, routing rules. The scaled CLAUDE.md. <a class="cite" href="corpus.html#p-2602-20478">anchor Tier 1</a> <a class="cite" href="corpus.html#p-2509-14744">file studies</a></div></div>
+    <div class="layer warm"><div class="ln">Capabilities<br><span class="small" style="font-weight:500">explicit rules</span></div><div class="ld">Skills + MCP tools + scripts — the <em>executable</em> half of expert knowledge, loaded by need to protect the budget. <a class="cite" href="corpus.html#p-2601-15153">explicit/tacit split</a> <a class="cite" href="corpus.html#p-2604-14228">skills vs MCP cost</a></div></div>
+    <div class="layer warm"><div class="ln">Specialists<br><span class="small" style="font-weight:500">routed roles</span></div><div class="ld">Sub-agent specs that embed domain knowledge and are auto-routed by trigger signals; isolated contexts returning summaries. <a class="cite" href="corpus.html#p-2602-20478">anchor Tier 2</a> <a class="cite" href="corpus.html#p-2308-00352">SOP roles</a></div></div>
+    <div class="layer cool"><div class="ln">Knowledge base<br><span class="small" style="font-weight:500">cold · retrieved</span></div><div class="ld">Per-subsystem "knowledge about code" — design intent, constraints, failure tables — over a repo graph, fetched minimal-sufficient. <a class="cite" href="corpus.html#p-2602-20478">anchor Tier 3</a> <a class="cite" href="corpus.html#p-2510-04905">repo-RAG</a></div></div>
+    <div class="layer cold"><div class="ln">Episodic memory<br><span class="small" style="font-weight:500">cross-session</span></div><div class="ld">Persistent notes incl. <em>hindsight</em> (failures/dead-ends), grown by delta and de-duplicated rather than rewritten. <a class="cite" href="corpus.html#p-2512-10398">Confucius notes</a> <a class="cite" href="corpus.html#p-2510-04618">ACE deltas</a></div></div>
+    <div class="layer cold"><div class="ln">Handoff contracts<br><span class="small" style="font-weight:500">between stages</span></div><div class="ld">Constraint-preserving payloads across planner→coder and agent→agent boundaries — the place most failures originate. <a class="cite" href="corpus.html#p-2510-10460">planner-coder gap</a></div></div>
+    <div class="layer cross"><div class="ln">Governance plane<br><span class="small" style="font-weight:500">cross-cutting</span></div><div class="ld">Versioning, ownership, drift detection, NFR/security codification, provenance, system-level monitoring, review parity. <a class="cite" href="corpus.html#p-2509-06216" style="background:#3a4d7a;color:#dbe3f5;border-color:#3a4d7a">artifacts</a> <a class="cite" href="corpus.html#p-2602-19844" style="background:#3a4d7a;color:#dbe3f5;border-color:#3a4d7a">monitoring</a> <a class="cite" href="corpus.html#p-2502-13767" style="background:#3a4d7a;color:#dbe3f5;border-color:#3a4d7a">trust</a></div></div>
+  </div>
+  <p class="note">This is a lens for organising the corpus, not a system anyone has built end-to-end. The anchor's three tiers are the closest real instance; the lower layers are assembled from other papers.</p>
+
+  <h2>Eight bets I'd make</h2>
+  <p>Where I think the evidence points, stated as design principles. Each is my opinion, grounded in the cited work.</p>
+
+  <h3>1 · Treat the spine as config-as-code, not documentation</h3>
+  <p>The strongest practical finding is that context files already "evolve like configuration code" and accrue "context debt" <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a>. I'd make that explicit: version it, assign owners (CODEOWNERS), review it, and lint it in CI — checking that documented commands and conventions still hold. The "promptware engineering" and "Agentic SE artifact" papers give the discipline; the file studies give the urgency.</p>
+
+  <h3>2 · Split explicit from tacit on purpose</h3>
+  <p>The Siemens result — explicit procedural rules belong in executable tools, tacit principles belong in prose, and neither alone suffices <a class="cite" href="corpus.html#p-2601-15153">Ulan&nbsp;uulu+&nbsp;'26</a> — is the design rule that explains the file studies' biggest weakness: they over-encode "how" (commands, architecture) and under-encode "why" (rationale, constraints). A spine should route each kind of knowledge to its right layer rather than dumping everything into one markdown file.</p>
+
+  <h3>3 · Grow-and-refine; never write-once</h3>
+  <p>Staleness is the anchor's primary failure mode <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>, context collapse is ACE's <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a>, and a quarter of real guidance files never get updated <a class="cite" href="corpus.html#p-2601-18341">Robbes+&nbsp;'26</a>. My bet: every layer of the spine ships with a refresh mechanism — drift detection, reflector/de-dup, or hindsight capture — or it will rot, and an agent that "trusts documentation absolutely" will fail silently on it.</p>
+
+  <h3>4 · Preserve constraints across handoffs, don't re-summarise</h3>
+  <p>75.3% of multi-agent code failures are a planner→coder information loss <a class="cite" href="corpus.html#p-2510-10460">Lyu+&nbsp;'26</a>. The most leveraged single intervention is therefore a structured handoff contract that carries core concepts, edge cases, and conditionals verbatim across stage boundaries — exactly what MetaGPT's typed artifacts did, and what loose natural-language summaries destroy.</p>
+
+  <h3>5 · The budget is the constraint — minimise, de-dup, provenance-tag</h3>
+  <p>The window is "the binding resource constraint" <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>; 28.7% of rule lines are wasteful duplicates <a class="cite" href="corpus.html#p-2512-18925">Jiang&nbsp;&amp;&nbsp;Nam&nbsp;'26</a>; "good context is the minimum sufficient for the decision" <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a>. A spine should retrieve minimal-sufficient context and tag each piece with its source — provenance is both a quality and a security control.</p>
+
+  <h3>6 · Codify the guardrails that are currently missing</h3>
+  <p>Security/NFRs are the least-codified content across every file study, while the threat surface grows <a class="cite" href="corpus.html#p-2602-19844">Zhang+&nbsp;'26</a>. The cheapest security win available is to put NFR and security expectations <em>into</em> the context layer (templated), and pair them with system-level monitoring — because the file and the monitor each cover what the other misses.</p>
+
+  <h3>7 · Invest in the harness; the durable value isn't the model</h3>
+  <p>"Scaffold can beat model" <a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a> and "98.4% harness" <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a> together say the engineering that compounds is in context management, tools, memory, and safety. Codified context is the declarative, ownable slice of that harness — the part a team can build and version without owning a runtime.</p>
+
+  <h3>8 · Keep the human at the wheel — design for control, not autonomy</h3>
+  <p>Professional developers succeed by controlling agents piecewise (2.1 steps/prompt) and reviewing everything <a class="cite" href="corpus.html#p-2512-14012">Huang+&nbsp;'25</a>; trust, via provenance and review parity, is the adoption gate <a class="cite" href="corpus.html#p-2502-13767">Roychoudhury+&nbsp;'25</a>. A spine should make plans, context, and provenance legible and editable by the human, not hide them behind autonomy.</p>
+
+  <h2>Where I'd hold back</h2>
+  <div class="box gap">
+    <p class="box-h">◇ Open bets I would <em>not</em> place yet</p>
+    <ul>
+      <li><strong>Schema standardisation.</strong> AGENTS.md is converging on a format, but "there is no established content structure yet" <a class="cite" href="corpus.html#p-2510-21413">Mohsenimofidi+&nbsp;'26</a>. I'd keep the spine's schema loose and observed, not prescribed, until outcome-linked studies exist.</li>
+      <li><strong>Self-evolving context at team scale.</strong> ACE is compelling but degrades without reliable feedback, and can be "polluted by spurious signals" <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a>. Auto-grown context shared across a team without a human gate is a risk I'd not take on yet.</li>
+      <li><strong>More agents.</strong> MAST's 41–86.7% failure rates and "protocols are insufficient for inter-agent failures" <a class="cite" href="corpus.html#p-2503-13657">Cemri+&nbsp;'25</a>, plus the survey's caution that multi-agent doesn't help when the prompt is robust <a class="cite" href="corpus.html#p-2404-11584">Masterman+&nbsp;'24</a>, make me default to the fewest agents that work.</li>
+      <li><strong>Quality, not just cost.</strong> The one controlled context-file study measured speed/tokens, not correctness <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a>. I treat "codified context improves code quality" as plausible-but-unproven.</li>
+    </ul>
+  </div>
+
+  <h2>The one-line version</h2>
+  <p style="font-size:1.18rem;color:var(--ink-soft);border-left:4px solid var(--amber);padding-left:18px;font-style:italic">The field has shown that context — codified, layered, maintained — is the dominant near-term lever on coding-agent behaviour. The unbuilt thing it keeps circling is a <strong>context spine</strong>: one owned, versioned, self-refreshing substrate that unifies the manifest, the tiers, the memory, and the governance into a single artifact a team can engineer.</p>
+
+  <div class="pager">
+    <a href="adoption.html">← Adoption</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · <span style="color:var(--amber)">this entire page is my inference</span>, grounded in the cited corpus.</footer>
+</body>
+</html>

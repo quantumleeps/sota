@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence — Does Codified Context Work?</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="codified-context.html">Codified Context</a>
+  <a class="nav active" href="evidence.html">Evidence</a>
+  <a class="nav" href="architecture.html">Architecture</a>
+  <a class="nav" href="failure-modes.html">Failure Modes</a>
+  <a class="nav" href="security.html">Security</a>
+  <a class="nav" href="adoption.html">Adoption</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">03 · Evidence</p>
+  <h1>Does codified context actually work?</h1>
+  <p class="lede">The corpus reports real, mostly positive effects — but they vary enormously in rigour, from one tightly controlled isolation study to several single-repo, small-N case studies. This page lays out the measured results and then reads them honestly: the direction of the evidence is consistent and encouraging; the <em>strength</em> is uneven.</p>
+
+  <h2>The evidence ledger</h2>
+  <p>Quantitative effects reported in the corpus that bear on "does engineering the context help?" The final column is <strong>my</strong> appraisal of how much weight each result carries — it is not from the papers.</p>
+
+  <div class="box inference">
+    <p class="box-h">⟡ How I rate "confidence" (my scale)</p>
+    <p><strong>Strong</strong> = controlled/paired design or ablation with adequate scale. <strong>Moderate</strong> = benchmark/ablation evidence but narrow (single model, domain, or framework). <strong>Indicative</strong> = small-N, single-repo, qualitative, or secondary-cited. The column reflects my judgement of internal + external validity, not the importance of the claim.</p>
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>What was measured</th><th>Result</th><th>Method &amp; scale</th><th>Source</th><th>My confidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Adding an AGENTS.md → agent efficiency</td>
+        <td class="num"><span class="pos">−28.64%</span> median runtime; <span class="pos">−16.58%</span> median output tokens; completion comparable</td>
+        <td>Paired within-task design, 124 real PRs / 10 repos, OpenAI Codex (gpt-5.2-codex); Wilcoxon p&lt;0.05 on runtime &amp; output tokens</td>
+        <td><a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a></td>
+        <td><span class="pos">Strong</span></td>
+      </tr>
+      <tr>
+        <td>Layered context pipeline → single-shot success</td>
+        <td class="num"><span class="pos">80%</span> vs <span class="neg">40%</span> baseline (CLAUDE.md alone); ≈3–5× token cost</td>
+        <td>5 tasks in one 180k-LOC Next.js repo; success = passes tests + criteria, no human fix</td>
+        <td><a class="cite" href="corpus.html#p-2508-08322">Haseeb&nbsp;'25</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Evolving "playbook" context (ACE) → task accuracy</td>
+        <td class="num"><span class="pos">+10.6%</span> agents, <span class="pos">+8.6%</span> finance; AppWorld up to +17.1%; <span class="pos">−86.9%</span> adaptation latency</td>
+        <td>AppWorld + finance benchmarks; matches IBM CUGA using a smaller open model; degrades without reliable feedback</td>
+        <td><a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Codified expert knowledge → output quality</td>
+        <td class="num"><span class="pos">+206%</span> overall (2.60 vs 0.85 / 3); per-scenario +71% to +614%</td>
+        <td>Industrial case (Siemens viz); 5 scenarios / 3 domains; 12 human evaluators + LLM judge; lower variance</td>
+        <td><a class="cite" href="corpus.html#p-2601-15153">Ulan&nbsp;uulu+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Agent-Computer Interface (ACI) → SWE-bench</td>
+        <td class="num"><span class="pos">3.8% → 12.47%</span> full; 18.0% Lite; portable (Claude 3 Opus 10.5%)</td>
+        <td>Benchmark + component ablations (editor, linter, viewer size, search); model held fixed</td>
+        <td><a class="cite" href="corpus.html#p-2405-15793">Yang+&nbsp;'24</a></td>
+        <td><span class="pos">Strong</span></td>
+      </tr>
+      <tr>
+        <td>Scaffold quality (Confucius) → SWE-Bench-Pro</td>
+        <td class="num"><span class="pos">59%</span> (GPT-5.2) vs 56% reported; weaker-model+CCA 52.7% &gt; stronger-model+proprietary 52.0%</td>
+        <td>SWE-Bench-Pro / Verified, same backbone/repos/tools; context-mgmt ablation +6.6; notes Run1→Run2 53.0→54.4%</td>
+        <td><a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Better role spec / verification (MAST interventions)</td>
+        <td class="num"><span class="pos">+9.4%</span> from role-spec; <span class="pos">+15.6%</span> from a verification step (ChatDev, same model)</td>
+        <td>Interventions on existing MAS; 1,600+ annotated traces; LLM-judge κ=0.77</td>
+        <td><a class="cite" href="corpus.html#p-2503-13657">Cemri+&nbsp;'25</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Planner→coder context handoff → robustness</td>
+        <td class="num">mutations drop Pass@10 <span class="neg">7.9–83.3%</span>; gap = 75.3% of failures; monitor+multi-prompt repair fixes <span class="pos">40–88.9%</span></td>
+        <td>Mutation "fuzzing": 3 MAS × 3 LLMs × 4 datasets; 150 failure cases coded κ=0.88</td>
+        <td><a class="cite" href="corpus.html#p-2510-10460">Lyu+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Removing roles from system prompts (ChatDev)</td>
+        <td class="num">Quality <span class="neg">0.395→0.221</span>; Executability <span class="neg">0.88→0.58</span> — the largest ablation drop</td>
+        <td>Ablation on ChatDev's SoftwareDev tasks</td>
+        <td><a class="cite" href="corpus.html#p-2307-07924">Qian+&nbsp;'23</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Encoded SOPs + structured artifacts (MetaGPT)</td>
+        <td class="num"><span class="pos">85.9%</span> Pass@1 HumanEval; executable feedback +4.2% / +5.4%</td>
+        <td>HumanEval/MBPP + a SoftwareDev set; role &amp; feedback ablations</td>
+        <td><a class="cite" href="corpus.html#p-2308-00352">Hong+&nbsp;'23</a></td>
+        <td>Moderate</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h2>The strongest single result, in context</h2>
+  <p>The AGENTS.md isolation study deserves its own callout because it is the only result in the corpus that cleanly isolates the causal effect of <em>one</em> context artifact: same task, same repo snapshot, agent run with the file present vs removed, in fresh containers.</p>
+  <div class="grid g3">
+    <div class="card stat"><div class="big green">−28.6%</div><div class="lbl">median wall-clock runtime <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big green">−16.6%</div><div class="lbl">median output tokens (both significant, p&lt;0.05)</div></div>
+    <div class="card stat"><div class="big">124</div><div class="lbl">real merged PRs across 10 repos (paired design)</div></div>
+  </div>
+  <p>The authors are careful about what it does <em>not</em> show. The token benefit concentrates in output tokens and a few very expensive runs — input/cached/total token medians barely moved (some slightly up). There is <strong>no correctness evaluation</strong>, only a 50-task manual sanity check that outputs were non-trivial; only one model family was tested; and the mechanism (less exploratory navigation) is "speculated," not yet traced <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a>. So: faster and cheaper, on small tasks, for one agent — convincingly; "better code" — not measured here.</p>
+
+  <h2>Reading the ledger honestly</h2>
+  <div class="box inference">
+    <p class="box-h">⟡ My appraisal of the evidence base</p>
+    <p><strong>Direction is consistent; rigour is not.</strong> Across very different methods — a controlled PR study, benchmark ablations, an industrial case, multi-agent interventions — every result points the same way: shaping context/scaffolding helps, often substantially, and frequently more than swapping the model. That convergence across methods is genuinely reassuring.</p>
+    <p>But notice what is missing. The <em>headline artifact</em> of this thread — the human-authored CLAUDE.md/AGENTS.md content studied on the <a href="codified-context.html">previous page</a> — has exactly one controlled efficiency study behind it and <strong>zero</strong> controlled correctness studies. The biggest correctness gains in the ledger come from <em>scaffolding and structure</em> (ACI, Confucius, SOPs, roles), not from prose context files. The anchor's compelling case studies are observational. The largest percentage (+206%) is a single industrial task-type with 5 scenarios. And the context-engineering survey's eye-catching figures (an "18-fold" navigation gain, "+175.96% exact match" on bug-fixing) are secondary citations from other works, not its own measurements <a class="cite" href="corpus.html#p-2507-13334">Mei+&nbsp;'25</a> — they should not be read as primary evidence.</p>
+    <p>My summary: <em>that</em> codified context helps is well-supported in direction; <em>how much</em>, <em>for which tasks</em>, and <em>whether it improves correctness rather than just speed/cost</em> are largely open.</p>
+  </div>
+
+  <div class="box gap">
+    <p class="box-h">◇ What would move the needle (drawn from the papers' own future-work)</p>
+    <ul>
+      <li>Controlled, per-tier benchmarking of codified-context infrastructure — the anchor names this as its top-priority future work <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>.</li>
+      <li>AGENTS.md effect across multiple agents/models and with a real correctness/quality measure, plus tracing the navigation mechanism <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a>.</li>
+      <li>Studies of which <em>file properties</em> (specificity, structure, style) drive the effect — every file study can describe content but none yet links content to agent outcomes <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a> <a class="cite" href="corpus.html#p-2512-18925">Jiang&nbsp;&amp;&nbsp;Nam&nbsp;'26</a>.</li>
+    </ul>
+  </div>
+
+  <div class="pager">
+    <a href="codified-context.html">← Codified Context</a>
+    <a href="architecture.html">Architecture →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · findings are cited; <span style="color:var(--amber)">amber blocks are my inference</span>.</footer>
+</body>
+</html>

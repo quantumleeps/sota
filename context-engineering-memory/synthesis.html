@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthesis — Context Engineering × Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;&amp;&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="practice.html">Practice</a>
+  <a class="nav" href="memory-systems.html">Memory&nbsp;Systems</a>
+  <a class="nav" href="memory-hierarchy.html">Memory&nbsp;Hierarchy</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="failure-modes.html">Failure&nbsp;Modes</a>
+  <a class="nav active" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">07 · Synthesis</p>
+  <h1>A reference model and some bets</h1>
+
+  <div class="box inference"><p class="box-h">⟡ This entire page is my inference — not the papers'</p>
+  <p>Everything below is my reasoning <em>across</em> the corpus: a model that unifies the findings, and the design bets I'd make on top of them. Citation chips here mark what I'm reasoning <strong>from</strong>, not sources that endorse the conclusion. No single paper proposes this stack or these bets; treat them as one reviewer's view, not consensus.</p></div>
+
+  <h2>The reference model: one managed context stack</h2>
+  <p>The cleanest way I can fit these sixteen sources together is to stop seeing "context engineering" and "agent memory" as separate fields and see one <strong>tiered store</strong> whose fastest, scarcest level is the context window. Each paper turns out to operate at a specific tier, and the live debates are about how to move information between them.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Tier</th><th>What it is</th><th>Governing techniques in the corpus</th></tr></thead>
+    <tbody>
+      <tr><td><strong>L0 · Generation window</strong></td><td>KV cache / activations — the literal compute state</td><td>Model-driven KV eviction <a class="cite" href="corpus.html#p-2602-22603">Kariyappa &amp; Suh '26</a>; "latent memory" <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a></td></tr>
+      <tr><td><strong>L1 · Active working set</strong></td><td>The visible context window + conversation log</td><td>Compaction, tool-result clearing <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a>; lossless trimming &amp; branching <a class="cite" href="corpus.html#p-2602-22402">Santoni '26 (CMV)</a>; demand paging / eviction <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a>; evolving playbook <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a></td></tr>
+      <tr><td><strong>L2 · Session memory</strong></td><td>What survives within a task / set of sessions</td><td>Gist memory &amp; look-up <a class="cite" href="corpus.html#p-2402-09727">Lee+ '24 (ReadAgent)</a>; structured notes &amp; state object <a class="cite" href="corpus.html#p-openai-memory">OpenAI '26</a>; just-in-time retrieval <a class="cite" href="corpus.html#p-anthropic-ctx">Anthropic '25</a></td></tr>
+      <tr><td><strong>L3 · Long-term store</strong></td><td>Persistent cross-session knowledge &amp; experience</td><td>Extract/consolidate/retrieve <a class="cite" href="corpus.html#p-2504-19413">Chhikara+ '25 (Mem0)</a>; learned ops <a class="cite" href="corpus.html#p-2601-01885">Yu+ '26 (AgeMem)</a>; evolving skills <a class="cite" href="corpus.html#p-2602-02474">Zhang+ '26 (MemSkill)</a></td></tr>
+      <tr><td><strong>Control plane</strong></td><td>Who decides what moves between tiers</td><td>Heuristic → prompted → learned, query-aware routing <a class="cite" href="corpus.html#p-2602-06025">Zhang+ '26 (BudgetMem)</a>; the survey's control-policy axis <a class="cite" href="corpus.html#p-2603-07670">Du '26</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">This layering is my construction. The surveys gesture at OS-like abstractions and multi-store models, but none lays out exactly this five-row map; I'm imposing it to make the corpus legible.</p>
+
+  <h2>Five bets I'd make</h2>
+
+  <div class="grid g2">
+    <div class="card"><p class="ct">Bet 1 · Cache, not vault</p>
+    <p>Treat the window as a cache with an explicit, cost-aware eviction policy, and default to <strong>aggressive forgetting</strong>. The inverted cost model — keeping is expensive, re-fetching cheap — makes deletion the right reflex, against the "remember everything" instinct. <a class="cite" href="corpus.html#p-2603-09023">Mason '26</a></p></div>
+
+    <div class="card"><p class="ct">Bet 2 · Curate before you compress</p>
+    <p>Prefer lossless moves (clear re-fetchable payloads, branch, retrieve just-in-time) and let the model distill detail itself; reach for lossy summarization only when the bloat is reasoning you cannot reconstruct. <a class="cite" href="corpus.html#p-2510-04618">Zhang+ '25 (ACE)</a> <a class="cite" href="corpus.html#p-anthropic-cookbook">Anthropic '26 (Cookbook)</a></p></div>
+
+    <div class="card"><p class="ct">Bet 3 · Learn the policy</p>
+    <p>Memory management should be learned and query-aware, not a fixed schedule. The 2026 systems consistently show learned, on-demand control beating hand-coded heuristics on both quality and cost. <a class="cite" href="corpus.html#p-2601-01885">Yu+ '26 (AgeMem)</a> <a class="cite" href="corpus.html#p-2602-06025">Zhang+ '26 (BudgetMem)</a></p></div>
+
+    <div class="card"><p class="ct">Bet 4 · Co-design memory with the agent</p>
+    <p>Don't bolt a store onto a fixed agent. MemoryArena's representation/training mismatch says the store and the policy that consumes it must be shaped together, or the gains evaporate. <a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a></p></div>
+
+    <div class="card"><p class="ct">Bet 5 · Measure cost and decisions, not recall</p>
+    <p>Evaluate the end-to-end pipeline on decision quality <em>and</em> token cost, and test forgetting. Recall on a saturated QA set is a vanity metric. <a class="cite" href="corpus.html#p-2603-07670">Du '26</a> <a class="cite" href="corpus.html#p-2512-13564">Hu+ '25</a> <a class="cite" href="corpus.html#p-openai-memory">OpenAI '26</a></p></div>
+
+    <div class="card"><p class="ct">The throughline</p>
+    <p>Across all five: <strong>information logistics is becoming a first-class part of the agent</strong>, not a wrapper around it. The window is the cache, the store is the disk, and the policy that pages between them is increasingly the model's own job.</p></div>
+  </div>
+
+  <h2>Where I'd hold back</h2>
+  <div class="box gap"><p class="box-h">◇ Bets I would <em>not</em> place yet</p>
+  <ul class="clean">
+    <li><strong>Fully RL-driven memory in production.</strong> AgeMem/MemSkill/BudgetMem are promising, but they're single-team, single-backbone, no-significance results; the training cost and reward-design fragility are real. Compelling direction, premature default.</li>
+    <li><strong>Parametric / weight-baked memory.</strong> Hard to audit, update, or delete — and unlearning is not production-ready. I'd keep memory inspectable and external until that changes <a class="cite" href="corpus.html#p-2603-07670">Du '26</a>.</li>
+    <li><strong>"Architecture X wins."</strong> The corpus can't support a winner: too few cross-team comparisons, benchmarks shaped by their authors, and one adversarial benchmark that humbles all of them <a class="cite" href="corpus.html#p-2602-16313">He+ '26 (MemoryArena)</a>.</li>
+    <li><strong>Over-trusting the OS analogy.</strong> Demand paging is a productive metaphor, but its own inverted-cost finding shows where the analogy breaks; borrow the abstractions, not the conclusions.</li>
+  </ul></div>
+
+  <div class="pager">
+    <a href="failure-modes.html">← Failure Modes</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering × Agent Memory · a state-of-the-art review of 16 sources · every chip → the <a href="corpus.html">corpus</a> → the original source. Amber callouts are the author's inference, not the papers' claims.</footer>
+</body>
+</html>

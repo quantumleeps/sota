@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architecture — Multi-Agent &amp; the Harness</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="codified-context.html">Codified Context</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav active" href="architecture.html">Architecture</a>
+  <a class="nav" href="failure-modes.html">Failure Modes</a>
+  <a class="nav" href="security.html">Security</a>
+  <a class="nav" href="adoption.html">Adoption</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">04 · Architecture</p>
+  <h1>Multi-agent &amp; the harness</h1>
+  <p class="lede">Codified context does not float free; it lives inside an architecture. The corpus traces a clear arc — from role-played multi-agent frameworks (2023), through the discovery that the agent's <em>interface and scaffold</em> drive performance (2024), to the present view that the agent system is mostly <strong>operational harness</strong> around a thin reasoning loop (2026).</p>
+
+  <h2>The architectural axes</h2>
+  <p>The survey supplies the vocabulary: single-agent vs multi-agent, and within multi-agent, <strong>vertical</strong> (a lead agent with subordinates) vs <strong>horizontal</strong> (equals in a shared thread) <a class="cite" href="corpus.html#p-2404-11584">Masterman+&nbsp;'24</a> <span class="tag def">Definition</span>. Its persona definition is the bridge to codified context: a persona is the role plus "descriptions of any tools the agent has access to" — i.e. the system prompt <em>is</em> codified role-and-tool context. The survey's design levers (clear leadership, role definition, message filtering, feedback phases) all "yield improved agent performance," but it cautions against assuming more agents help:</p>
+  <blockquote class="q">multi-agent discussion does not necessarily enhance reasoning when the prompt provided to an agent is sufficiently robust.<span class="src">— Landscape of AI Agent Architectures <a class="cite" href="corpus.html#p-2404-11584">Masterman+&nbsp;'24</a>, Key Findings</span></blockquote>
+  <p>It also reports the concrete value of structure: a designated leader makes teams ≈10% faster and shifts communication from agents ordering each other around to the leader giving directions; message subscribing/filtering keeps agents from drowning in irrelevant chatter <a class="cite" href="corpus.html#p-2404-11584">Masterman+&nbsp;'24</a> <span class="tag emp">Empirical</span>.</p>
+
+  <h2>Codifying coordination — the 2023 frameworks</h2>
+  <p>Three foundational frameworks each codify context in a different way, and their ablations are the earliest hard evidence that the codification matters more than the model.</p>
+  <div class="grid g3">
+    <div class="card"><p class="ct">ChatDev</p><h3>Roles + chat chain</h3><p class="small">Role-played agents (CEO/CTO/programmer/reviewer/tester) instantiated by symmetrical "inception prompts," sequenced by a "chat chain." Removing roles from the system prompts is the single largest performance drop. <a class="cite" href="corpus.html#p-2307-07924">Qian+&nbsp;'23</a></p></div>
+    <div class="card"><p class="ct">MetaGPT</p><h3>Encoded SOPs + structured artifacts</h3><p class="small">Human Standardised Operating Procedures compiled into prompt sequences; agents communicate via <em>documents and diagrams</em> (PRD, design, interfaces) over a publish-subscribe pool, not free dialogue. 85.9% Pass@1 HumanEval. <a class="cite" href="corpus.html#p-2308-00352">Hong+&nbsp;'23</a></p></div>
+    <div class="card"><p class="ct">AutoGen</p><h3>Conversable agents + conversation programming</h3><p class="small">Agents (LLM/human/tool-backed) whose interaction is "programmed" by fusing natural language and code; control flow emerges from auto-reply with "no extra control plane." The framework-primitive end. <a class="cite" href="corpus.html#p-2308-08155">Wu+&nbsp;'23</a></p></div>
+  </div>
+  <div class="box finding">
+    <p class="box-h">▦ The throughline</p>
+    <p>MetaGPT's central argument — that <em>structure</em> (typed artifacts, role-scoped subscriptions), not more conversation, is what reduces cascading hallucination — is the 2023 ancestor of the 2026 "codified context" thesis. Both say: write the coordination and the role knowledge down in a structured form the agent must consume. <a class="cite" href="corpus.html#p-2308-00352">Hong+&nbsp;'23</a> <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a></p>
+  </div>
+
+  <h2>The scaffolding lineage</h2>
+  <p>The benchmark that anchors all coding-agent work, SWE-bench, frames the core problem as one of context: 2,294 real GitHub tasks over codebases averaging 438k lines, where "solving SWE-bench requires identifying the relatively small number of lines that need to be edited… amongst a sea of context," and performance "drops considerably" as context length grows <a class="cite" href="corpus.html#p-2310-06770">Jimenez+&nbsp;'23</a> <span class="tag emp">Empirical</span>.</p>
+  <p>SWE-agent answered with the <strong>Agent-Computer Interface</strong>: treat the LM as "a new category of end user" and design its command set, feedback format, and history management deliberately. Its ACI collapses old observations, suppresses verbose search output, and runs a linter on edits — and lifts resolution from 3.8% to 12.47% with the model held fixed <a class="cite" href="corpus.html#p-2405-15793">Yang+&nbsp;'24</a> <span class="tag emp">Empirical</span>.</p>
+  <blockquote class="q">careful ACI design can substantially improve LM agent performance without modifying the underlying LM's weights… all content has a fixed cost in memory and computation for LMs and distracting context can harm performance.<span class="src">— SWE-agent <a class="cite" href="corpus.html#p-2405-15793">Yang+&nbsp;'24</a></span></blockquote>
+  <p>Confucius takes the lineage to its strongest claim — that the scaffold can outrank the model. A weaker model on its scaffold beat a stronger model on a proprietary one (52.7% vs 52.0% on SWE-Bench-Pro), and its gains come from context engineering made first-class: hierarchical markdown working memory, threshold-triggered structured compression, and persistent cross-session notes <a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a> <span class="tag emp">Empirical</span>. Its AX/UX/DX separation (what the agent sees vs what humans see vs what's observable) is a design principle the rest of the corpus implicitly assumes but rarely names.</p>
+
+  <h2>How agents acquire context — retrieval substrates</h2>
+  <p>Codified context files are one way to get the right information into the window; retrieval is the other. The RAG-for-code survey reframes repository-level retrieval as "a coupled and evolving process involving context construction, retrieval optimization, generation, and environment interaction," not a static retrieve-then-generate pipeline <a class="cite" href="corpus.html#p-2510-04905">Tao+&nbsp;'26</a> <span class="tag def">Definition</span>. Two parts of its taxonomy matter most here:</p>
+  <ul class="clean">
+    <li><strong>A repository-as-graph schema</strong> — nodes at Directory / Module / Class / Function / Line granularity, edges for Contain / Import / Inherit / Invoke / DataFlow / ControlFlow — a concrete structure for representing a codebase as retrievable context.</li>
+    <li><strong>An autonomy ladder</strong> — Level 0 (static one-pass; the non-agentic "Agentless" reaches a competitive 32% on SWE-bench Lite), Level 1 (iterative feedback), Level 2 (planning + tools). The emerging trend is "agentic search": "Claude Code exemplifies this paradigm by replacing static embeddings with dynamic tool usage" (grep/ls/cat in a plan-act-observe loop).</li>
+  </ul>
+  <p>It also marks the design boundary a context layer must decide: long-context models can match RAG on small, well-structured repos, while RAG wins as size/complexity grows <a class="cite" href="corpus.html#p-2510-04905">Tao+&nbsp;'26</a>. The code-generation survey complements this by treating the "Context Engine" as a defining axis of deployed tools <a class="cite" href="corpus.html#p-2508-00083">Dong+&nbsp;'25</a>:</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Tool</th><th>"Context Engine" (per Dong+&nbsp;'25)</th></tr></thead>
+    <tbody>
+      <tr><td>GitHub Copilot</td><td>RAG</td></tr>
+      <tr><td>Cursor</td><td>vector semantic indexing</td></tr>
+      <tr><td>Devin</td><td>sandbox knowledge base</td></tr>
+      <tr><td>Tongyi Lingma</td><td>repo knowledge graph + MCTS</td></tr>
+      <tr><td>Claude Code</td><td>ultra-long context window + agent search</td></tr>
+    </tbody>
+  </table></div>
+  <p>The same survey catalogs the multi-agent context substrates that prefigure codified context — a blackboard model, von-Neumann instruction/file registers (L2MAC), brain-like tiered memory (Cogito), declarative API memory (CleanAgent) <a class="cite" href="corpus.html#p-2508-00083">Dong+&nbsp;'25</a>.</p>
+
+  <h2>The harness is the architecture</h2>
+  <p>The Claude Code design-space analysis crystallises where the engineering now sits. By a community estimate it cites, only ≈1.6% of the codebase is "AI decision logic"; ≈98.4% is "operational infrastructure" — "minimal scaffolding, maximal operational harness" <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a> <span class="tag emp">Empirical</span>. The core loop is a single while-loop (ReAct); everything interesting is the harness around it. The paper organises agent coding systems by four design questions:</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Design question</th><th>Claude Code's answer</th><th>Contrasting answers</th></tr></thead>
+    <tbody>
+      <tr><td>Where does reasoning live?</td><td>model reasons, harness executes/validates</td><td>scaffolding-side reasoning (Devin, LangGraph)</td></tr>
+      <tr><td>How many execution engines?</td><td>one <span class="mono">queryLoop</span> for all surfaces</td><td>mode-specific engines</td></tr>
+      <tr><td>Default safety posture?</td><td>deny-first + layered defense-in-depth</td><td>container isolation (SWE-agent, OpenHands); git rollback (Aider)</td></tr>
+      <tr><td>Binding resource constraint?</td><td>the context window</td><td>compute budget; working memory</td></tr>
+    </tbody>
+  </table></div>
+  <p>Because the context window is the binding constraint, Claude Code runs a five-layer compaction pipeline before each model call (budget reduction → snip → microcompact → context collapse → auto-compact, cheapest first), and offers four extension mechanisms specifically because their differing context costs mean "a single unified API cannot span the full range" <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>. The separation of reasoning from enforcement is also a security property: a compromised model "cannot override sandboxing or deny-first rules" (see <a href="security.html">Security</a>).</p>
+  <div class="box inference">
+    <p class="box-h">⟡ My read: two findings that rhyme</p>
+    <p>"Scaffold can beat model" <a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a> and "98.4% of the system is harness" <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a> are the same observation from two directions: the durable engineering value in a coding agent is in the harness — context management, tool design, memory, safety — not the model call. Codified context is the <em>declarative, version-controllable slice</em> of that harness, the part a team can author and own without building a runtime. That is, to me, the strongest argument for taking it seriously as infrastructure.</p>
+  </div>
+
+  <h2>What developers actually assemble</h2>
+  <p>In practice, agent systems are stitched together from multiple frameworks: 96% of top-starred agent projects use two or more, typically an orchestration framework plus a data or multi-agent layer (e.g. LangChain + LlamaIndex, AutoGen + LangChain) <a class="cite" href="corpus.html#p-2512-01939">Wang+&nbsp;'25</a> <span class="tag emp">Empirical</span>. The study warns that popularity ≠ adoption (MetaGPT's tens of thousands of stars vs presence in only 2 studied repos) and that the recurring pains are context-spine problems: memory persistence across turns, message/context de-duplication ("message cooling"), and MCP's prompt overhead (≈11.7k-token prompts, 40% from MCP).</p>
+  <p>And one rung up, agent-to-agent <em>identity</em> and discovery become their own infrastructure: NANDA's Adaptive Resolver proposes a DNS-analogue that resolves an agent name to a context-tailored endpoint, deliberately separating "Agent Name… from the context in which it is resolved" <a class="cite" href="corpus.html#p-2508-03113">Zinky+&nbsp;'25</a> <span class="tag prop">Proposal</span> — the plumbing beneath MCP/A2A ecosystems, though it is explicitly a speculative, unimplemented design.</p>
+
+  <div class="pager">
+    <a href="evidence.html">← Evidence</a>
+    <a href="failure-modes.html">Failure Modes →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · findings are cited; <span style="color:var(--amber)">amber blocks are my inference</span>.</footer>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpus — Context Engineering: State of the Art</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="codified-context.html">Codified Context</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="architecture.html">Architecture</a>
+  <a class="nav" href="failure-modes.html">Failure Modes</a>
+  <a class="nav" href="security.html">Security</a>
+  <a class="nav" href="adoption.html">Adoption</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav active" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">The Corpus · Provenance Backbone</p>
+  <h1>Corpus &amp; bibliography</h1>
+  <p class="lede">Every citation chip elsewhere in this microsite — e.g. <a class="cite" href="#p-2601-20404">Lulla+&nbsp;'26</a> — links to its entry here. Each entry links to the arXiv abstract for the paper. (The exact local files ingested are recorded in the private research corpus.) 10 thread papers + 23 unique references of the anchor (33 documents total).</p>
+
+  <div class="legend">
+    <span><span class="sw" style="background:#e6f2ef;border-color:#bfe0d8"></span> anchor</span>
+    <span><span class="sw" style="background:#eef1fb;border-color:#d4ddf6"></span> core</span>
+    <span><span class="sw" style="background:#f4f1e8;border-color:#e3d9c4"></span> support</span>
+    <span><span class="sw" style="background:#f1f3f8;border-color:#dde2ee"></span> reference (of anchor)</span>
+  </div>
+
+  <div class="box finding" style="margin-top:1.6em">
+    <p class="box-h">▦ How this corpus was read</p>
+    <p>Each document was ingested by a dedicated reading pass that produced a structured, quote-anchored digest (thesis, claims tagged empirical/theoretical/proposal/definition, methodology, verbatim quotes, limitations). The synthesis pages were then written from those digests. Author/venue/date metadata reflects what is stated <em>in the source files</em>; where a source did not state a venue, that is noted. arXiv IDs in the <span class="mono">26xx</span> range are pre-publication identifiers as supplied in the repository manifest.</p>
+  </div>
+
+  <h2 id="anchor">Anchor</h2>
+
+  <div class="bibentry" id="p-2602-20478">
+    <span class="role anchor">Anchor</span><span class="bt">Codified Context: Infrastructure for AI Agents in a Complex Codebase</span>
+    <div class="meta"><span class="idtag">arXiv:2602.20478</span> · Vasilopoulos (Independent), 2026 · systems paper + experience report · <strong>cite: Vasilopoulos&nbsp;'26</strong></div>
+    <div class="rel">Defines <em>codified context infrastructure</em> as a three-tier scheme — a hot-memory "constitution," domain-specialist sub-agents routed by trigger tables, and a cold-memory knowledge base served over MCP — built solo across 283 Claude Code sessions on a 108k-line C# codebase. The spine of the thread; the only paper whose references were pre-harvested.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2602.20478" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2 id="core">Core</h2>
+
+  <div class="bibentry" id="p-2508-08322">
+    <span class="role core">Core</span><span class="bt">Context Engineering for Multi-Agent LLM Code Assistants (Elicit, NotebookLM, ChatGPT, Claude Code)</span>
+    <div class="meta"><span class="idtag">arXiv:2508.08322</span> · Haseeb (Virginia Tech, inferred), Aug 2025 · system + small-N case study · <strong>cite: Haseeb&nbsp;'25</strong></div>
+    <div class="rel">A layered "context-engineering" pipeline (intent translation → external-knowledge retrieval → synthesis → orchestrated Claude Code sub-agents) reaches 80% single-shot success vs 40% for a single-agent CLAUDE.md baseline on 5 tasks in a 180k-LOC repo. Also one of the anchor's references.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2508.08322" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2512-01939">
+    <span class="role core">Core</span><span class="bt">An Empirical Study of Agent Developer Practices in AI Agent Frameworks</span>
+    <div class="meta"><span class="idtag">arXiv:2512.01939</span> · Wang, Xu, Chen, Bi, Gu, Zheng (Sun Yat-sen, Zhejiang, Melbourne, TUM), 2025 · empirical (repo mining) · <strong>cite: Wang+&nbsp;'25</strong></div>
+    <div class="rel">Mines 1,575 GitHub agent repos across 10 frameworks (LangChain, AutoGen, CrewAI, MetaGPT…). Finds 96% of top projects compose ≥2 frameworks, a 4×9 challenge taxonomy over the SDLC, and that MCP's context overhead (~11.7k-token prompts, 40% from MCP) is a real pain point.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2512.01939" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2601-20404">
+    <span class="role core">Core</span><span class="bt">On the Impact of AGENTS.md Files on the Efficiency of AI Coding Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2601.20404</span> · Lulla, Mohsenimofidi, Galster, Zhang, Baltes, Treude (SMU, Heidelberg, Bamberg, KCL), ICSE JAWs 2026 · empirical (controlled) · <strong>cite: Lulla+&nbsp;'26</strong></div>
+    <div class="rel">The empirical backbone: a paired within-task design over 124 real PRs in 10 repos (OpenAI Codex / gpt-5.2-codex). Presence of AGENTS.md cuts median runtime 28.64% and median output tokens 16.58% (both significant, p&lt;0.05), holding task completion comparable. Also an anchor reference.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2601.20404" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2604-14228">
+    <span class="role core">Core</span><span class="bt">Dive into Claude Code: The Design Space of Today's and Future AI Agent Systems</span>
+    <div class="meta"><span class="idtag">arXiv:2604.14228</span> · Liu, Zhao, Shang, Shen (MBZUAI VILA Lab; UCL), 2026 · source-grounded design-space analysis · <strong>cite: Liu+&nbsp;'26</strong></div>
+    <div class="rel">Reverse-engineers Claude Code v2.1.88 into a design space: "minimal scaffolding, maximal operational harness" (≈1.6% decision logic / 98.4% infrastructure), five values → thirteen principles, the CLAUDE.md hierarchy, skills vs sub-agents, four context-cost-ordered extension mechanisms, and a five-layer compaction pipeline.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2604.14228" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2603-09619">
+    <span class="role core">Core</span><span class="bt">Context Engineering: From Prompts to Corporate Multi-Agent Architecture</span>
+    <div class="meta"><span class="idtag">arXiv:2603.09619</span> · Vishnyakova (HSE University, Moscow), Mar 2026 · position / conceptual framework · <strong>cite: Vishnyakova&nbsp;'26</strong></div>
+    <div class="rel">Proposes a cumulative four-level maturity "Pyramid" — Prompt → Context → Intent → Specification engineering — framing context as the agent's operating system. Adds five context-quality criteria (relevance, sufficiency, isolation, economy, provenance) and the delegation-vs-decomposition distinction. PDF-only.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2603.09619" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2 id="support">Support</h2>
+
+  <div class="bibentry" id="p-2404-11584">
+    <span class="role support">Support</span><span class="bt">The Landscape of Emerging AI Agent Architectures for Reasoning, Planning, and Tool Calling: A Survey</span>
+    <div class="meta"><span class="idtag">arXiv:2404.11584</span> · Masterman, Besen, Sawtell, Chao (Neudesic/IBM, Microsoft), Apr 2024 · survey · <strong>cite: Masterman+&nbsp;'24</strong></div>
+    <div class="rel">Structural backbone: single- vs multi-agent and vertical vs horizontal architectures; persona = role + tool descriptions; design levers (leadership, role definition, message filtering, feedback) that improve agent performance; finds best architecture is use-case-dependent.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2404.11584" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2602-19844">
+    <span class="role support">Support</span><span class="bt">LLM-enabled Applications Require System-Level Threat Monitoring</span>
+    <div class="meta"><span class="idtag">arXiv:2602.19844</span> · Zhang, Yang, Wang, Sun, Dong (NUS, SMU), 2026 · position + threat taxonomy · <strong>cite: Zhang+&nbsp;'26</strong></div>
+    <div class="rel">Argues security failures of LLM apps are expected operational conditions needing EDR-style, workflow-aware monitoring across an 8-stage MCP pipeline. 14-threat taxonomy: prompt injection, RAG/context poisoning, MCP tool-output injection, model-registry tampering, config/prompt drift.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2602.19844" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2508-03113">
+    <span class="role support">Support</span><span class="bt">NANDA Adaptive Resolver: Architecture for Dynamic Resolution of AI Agent Names</span>
+    <div class="meta"><span class="idtag">arXiv:2508.03113</span> · Zinky, Seshadri, Lambe, Chari, Raskar (Akamai, Unify Dynamics, MIT Media Lab), Aug 2025 · position / architecture (speculative) · <strong>cite: Zinky+&nbsp;'25</strong></div>
+    <div class="rel">A DNS-analogue that resolves a human-readable agent name to a <em>context-tailored</em> endpoint, separating agent identity from connectivity. Adjacent infrastructure: naming, discovery, and negotiated connectivity <em>between</em> agents in an A2A/MCP ecosystem.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2508.03113" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2407-12796">
+    <span class="role support">Support</span><span class="bt">AI Agents and Education: Simulated Practice at Scale</span>
+    <div class="meta"><span class="idtag">arXiv:2407.12796</span> · Mollick, Mollick, Bach, Ciccarelli, Przystanski, Ravipinto (Wharton Generative AI Lab), Jul 2024 · system / prototype · <strong>cite: Mollick+&nbsp;'24</strong></div>
+    <div class="rel">Tangential, included for breadth. Transferable patterns: authored per-role context (goal/role/system), an Agent/Concept/Logic/Context decomposition with machine-parseable tagged output, hierarchical "summary-of-summaries" compaction, and turn-cap guardrails.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2407.12796" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2 id="references">References of the anchor</h2>
+  <p class="note">23 unique works cited by the anchor and pre-harvested under <span class="mono">papers/2602.20478/refs/</span>. Two of these (2508.08322, 2601.20404) are also first-class thread papers, listed above.</p>
+
+  <div class="bibentry" id="p-2307-07924">
+    <span class="role ref">Ref</span><span class="bt">ChatDev: Communicative Agents for Software Development</span>
+    <div class="meta"><span class="idtag">arXiv:2307.07924</span> · Qian+ (Tsinghua, Sydney, BUPT, Modelbest), 2023 · multi-agent framework · <strong>cite: Qian+&nbsp;'23</strong></div>
+    <div class="rel">"Chat chain" of role-played agents (CEO/CTO/programmer/reviewer/tester) via inception prompting. Ablation: removing roles from system prompts is the single largest performance drop — direct evidence that codified role context shapes output.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2307.07924" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2308-00352">
+    <span class="role ref">Ref</span><span class="bt">MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework</span>
+    <div class="meta"><span class="idtag">arXiv:2308.00352</span> · Hong+ (DeepWisdom, KAUST, et al.), ICLR 2024 · multi-agent framework · <strong>cite: Hong+&nbsp;'23</strong></div>
+    <div class="rel">Encodes human Standardized Operating Procedures (SOPs) into prompt sequences with structured intermediate artifacts (PRD, design docs, interfaces) and a publish-subscribe message pool. 85.9% Pass@1 HumanEval; structure (not more dialogue) cuts hallucination.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2308.00352" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2308-08155">
+    <span class="role ref">Ref</span><span class="bt">AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation</span>
+    <div class="meta"><span class="idtag">arXiv:2308.08155</span> · Wu+ (Microsoft Research, Penn State, UW), 2023 · multi-agent framework · <strong>cite: Wu+&nbsp;'23</strong></div>
+    <div class="rel">"Conversable agents" (LLM/human/tool-backed) plus "conversation programming" fusing natural language and code to define computation and control flow. The framework-primitive end of codified context — role + control are programmed, not fixed.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2308.08155" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2310-06770">
+    <span class="role ref">Ref</span><span class="bt">SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</span>
+    <div class="meta"><span class="idtag">arXiv:2310.06770</span> · Jimenez, Yang+ (Princeton, U Chicago), ICLR 2024 · benchmark · <strong>cite: Jimenez+&nbsp;'23</strong></div>
+    <div class="rel">2,294 real GitHub issue→PR tasks across 12 Python repos (avg 438k LOC), execution-verified. Best 2023 model resolved 1.96%; performance falls as context grows — the canonical statement of "find the right lines in a sea of context."</div>
+    <div class="links"><a href="https://arxiv.org/abs/2310.06770" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2405-15793">
+    <span class="role ref">Ref</span><span class="bt">SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering</span>
+    <div class="meta"><span class="idtag">arXiv:2405.15793</span> · Yang, Jimenez+ (Princeton), NeurIPS 2024 · system + ACI concept · <strong>cite: Yang+&nbsp;'24</strong></div>
+    <div class="rel">Introduces the Agent-Computer Interface (ACI): a purpose-built command set + feedback format + history management for an LM "end user." Lifts SWE-bench from 3.8% (RAG) to 12.47% without changing the model — interface design <em>is</em> a performance lever.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2405.15793" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2502-13767">
+    <span class="role ref">Ref</span><span class="bt">Agentic AI Software Engineers: Programming with Trust</span>
+    <div class="meta"><span class="idtag">arXiv:2502.13767</span> · Roychoudhury, Păsăreanu, Pradel, Ray (NUS, CMU, CISPA, Columbia), 2025 · opinion / position · <strong>cite: Roychoudhury+&nbsp;'25</strong></div>
+    <div class="rel">Argues the emphasis shifts "from scale to trust." Splits technical trust vs human trust; proposes "transparent scaffolding" (provenance + confidence in PR artifacts) and "review parity." The trust rationale for codifying/auditing context.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2502.13767" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2503-02400">
+    <span class="role ref">Ref</span><span class="bt">Promptware Engineering: Software Engineering for Prompt-Enabled Systems</span>
+    <div class="meta"><span class="idtag">arXiv:2503.02400</span> · Chen, Wang, Sun, Liu, Zhang, Liu (Tsinghua, NTU, PKU, KCL), TOSEM 2026 · vision · <strong>cite: Chen+&nbsp;'25</strong></div>
+    <div class="rel">Names the "promptware crisis": prompts are first-class software artifacts but built by ad-hoc trial-and-error. A C1–C10 characteristic taxonomy and 27 research opportunities map the whole SE lifecycle onto prompt/context development (versioning, testing, compilation).</div>
+    <div class="links"><a href="https://arxiv.org/abs/2503.02400" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2503-13657">
+    <span class="role ref">Ref</span><span class="bt">Why Do Multi-Agent LLM Systems Fail? (MAST)</span>
+    <div class="meta"><span class="idtag">arXiv:2503.13657</span> · Cemri, Pan, Yang+ (UC Berkeley), NeurIPS 2025 D&amp;B · empirical + taxonomy · <strong>cite: Cemri+&nbsp;'25</strong></div>
+    <div class="rel">First empirically grounded failure taxonomy (MAST): 14 modes in 3 categories (system-design, inter-agent misalignment, verification) over 1,600+ traces; 41–86.7% failure rates. Failure is design, not just model — and protocols like MCP/A2A are "often insufficient" for inter-agent failures.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2503.13657" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2507-13334">
+    <span class="role ref">Ref</span><span class="bt">A Survey of Context Engineering for Large Language Models</span>
+    <div class="meta"><span class="idtag">arXiv:2507.13334</span> · Mei+ (CAS ICT, UC Merced, Queensland, PKU, Tsinghua), Jul 2025 · survey (1,400+ papers) · <strong>cite: Mei+&nbsp;'25</strong></div>
+    <div class="rel">The theoretical vocabulary: formalizes context as a dynamically assembled set <span class="mono">C = A(c₁…cₙ)</span> with components for instructions, knowledge, tools, memory, state, query. Splits foundational Components from System Implementations (RAG, memory, tool-use, multi-agent). Shifts "art of prompts" to "science of information logistics."</div>
+    <div class="links"><a href="https://arxiv.org/abs/2507.13334" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2508-00083">
+    <span class="role ref">Ref</span><span class="bt">A Survey on Code Generation with LLM-based Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2508.00083</span> · Dong, Jiang, Qian+ (Peking University), 2025 · survey (100 core papers) · <strong>cite: Dong+&nbsp;'25</strong></div>
+    <div class="rel">Methodological survey of single- vs multi-agent code generation. Names context engineering as a first-class challenge with four canonical failure modes (poisoning, distraction, confusion, conflict) and treats "Context Engine" as a defining axis of deployed tools.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2508.00083" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2509-06216">
+    <span class="role ref">Ref</span><span class="bt">Agentic Software Engineering: Foundational Pillars and a Research Roadmap</span>
+    <div class="meta"><span class="idtag">arXiv:2509.06216</span> · Hassan, Li, Adams, Chen, Lin, Qiu, Kashiwa (Queen's, Concordia, Huawei, NAIST), 2025 · vision · <strong>cite: Hassan+&nbsp;'25</strong></div>
+    <div class="rel">"SE 3.0" with a structured duality — SE for Humans vs SE for Agents. Replaces transient prompts with version-controlled, machine-readable artifacts: BriefingScript, LoopScript, MentorScript (naming CLAUDE.md/AGENTS.md as its grassroots precursor). Names the missing observability/revision-control layer for code+prompt+context.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2509.06216" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2509-14744">
+    <span class="role ref">Ref</span><span class="bt">On the Use of Agentic Coding Manifests: An Empirical Study of Claude Code</span>
+    <div class="meta"><span class="idtag">arXiv:2509.14744</span> · Chatlatanagulchai+ (Kasetsart, NAIST), Sep 2025 · empirical · <strong>cite: Chatlatanagulchai+&nbsp;'25a</strong></div>
+    <div class="rel">253 CLAUDE.md files / 242 repos. Establishes the canonical "shallow hierarchy" (median 1 H1 / 5 H2 / 9 H3) and an action-oriented content profile: Build&amp;Run 77%, Implementation 72%, Architecture 65%; Security 8.7%, Performance 12.7% rare.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2509.14744" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2510-04618">
+    <span class="role ref">Ref</span><span class="bt">Agentic Context Engineering (ACE): Evolving Contexts for Self-Improving LLMs</span>
+    <div class="meta"><span class="idtag">arXiv:2510.04618</span> · Zhang, Hu+ (Stanford, SambaNova, UC Berkeley), ICLR 2026 · system + empirical · <strong>cite: Zhang+&nbsp;'26 (ACE)</strong></div>
+    <div class="rel">Contexts as "evolving playbooks," not concise summaries. Diagnoses <em>brevity bias</em> and <em>context collapse</em> (66.7%→57.1% accuracy when a context collapsed from 18,282→122 tokens). Generator–Reflector–Curator with incremental delta updates: +10.6% agents, +8.6% finance; −86.9% adaptation latency.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2510.04618" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2510-04905">
+    <span class="role ref">Ref</span><span class="bt">Retrieval-Augmented Code Generation: A Survey with Focus on Repository-Level Approaches</span>
+    <div class="meta"><span class="idtag">arXiv:2510.04905</span> · Tao, Li, Qin, Liu (CMU, CUHK, SUSTech), 2026 · survey (152 papers) · <strong>cite: Tao+&nbsp;'26</strong></div>
+    <div class="rel">Reframes RAG-for-code as a coupled, evolving process (context construction → retrieval → generation → environment). Non-graph vs graph retrieval substrates; a node/edge schema for repos; the agentic-search trend (Claude Code's grep/ls/cat loop) and the RAG-vs-long-context necessity boundary.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2510.04905" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2510-10460">
+    <span class="role ref">Ref</span><span class="bt">Understanding and Bridging the Planner-Coder Gap (Robustness of MAS for Code Generation)</span>
+    <div class="meta"><span class="idtag">arXiv:2510.10460</span> · Lyu, Chen, Ji, Wang+ (HKUST, Lingnan, Renmin), ISSTA 2026 · empirical + tool · <strong>cite: Lyu+&nbsp;'26</strong></div>
+    <div class="rel">Semantic-preserving rephrasings drop Pass@10 by 7.9–83.3%; 75.3% of failures are a "planner-coder gap" — plans logically sound but missing implementation detail. A monitor agent + multi-prompt generation repairs 40–88.9%.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2510.10460" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2510-21413">
+    <span class="role ref">Ref</span><span class="bt">Context Engineering for AI Agents in Open-Source Software</span>
+    <div class="meta"><span class="idtag">arXiv:2510.21413</span> · Mohsenimofidi, Baltes, Galster, Treude (Heidelberg, Bamberg, SMU), MSR 2026 · empirical · <strong>cite: Mohsenimofidi+&nbsp;'26</strong></div>
+    <div class="rel">Cross-tool study over 10,000 repos: only 5% have adopted any context file. A 14-category content taxonomy for AGENTS.md, a 5-way <em>style</em> taxonomy (descriptive/prescriptive/prohibitive/explanatory/conditional), and evolution data showing instruction fine-tuning dominates. "No established content structure yet."</div>
+    <div class="links"><a href="https://arxiv.org/abs/2510.21413" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2511-09268">
+    <span class="role ref">Ref</span><span class="bt">Decoding the Configuration of AI Coding Agents: Insights from Claude Code Projects</span>
+    <div class="meta"><span class="idtag">arXiv:2511.09268</span> · Santos, Costa, Montandon, Valente (UFMG, Brazil), 2025 · empirical · <strong>cite: Santos+&nbsp;'25</strong></div>
+    <div class="rel">328 CLAUDE.md files from popular projects. Software architecture dominates (72.6%); median 7 level-2 sections; sparse code/links/diagrams; top co-occurrence Architecture+Dependencies+Project-Overview (21.6%). Notes 45 "memory bank" files that only point to other markdown.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2511.09268" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2511-12884">
+    <span class="role ref">Ref</span><span class="bt">Agent READMEs: An Empirical Study of Context Files for Agentic Coding</span>
+    <div class="meta"><span class="idtag">arXiv:2511.12884</span> · Chatlatanagulchai+ with Li, Adams, Hassan (Kasetsart, NAIST, Queen's), Nov 2025 · empirical · <strong>cite: Chatlatanagulchai+&nbsp;'25b</strong></div>
+    <div class="rel">The largest cross-tool study: 2,303 context files / 1,925 repos (Claude, Codex/AGENTS.md, Copilot). Files are long, hard to read (Claude FRE 16.6 ≈ legal text), and evolve like config via small additions; coins "context debt." NFRs rare (Security/Perf 14.5%). Auto-classifiable at F1 0.79.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2511.12884" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2512-10398">
+    <span class="role ref">Ref</span><span class="bt">Confucius Code Agent: Scalable Agent Scaffolding for Real-World Codebases</span>
+    <div class="meta"><span class="idtag">arXiv:2512.10398</span> · Wong, Qi, Wang, Hu+ (Meta, Harvard), Dec 2025 · system + framework · <strong>cite: Wong+&nbsp;'25</strong></div>
+    <div class="rel">Scaffold &gt; model: a weaker model + Confucius (52.7%) beats a stronger model + proprietary scaffold (52.0%) on SWE-Bench-Pro; 59% with GPT-5.2. Hierarchical Markdown working memory, threshold-triggered compression, and persistent cross-session "hindsight notes" (indexed by error/stack trace).</div>
+    <div class="links"><a href="https://arxiv.org/abs/2512.10398" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2512-14012">
+    <span class="role ref">Ref</span><span class="bt">Professional Software Developers Don't Vibe, They Control: AI Agent Use for Coding in 2025</span>
+    <div class="meta"><span class="idtag">arXiv:2512.14012</span> · Huang, Reyna, Lerner, Xia, Hempel (UCSD, Cornell), 2025 · empirical (mixed-methods) · <strong>cite: Huang+&nbsp;'25</strong></div>
+    <div class="rel">13 observed + 99 surveyed professional developers. They <em>control</em> agents: plan, prompt with explicit context, execute piecewise (avg 2.1 steps/prompt), validate. Documents context files (CLAUDE.md/SPECIFICATION.md/TASKS.md, knowledge/ dirs, user rules) and a top-10 prompt-context-type taxonomy in the wild.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2512.14012" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2512-18925">
+    <span class="role ref">Ref</span><span class="bt">Beyond the Prompt: An Empirical Study of Cursor Rules</span>
+    <div class="meta"><span class="idtag">arXiv:2512.18925</span> · Jiang, Nam (UC Irvine), MSR 2026 · empirical · <strong>cite: Jiang &amp; Nam&nbsp;'26</strong></div>
+    <div class="rel">401 repos / 1,876 <span class="mono">.mdc</span> rule files. Five-theme taxonomy (Project, Convention, Guideline, LLM Directive, Example); LLM Directives less adopted (50% vs 84–89%); 28.7% of lines are exact duplicates (reuse from templates) — motivating "context transparency / budget."</div>
+    <div class="links"><a href="https://arxiv.org/abs/2512.18925" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2601-15153">
+    <span class="role ref">Ref</span><span class="bt">How to Build AI Agents by Augmenting LLMs with Codified Human Expert Domain Knowledge?</span>
+    <div class="meta"><span class="idtag">arXiv:2601.15153</span> · Ulan uulu+ (Siemens; Chalmers; Malmö), CAIN 2026 · framework + industrial case study · <strong>cite: Ulan uulu+&nbsp;'26</strong></div>
+    <div class="rel">Splits expert knowledge into explicit procedural rules (→ executable code/tools) vs tacit design principles (→ prompts/RAG); neither alone suffices. A classifier→RAG→codified-rules→prompt pipeline yields a 206% quality gain (Siemens visualization). Zero-shot reuse across physics domains.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2601.15153" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2601-18341">
+    <span class="role ref">Ref</span><span class="bt">Agentic Much? Adoption of Coding Agents on GitHub</span>
+    <div class="meta"><span class="idtag">arXiv:2601.18341</span> · Robbes, Degueule, Matricon, Hora, Zacchiroli (Bordeaux, Rennes/Inria, UFMG, Télécom Paris), 2026 · empirical (large-scale mining) · <strong>cite: Robbes+&nbsp;'26</strong></div>
+    <div class="rel">First large-scale adoption study: ≈128k projects, 22–29% adoption within ~a year. Most adopters keep one modest guidance file; a minority maintain &gt;1,000-line files. Claude + Copilot &gt; half of adoption. AI-assisted commits are larger (median +31 lines vs human +11) and skew to features.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2601.18341" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="pager">
+    <a href="synthesis.html">← Synthesis</a>
+    <a href="index.html">Overview →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · built from a 33-document local corpus · citation chips resolve to entries on this page.</footer>
+</body>
+</html>

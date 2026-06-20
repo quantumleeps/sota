@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpus — Context Engineering × Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;&amp;&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="practice.html">Practice</a>
+  <a class="nav" href="memory-systems.html">Memory&nbsp;Systems</a>
+  <a class="nav" href="memory-hierarchy.html">Memory&nbsp;Hierarchy</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="failure-modes.html">Failure&nbsp;Modes</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav active" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">Bibliography · Provenance backbone</p>
+  <h1>The corpus</h1>
+  <p class="lede">Sixteen sources on context engineering and agent memory: twelve arXiv papers, three industry engineering writeups, and one ICML paper. Every citation chip on this site resolves to an entry here, and each entry links onward to the original on arXiv or the publishing lab. That chain — claim → chip → bibliography → source — is the whole point.</p>
+
+  <div class="box gap"><p class="box-h">◇ How to read this page</p>
+  <p>Entries are grouped by the role each plays in the thread. The <strong>cite</strong> label in each entry is the exact chip used across the site. Dates and venues are taken from the sources themselves; where a source did not state a venue or date, this is noted. The 2026 arXiv papers are <strong>preprints under review, not peer-reviewed</strong>; the three lab writeups are industry engineering guidance, not controlled studies. Treat both accordingly.</p></div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:#e6f2ef;border-color:#bfe0d8"></span> Anchor — defines the field</span>
+    <span><span class="sw" style="background:#eef1fb;border-color:#d4ddf6"></span> Core — on-topic method / system / benchmark</span>
+    <span><span class="sw" style="background:#f4f1e8;border-color:#e3e0d8"></span> Support — industry practitioner guidance</span>
+  </div>
+
+  <h2>Anchor — the field-defining surveys</h2>
+
+  <div class="bibentry" id="p-2507-13334">
+    <span class="role anchor">Anchor</span><span class="bt">A Survey of Context Engineering for Large Language Models</span>
+    <div class="meta"><span class="idtag">arXiv:2507.13334</span> · Mei, Yao, Ge, Wang et al. (Inst. of Computing Technology, CAS; UC Merced; Queensland; Peking; Tsinghua), Jul 2025 · survey · <strong>cite: Mei+ '25</strong></div>
+    <div class="rel">Names and formalizes "context engineering" as a discipline that "transcends simple prompt design," reconceiving context as a dynamically assembled set of components C = A(c₁…cₙ) optimized under |C| ≤ L_max. Synthesizes 1400+ papers into Foundational Components (retrieval, processing, management) and System Implementations (RAG, memory, tools, multi-agent), and names the field's defining gap: a comprehension-vs-generation asymmetry.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2507.13334" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2512-13564">
+    <span class="role anchor">Anchor</span><span class="bt">Memory in the Age of AI Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2512.13564</span> · Hu, Liu, Yue, Zhang et al. (NUS, Renmin, Fudan, Peking, NTU, Oxford, OPPO et al.), Dec 2025 · survey · <strong>cite: Hu+ '25</strong></div>
+    <div class="rel">Argues the long/short-term dichotomy is insufficient and proposes a unified "Forms–Functions–Dynamics" taxonomy of agent memory. Explicitly separates context engineering ("resource allocation and interface correctness") from agent memory ("a persistent, self-evolving cognitive state"), locating their overlap at working memory — the conceptual hinge for this whole review.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2512.13564" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Core — methods, systems, surveys &amp; benchmarks</h2>
+
+  <div class="bibentry" id="p-2603-07670">
+    <span class="role core">Core</span><span class="bt">Memory for Autonomous LLM Agents: Mechanisms, Evaluation, and Emerging Frontiers</span>
+    <div class="meta"><span class="idtag">arXiv:2603.07670</span> · Pengfei Du (Hong Kong Research Inst. of Technology), Mar 2026 · survey · <strong>cite: Du '26</strong></div>
+    <div class="rel">Formalizes agent memory as a write–manage–read loop and a POMDP belief state, organized along temporal scope × representational substrate × control policy. Coins useful failure vocabulary (summarization drift, attentional dilution, self-reinforcing error, schema drift) and crystallizes the cross-benchmark lesson that "long context is not memory."</div>
+    <div class="links"><a href="https://arxiv.org/abs/2603.07670" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2510-04618">
+    <span class="role core">Core</span><span class="bt">Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models (ACE)</span>
+    <div class="meta"><span class="idtag">arXiv:2510.04618</span> · Q. Zhang, Hu, Upasani et al. (Stanford, SambaNova, UC Berkeley), ICLR 2026 · framework + empirical · <strong>cite: Zhang+ '25 (ACE)</strong></div>
+    <div class="rel">Treats context as an evolving "playbook" of itemized strategies, updated by a Generator/Reflector/Curator loop with incremental delta edits. Diagnoses two failure modes of iterative context curation — <em>brevity bias</em> and <em>context collapse</em> — and reports +10.6% (agents) / +8.6% (domain) with large adaptation-cost reductions.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2510.04618" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2504-19413">
+    <span class="role core">Core</span><span class="bt">Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory</span>
+    <div class="meta"><span class="idtag">arXiv:2504.19413</span> · Chhikara, Khant, Aryan, Singh, Yadav (mem0.ai), Apr 2025 (ECAI 2025) · system + empirical · <strong>cite: Chhikara+ '25 (Mem0)</strong></div>
+    <div class="rel">A production memory architecture that extracts, consolidates (ADD/UPDATE/DELETE/NOOP) and retrieves salient facts, with a graph variant Mem0ᵍ. On LOCOMO it reaches near-full-context accuracy at ~91% lower p95 latency and >90% lower token cost — the canonical "memory beats brute-force context on cost" datapoint.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2504.19413" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2601-01885">
+    <span class="role core">Core</span><span class="bt">Agentic Memory: Learning Unified Long-Term and Short-Term Memory Management for LLM Agents (AgeMem)</span>
+    <div class="meta"><span class="idtag">arXiv:2601.01885</span> · Yu, Yao, Xie, Tan, Feng, Li, Wu (Wuhan University, Alibaba Group), Jan 2026 · framework + empirical · <strong>cite: Yu+ '26 (AgeMem)</strong></div>
+    <div class="rel">Exposes six memory operations (LTM: add/update/delete; STM: retrieve/summarize/filter) as tool actions in the agent's own policy, trained end-to-end with a three-stage curriculum and step-wise GRPO. Turns context curation from a heuristic schedule into a learned control problem with delayed reward.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2601.01885" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2602-02474">
+    <span class="role core">Core</span><span class="bt">MemSkill: Learning and Evolving Memory Skills for Self-Evolving Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2602.02474</span> · H. Zhang, Long, Bao, Wang, Feng, W. Zhang, Yue (NTU, UIUC, UIC, Tsinghua), Feb 2026 · framework + empirical · <strong>cite: Zhang+ '26 (MemSkill)</strong></div>
+    <div class="rel">Elevates memory <em>operations</em> into a learnable, evolvable "skill bank": an RL-trained controller selects skills, an executor applies them span-by-span, and a designer evolves the skill set from hard cases. Span-level extraction reaches the best quality–cost frontier (215 vs 1288 LLM calls for a strong baseline).</div>
+    <div class="links"><a href="https://arxiv.org/abs/2602.02474" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2602-06025">
+    <span class="role core">Core</span><span class="bt">Learning Query-Aware Budget-Tier Routing for Runtime Agent Memory (BudgetMem)</span>
+    <div class="meta"><span class="idtag">arXiv:2602.06025</span> · H. Zhang, Yue, Feng, Long, Bao, Jin et al. (NTU, UIUC, Tsinghua, SYSU, HKUST-GZ), Feb 2026 · system + empirical · <strong>cite: Zhang+ '26 (BudgetMem)</strong></div>
+    <div class="rel">Defers memory computation until a query arrives, exposing Low/Mid/High "budget tiers" on each pipeline module and training a lightweight RL router to pick tiers query-aware. Traces a controllable accuracy–cost Pareto frontier that envelops fixed baselines — memory extraction as a tunable inference-time knob.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2602.06025" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2402-09727">
+    <span class="role core">Core</span><span class="bt">A Human-Inspired Reading Agent with Gist Memory of Very Long Contexts (ReadAgent)</span>
+    <div class="meta"><span class="idtag">arXiv:2402.09727</span> · Lee, Chen, Furuta, Canny, Fischer (Google DeepMind), ICML 2024 · system + empirical · <strong>cite: Lee+ '24 (ReadAgent)</strong></div>
+    <div class="rel">Paginates long text into episodes, compresses each into a fuzzy "gist," and interactively looks up verbatim pages on demand — extending effective context 3.5–20× while beating retrieval and full-context baselines. A canonical hierarchical-memory / compaction architecture for long-context reading.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2402.09727" target="_blank" rel="noopener">arXiv abstract ↗</a> <a href="https://deepmind.google/research/publications/74917/" target="_blank" rel="noopener">DeepMind page ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2603-09023">
+    <span class="role core">Core</span><span class="bt">The Missing Memory Hierarchy: Demand Paging for LLM Context Windows</span>
+    <div class="meta"><span class="idtag">arXiv:2603.09023</span> · Tony Mason (UBC; Georgia Tech), Mar 2026 · system + empirical · <strong>cite: Mason '26</strong></div>
+    <div class="rel">Argues the context window "is not memory — it is L1 cache," and applies 1960s OS abstractions (demand paging, working sets, eviction) directly. A 857-session production corpus shows 21.8% structural token waste and 84.4× median reprocessing of stale results, and a deployed proxy (Pichay) recovers context. Introduces the "inverted cost model."</div>
+    <div class="links"><a href="https://arxiv.org/abs/2603.09023" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2602-22402">
+    <span class="role core">Core</span><span class="bt">Contextual Memory Virtualisation: DAG-Based State Management and Structurally Lossless Trimming for LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2602.22402</span> · Cosmo Santoni (Imperial College London), Feb 2026 · system + empirical · <strong>cite: Santoni '26 (CMV)</strong></div>
+    <div class="rel">Treats the conversation log as version-controlled state: a DAG of snapshots/branches ("Git for context") plus a three-pass "structurally lossless" trimmer that strips mechanical bloat while preserving every user/assistant message verbatim. Trimming cuts tokens by a mean 20% (max 86%) across 76 sessions; the dominant value is avoiding context rebuilding.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2602.22402" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2602-22603">
+    <span class="role core">Core</span><span class="bt">SideQuest: Model-Driven KV Cache Management for Long-Horizon Agentic Reasoning</span>
+    <div class="meta"><span class="idtag">arXiv:2602.22603</span> · Kariyappa, Suh (NVIDIA), Feb 2026 · system + empirical · <strong>cite: Kariyappa &amp; Suh '26</strong></div>
+    <div class="rel">Lets the model do its own KV-cache "garbage collection": an auxiliary thread on the shared context reasons about which tool-output tokens are stale and evicts them, with zero permanent token overhead to the main window. Cuts peak token utilization 56–65% and lifts serving throughput 83.9% for ≤5% accuracy loss.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2602.22603" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2602-16313">
+    <span class="role core">Core</span><span class="bt">MemoryArena: Benchmarking Agent Memory in Interdependent Multi-Session Agentic Tasks</span>
+    <div class="meta"><span class="idtag">arXiv:2602.16313</span> · He, Wang, Zhi, Hu et al. (Stanford, UCSD, UIUC, Princeton, Pitt), ICML 2026 · benchmark · <strong>cite: He+ '26 (MemoryArena)</strong></div>
+    <div class="rel">Couples memorization and action in multi-session tasks whose later subtasks are underspecified unless the agent distills and reuses earlier experience. Systems near-saturated on LoCoMo fail here (near-zero success on two of four environments); external memory and RAG give no consistent gain over raw long context. The sobering reality check.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2602.16313" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Support — industry practitioner guidance</h2>
+
+  <div class="bibentry" id="p-anthropic-ctx">
+    <span class="role support">Support</span><span class="bt">Effective Context Engineering for AI Agents</span>
+    <div class="meta"><span class="idtag">anthropic.com/engineering</span> · Anthropic Applied AI (Rajasekaran, Dixon, Ryan, Hadfield et al.), Sep 29 2025 · engineering blog / position · <strong>cite: Anthropic '25</strong></div>
+    <div class="rel">Anthropic's field-defining practitioner piece: context is a finite resource subject to "context rot" and a finite "attention budget," and the discipline is finding the smallest set of high-signal tokens. Popularizes just-in-time retrieval, compaction, structured note-taking, and sub-agent context isolation. Industry guidance, not a controlled study.</div>
+    <div class="links"><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" target="_blank" rel="noopener">Read at anthropic.com ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-anthropic-cookbook">
+    <span class="role support">Support</span><span class="bt">Context Engineering: Memory, Compaction, and Tool Clearing</span>
+    <div class="meta"><span class="idtag">platform.claude.com/cookbook</span> · Isabella He, Anthropic (Claude Cookbook), Mar 20 2026 · technical how-to · <strong>cite: Anthropic '26 (Cookbook)</strong></div>
+    <div class="rel">Operationalizes three composable, first-party primitives — compaction (whole-window summary), tool-result clearing (drop re-fetchable payloads), and the file-backed memory tool (cross-session) — with a workload-to-primitive decision framework and illustrative token measurements from a research-agent demo. The sharpest articulation of "which primitive for which problem."</div>
+    <div class="links"><a href="https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools" target="_blank" rel="noopener">Read at platform.claude.com ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-openai-memory">
+    <span class="role support">Support</span><span class="bt">Context Engineering for Personalization: State Management with Long-Term Memory Notes</span>
+    <div class="meta"><span class="idtag">developers.openai.com/cookbook</span> · Emre Okcular, OpenAI (Cookbook / Agents SDK), Jan 2026 · technical how-to · <strong>cite: OpenAI '26</strong></div>
+    <div class="rel">A reference implementation of long-term memory as structured "notes" over a local-first state object: distill candidate notes during a run, consolidate (dedup + conflict-resolve + forget) asynchronously at session end, and inject curated slices under explicit precedence rules. Argues "forgetting is not a bug — it is essential" and frames injected memory as an attack surface.</div>
+    <div class="links"><a href="https://developers.openai.com/cookbook/examples/agents_sdk/context_personalization" target="_blank" rel="noopener">Read at developers.openai.com ↗</a></div>
+  </div>
+
+  <div class="pager">
+    <a href="synthesis.html">← Synthesis</a>
+    <a href="index.html">Overview →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering × Agent Memory · a state-of-the-art review of 16 sources · every chip → this corpus → the original source. Amber callouts are the author's inference, not the papers' claims.</footer>
+</body>
+</html>

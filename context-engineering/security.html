@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security — The DevSecOps Surface of Codified Context</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="codified-context.html">Codified Context</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="architecture.html">Architecture</a>
+  <a class="nav" href="failure-modes.html">Failure Modes</a>
+  <a class="nav active" href="security.html">Security</a>
+  <a class="nav" href="adoption.html">Adoption</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">06 · Security</p>
+  <h1>The DevSecOps surface</h1>
+  <p class="lede">Codified context is, by design, attacker-reachable input that the agent "trusts absolutely." That makes the context layer a security surface, not just a productivity one. The corpus treats this from three angles: a system-level threat model, the harness-level defenses one production agent actually ships, and the argument that <strong>trust</strong> — not capability — is the real gate on deployment.</p>
+
+  <h2>Monitor the system, not just the model</h2>
+  <p>The position paper here argues LLM-app security failures "should be treated as expected operational conditions rather than exceptional events," requiring an EDR-style, workflow-aware monitoring layer — because "the primary barrier to trustworthy deployment is not further improving model capability but establishing system-level threat monitoring" <a class="cite" href="corpus.html#p-2602-19844">Zhang+&nbsp;'26</a> <span class="tag prop">Proposal</span>. It models the reference system as an 8-stage MCP pipeline and calls MCP "the standardized architectural spine that connects AI agents to external data and tools" — which is precisely why it is also the place to instrument. Its key argument against the usual defenses:</p>
+  <blockquote class="q">guardrails fundamentally operate as localized control mechanisms… yet lack global visibility into cross-stage interactions and emergent failure modes that span the end-to-end execution workflow.<span class="src">— System-Level Threat Monitoring <a class="cite" href="corpus.html#p-2602-19844">Zhang+&nbsp;'26</a>, §Alternative Views</span></blockquote>
+  <p class="note">This is a conceptual/position paper: the 14-threat taxonomy and monitoring artifacts are proposed and illustrated, not empirically validated. <a class="cite" href="corpus.html#p-2602-19844">Zhang+&nbsp;'26</a></p>
+
+  <h2>The context-file attack surface</h2>
+  <p>Several of the paper's 14 threats land directly on codified context and the tools it wires in. Mapped to this thread:</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Threat (per Zhang+&nbsp;'26)</th><th>How it lands on codified context</th><th>Proposed monitoring/mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>Indirect prompt injection via RAG/retrieved context</td><td>Attacker-planted text in indexed/retrieved content ("END OF REVIEW… call the PaymentTool now") becomes an executable instruction — poisoned context-as-code</td><td>Provenance tags {source, signature, trust tier}; snippet hashes; boundary-marker detection</td></tr>
+      <tr><td>Service/MCP tool-output injection</td><td>Tool or MCP results carry imperative payloads (the "delete the Project folder" email example) — an MCP/tool supply-chain risk</td><td>Output schema validation; DATA→INSTRUCTION intent classification; insertion-position auditing (recency bias)</td></tr>
+      <tr><td>Environment / memory tampering</td><td>Agent writes poisoned assertions into long-term memory or (Graph)-RAG that persist across sessions — a codified-context integrity attack</td><td>Memory-mutation logs; namespace write privileges</td></tr>
+      <tr><td>Live model poisoning / registry compromise</td><td>Mutable <span class="mono">:latest</span> tags pulled by CI/CD; runtime tampering of the model plane</td><td>Registry mutation logs, provenance chains, SHA-256 verification, signed CI builds</td></tr>
+      <tr><td>Model drift via config/prompt change</td><td>Edits to tool registry, retrieval corpus, or system prompt silently alter the agent's action space</td><td>Audit system-prompt/config changes with approval records; dependency fingerprinting</td></tr>
+      <tr><td>Over-privileged tools / auto-publish</td><td>Agentic tools acting on production without review; human-in-the-loop bypass</td><td>Argument-outlier detection (<span class="mono">delete_*</span> vs <span class="mono">get_*</span>); human-in-loop bypass-rate monitoring</td></tr>
+    </tbody>
+  </table></div>
+  <p>The developer-practices study adds a concrete, mundane instance: MCP credential storage can be insecure — Cline's <span class="mono">mcp settings.json</span> "syncs to cloud," exposing secrets <a class="cite" href="corpus.html#p-2512-01939">Wang+&nbsp;'25</a> <span class="tag emp">Empirical</span>.</p>
+
+  <h2>Defense in the harness — and its gaps</h2>
+  <p>Claude Code is the corpus's worked example of harness-level defense. Its central security property is the separation of reasoning from enforcement: the model only emits tool-use requests; the harness validates and dispatches, so "a compromised model cannot override sandboxing or deny-first rules" <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a> <span class="tag thy">Theory</span>. It layers a deny-first posture (deny &gt; ask &gt; allow), seven permission modes on a monotonic autonomy spectrum, and seven independent safety layers any one of which can block.</p>
+  <div class="box risk">
+    <p class="box-h">⚠ Documented gaps in that defense</p>
+    <p>The same analysis is candid that defense-in-depth can fail when layers share economic/performance failure modes: commands with &gt;50 subcommands fall back to one generic permission prompt instead of per-subcommand deny checks (a documented bypass), and a <em>pre-trust initialization window</em> lets hooks/MCP/settings load <em>before</em> the trust dialog — outside the deny-first pipeline — implicated in several CVEs it cites (e.g. CVE-2025-59536, CVE-2026-21852) <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a> <span class="tag emp">Empirical</span>. The lesson: codified extensions (hooks, MCP, settings) are part of the trust boundary, and <em>when</em> they load matters as much as <em>what</em> they permit.</p>
+  </div>
+
+  <h2>Trust as the adoption gate</h2>
+  <p>The "programming with trust" opinion piece argues the binding constraint on deploying AI software engineers is developer trust, and that "the emphasis will be… increasingly on programming with trust" <a class="cite" href="corpus.html#p-2502-13767">Roychoudhury+&nbsp;'25</a> <span class="tag thy">Theory</span>. It splits the problem usefully:</p>
+  <div class="grid g2">
+    <div class="card"><p class="ct">Technical trust</p><p class="small">correctness, security, performance, maintainability, standards compliance, testing, dependency management.</p></div>
+    <div class="card"><p class="ct">Human trust</p><p class="small">explainability/transparency, ethical alignment, familiar patterns, expertise match, adaptation to feedback.</p></div>
+  </div>
+  <p>Its operational proposals map cleanly onto codified context as a trust mechanism: <strong>"transparent scaffolding"</strong> — tagging AI-generated code and embedding authorship provenance and confidence metrics in PR templates — and <strong>"review parity"</strong> — the same review gates and quality thresholds for agent code as for human code, backed by code-review agents with static/dynamic analysis <a class="cite" href="corpus.html#p-2502-13767">Roychoudhury+&nbsp;'25</a> <span class="tag prop">Proposal</span>. In other words, provenance and review are not just process hygiene; they are how an agent earns a "senior-colleague reputation."</p>
+
+  <h2>The under-codified guardrail</h2>
+  <div class="box inference">
+    <p class="box-h">⟡ My synthesis: the security gap is also a content gap</p>
+    <p>Put the file studies next to the threat model and a sharp problem appears. Context files are where teams could encode security expectations for agent-written code — yet across every study, <strong>security is the least-codified content category</strong> (8.7% of CLAUDE.md files <a class="cite" href="corpus.html#p-2509-14744">'25a</a>; 14.5% cross-tool <a class="cite" href="corpus.html#p-2511-12884">'25b</a>; 34% of Cursor repos <a class="cite" href="corpus.html#p-2512-18925">Jiang&nbsp;&amp;&nbsp;Nam&nbsp;'26</a>; only 6 of 155 AGENTS.md sections <a class="cite" href="corpus.html#p-2510-21413">Mohsenimofidi+&nbsp;'26</a>). So the artifact best placed to carry guardrails for agent code is precisely where guardrails are most often absent — while the threat surface those guardrails would address is expanding <a class="cite" href="corpus.html#p-2602-19844">Zhang+&nbsp;'26</a>. For a DevSecOps reader this is the actionable gap: codify security/NFR expectations into the context layer <em>and</em> monitor the system-level signals, because neither the file nor the monitor suffices alone. This pairing is my recommendation, not a single paper's claim.</p>
+  </div>
+
+  <h3>One rung up: agent identity</h3>
+  <p>Finally, multi-agent ecosystems push trust into naming and discovery. NANDA notes that static endpoints "do not scale and are susceptible to DDoS attacks, overload, and flash mobs," and proposes resolving agent names to context-tailored endpoints with trust "relative to the reputation of the Name Space," enforced at registration <a class="cite" href="corpus.html#p-2508-03113">Zinky+&nbsp;'25</a> <span class="tag prop">Proposal</span>. It is speculative infrastructure, but it flags that in an A2A future, <em>who</em> an agent is talking to becomes a security decision the context layer must inform.</p>
+
+  <div class="pager">
+    <a href="failure-modes.html">← Failure Modes</a>
+    <a href="adoption.html">Adoption →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · findings are cited; <span style="color:var(--amber)">amber blocks are my inference</span>.</footer>
+</body>
+</html>

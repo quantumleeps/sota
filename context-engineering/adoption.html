@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adoption — Codified Context in the Wild</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="codified-context.html">Codified Context</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="architecture.html">Architecture</a>
+  <a class="nav" href="failure-modes.html">Failure Modes</a>
+  <a class="nav" href="security.html">Security</a>
+  <a class="nav active" href="adoption.html">Adoption</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">07 · Adoption</p>
+  <h1>Practice in the wild</h1>
+  <p class="lede">Two large empirical studies bracket reality. Coding agents have spread to roughly a quarter of active GitHub projects in about a year — but deliberate <em>context files</em> remain a minority practice, and the developers who use agents well do so by <strong>controlling</strong> them, not vibing.</p>
+
+  <h2>How fast — adoption at scale</h2>
+  <p>The first large-scale adoption study estimates 22.20–28.66% of ≈128k active GitHub projects had adopted a coding agent within about a year, detected through their traces — config files, co-author trailers, branch/label conventions <a class="cite" href="corpus.html#p-2601-18341">Robbes+&nbsp;'26</a> <span class="tag emp">Empirical</span>.</p>
+  <div class="grid g3">
+    <div class="card stat"><div class="big">22–29%</div><div class="lbl">of active GitHub projects adopted a coding agent in ~1 year</div></div>
+    <div class="card stat"><div class="big">&gt;50%</div><div class="lbl">of adoption is Claude + Copilot alone; top-5 tools &gt;80%</div></div>
+    <div class="card stat"><div class="big amber">+31</div><div class="lbl">median lines added per AI-assisted commit (vs +11 human)</div></div>
+  </div>
+  <p>The texture matters: adoption rises with project size/activity but falls with age (younger projects adopt ≈3× more); organisations adopt more than average (Microsoft near-double); and agent commits skew to features (≈35.7% feat vs a ≈17% human baseline) and are larger. The inflection points track product releases — late Feb 2025 (Claude Code), mid-May 2025 (Codex/Gemini/Jules) <a class="cite" href="corpus.html#p-2601-18341">Robbes+&nbsp;'26</a>. The authors' framing is that the artifacts this whole thread studies are now "the primary observable signature of agent adoption":</p>
+  <blockquote class="q">coding agents leave abundant traces in software repositories, in the form of configuration files, summaries of knowledge they acquired, or even explicit metadata.<span class="src">— Agentic Much? <a class="cite" href="corpus.html#p-2601-18341">Robbes+&nbsp;'26</a>, Introduction</span></blockquote>
+
+  <h2>What they write — guidance files in the wild</h2>
+  <p>Agent adoption ≠ deliberate context engineering. The OSS study found only <strong>5%</strong> of 10,000 scanned repos had adopted <em>any</em> context-file format <a class="cite" href="corpus.html#p-2510-21413">Mohsenimofidi+&nbsp;'26</a> <span class="tag emp">Empirical</span>, and the adoption study confirms the shape: most file-adopters keep a <em>single</em> modest guidance file (&gt;85% have ≤5), while a sophisticated minority maintain &gt;1,000-line, frequently-edited guidance — and about a quarter never update their file at all <a class="cite" href="corpus.html#p-2601-18341">Robbes+&nbsp;'26</a>.</p>
+  <div class="box inference">
+    <p class="box-h">⟡ My read of the gap</p>
+    <p>There is a wide adoption gap between <em>using an agent</em> (≈25% of projects) and <em>engineering its context</em> (≈5% of repos, mostly one flat file). The tiered-infrastructure and self-evolving-context work on the <a href="codified-context.html">Codified Context</a> page is, in practice, describing what a small leading edge does — the median project is several rungs below it. That gap is the addressable opportunity, and also a caution against over-reading the frontier as the norm.</p>
+  </div>
+
+  <h2>How they work — control, not vibe</h2>
+  <p>The flagship behavioural study (13 observed + 99 surveyed professional developers) is unambiguous: "professional developers do not vibe code. Instead, they carefully <em>control</em> the agents through planning and supervision" <a class="cite" href="corpus.html#p-2512-14012">Huang+&nbsp;'25</a> <span class="tag emp">Empirical</span>. Concretely, they execute plans piecewise — on average asking the agent to work on just <strong>2.1 steps at a time</strong>, never more than 5–6 even with 70-step plans — and they prize "clear context and explicit instructions."</p>
+  <blockquote class="q">I do everything with assistance but never let the agent be completely autonomous — I am always reading the output and steering.<span class="src">— survey respondent S83, Don't Vibe, They Control <a class="cite" href="corpus.html#p-2512-14012">Huang+&nbsp;'25</a></span></blockquote>
+  <p>The study documents codified context in active use: user rules, plan files, and explicit <span class="mono">CLAUDE.md</span> / <span class="mono">SPECIFICATION.md</span> / <span class="mono">TASKS.md</span> workflows, a <span class="mono">knowledge/</span> directory of structured docs, and MCP servers (e.g. Context7) to inject post-cutoff documentation. Its empirically grounded <strong>top-10 prompt context-type</strong> inventory is, in effect, a checklist of what developers feel they must supply:</p>
+  <div class="grid g2">
+    <div class="card"><p class="small">UI/design term · technical term · domain object · reference to input file · specific library/API · interaction · new feature/requirement · reference to a plan step · reference to output file · purpose of feature</p><p class="ct" style="margin-top:8px">top-10 of 43 observed context types <a class="cite" href="corpus.html#p-2512-14012">Huang+&nbsp;'25</a></p></div>
+    <div class="card"><p class="small">Sentiment is positive but supervised: agent-suitability rated <strong>4.73/6</strong>, enjoyment <strong>5.11/6</strong>; developers modify agent code about half the time; <strong>no</strong> respondent said agents could replace human decision-making. SWE expertise was cited as critical to using agents well.</p></div>
+  </div>
+  <p>One rung up, the framework-practices study shows the systems themselves are assembled, not adopted whole: 96% of top agent projects compose ≥2 frameworks, and MCP — while productivity-positive (one report cited ≈+20% engineer productivity) — brings real context overhead <a class="cite" href="corpus.html#p-2512-01939">Wang+&nbsp;'25</a> <span class="tag emp">Empirical</span>.</p>
+
+  <h2>What developers say is hard</h2>
+  <p>The suitability data is a candid map of the frontier. Agents are seen as suitable for repetitive/scaffolding/well-defined tasks and clearly unsuitable for business logic, legacy integration, and high-stakes/security-critical code. Two items bear directly on codified context <a class="cite" href="corpus.html#p-2512-14012">Huang+&nbsp;'25</a>:</p>
+  <ul class="clean">
+    <li><strong>Planning / architecture is "controversial"</strong> (13 say suitable : 23 say not) — the layer most people still want to own.</li>
+    <li><strong>Long-context sessions / between-task consistency is a weak spot</strong> (4 suitable : 8 not) — i.e. the agent forgetting across tasks is a felt pain, which is exactly the problem persistent codified context is meant to solve.</li>
+  </ul>
+  <div class="box finding">
+    <p class="box-h">▦ The demand signal</p>
+    <p>"Between-task consistency" being a named weakness, while developers simultaneously maintain CLAUDE.md/SPECIFICATION.md/knowledge-dir workflows by hand, is the clearest user-pull evidence in the corpus for durable, persistent codified context. The future-work section explicitly calls for "better interfaces for the planning step." <a class="cite" href="corpus.html#p-2512-14012">Huang+&nbsp;'25</a></p>
+  </div>
+
+  <h2>Adjacent: authored context beyond coding</h2>
+  <p>For breadth, the education paper shows the same authoring pattern in a non-coding domain: each agent in a teaching simulation is given an explicit goal/role/system prompt, structured tagged output is parsed by "Concept" fields, and limited windows are handled by a hierarchical "summary of summaries" <a class="cite" href="corpus.html#p-2407-12796">Mollick+&nbsp;'24</a> <span class="tag prop">Proposal</span>. The connection to coding agents is conceptual, not direct — but it reinforces that authored, role-scoped context plus structured I/O and compaction is a general pattern, not a coding-only one.</p>
+
+  <div class="pager">
+    <a href="security.html">← Security</a>
+    <a href="synthesis.html">Synthesis →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · findings are cited; <span style="color:var(--amber)">amber blocks are my inference</span>.</footer>
+</body>
+</html>

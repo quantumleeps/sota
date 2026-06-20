@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Failure Modes — Where Codified Context Breaks</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="codified-context.html">Codified Context</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="architecture.html">Architecture</a>
+  <a class="nav active" href="failure-modes.html">Failure Modes</a>
+  <a class="nav" href="security.html">Security</a>
+  <a class="nav" href="adoption.html">Adoption</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">05 · Failure Modes</p>
+  <h1>Where it breaks</h1>
+  <p class="lede">The corpus is unusually candid about failure. Codified context and multi-agent structure do not only add capability — they add new ways to fail. Three families recur: <strong>coordination failures</strong> between agents and stages, <strong>decay of the context itself</strong>, and the <strong>maintenance liability</strong> that owning context infrastructure creates.</p>
+
+  <h2>Coordination failures</h2>
+  <p>The MAST study is the field's reference taxonomy. Across 7 popular multi-agent systems it found 41–86.7% failure rates and built a 14-mode taxonomy in 3 categories from 1,600+ annotated traces (LLM-judge κ=0.77) <a class="cite" href="corpus.html#p-2503-13657">Cemri+&nbsp;'25</a> <span class="tag emp">Empirical</span>. Its headline finding reframes the whole debate:</p>
+  <blockquote class="q">MAS failure is not merely a function of challenges in the underlying model; a well-designed MAS can result in performance gain when using the same underlying model.<span class="src">— Why Do Multi-Agent LLM Systems Fail? <a class="cite" href="corpus.html#p-2503-13657">Cemri+&nbsp;'25</a>, Insight 1</span></blockquote>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Category</th><th>Most prevalent modes (share of analysed traces)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>FC1 · System design</strong><br><span class="small">poor/ambiguous spec, architecture, state</span></td><td>step repetition 15.7%; fail to ask / not recognising completion 12.4%; disobey task spec 11.8%; loss of context 2.8%; disobey role 1.5%</td></tr>
+      <tr><td><strong>FC2 · Inter-agent misalignment</strong><br><span class="small">breakdown of information flow</span></td><td>reasoning-action mismatch 13.2%; task derailment 7.4%; fail to ask clarification 6.8%; conversation reset 2.2%; ignored other agent 1.9%; information withholding 0.85%</td></tr>
+      <tr><td><strong>FC3 · Task verification</strong><br><span class="small">inadequate / premature checks</span></td><td>incorrect verification 9.1%; no/incomplete verification 8.2%; premature termination 6.2%</td></tr>
+    </tbody>
+  </table></div>
+  <p>The pointed implication for this thread: FC1 (ambiguous task/role specs) and FC2 (information flow) are exactly the layers codified context targets — and cheap structural fixes moved the needle (+9.4% from better role specs, +15.6% from adding a verification step). But the authors warn that better <em>protocols</em> alone will not fix FC2:</p>
+  <blockquote class="q">Solutions focused on context or communication protocols are often insufficient for FC2 failures, which demand deeper "social reasoning" abilities.<span class="src">— MAST <a class="cite" href="corpus.html#p-2503-13657">Cemri+&nbsp;'25</a>, Insight 2</span></blockquote>
+
+  <h3>The planner→coder gap</h3>
+  <p>The most precisely quantified coordination failure. Semantically equivalent rephrasings of a request drop Pass@10 by 7.9–83.3% across multi-agent code systems, and 75.3% of those failures trace to a "planner-coder gap" — plans that are "logically sound but lack sufficient implementation details" by the time they reach the coder <a class="cite" href="corpus.html#p-2510-10460">Lyu+&nbsp;'26</a> <span class="tag emp">Empirical</span>. Two mechanisms: <em>semantic drift</em> (intent diluted through abstraction) and <em>context fragmentation</em> (constraints/edge-cases dropped). The error-pattern breakdown is effectively a checklist of what a handoff context must preserve:</p>
+  <ul>
+    <li>Core concepts 32.7% · Condition judgments 22.1% · Edge cases 19.5% · Complex logic 15.9% · Relational phrases 9.7%</li>
+  </ul>
+  <div class="box inference">
+    <p class="box-h">⟡ My read</p>
+    <p>The planner-coder gap is the single most actionable failure result for a context spine. It says the dangerous moment is not <em>within</em> a prompt but <em>between</em> stages — the moment a plan is handed off. Codified context that explicitly carries constraints, edge cases, and conditionals across that boundary (rather than re-summarising) is directly addressing the dominant failure cause that study found. The repair they validate — a "monitor agent" plus multi-prompt generation — is one concrete realisation. <a class="cite" href="corpus.html#p-2510-10460">Lyu+&nbsp;'26</a></p>
+  </div>
+
+  <h2>Decay of the context itself</h2>
+  <p>Even a perfect context degrades. ACE names two mechanisms directly. <strong>Brevity bias</strong>: prompt optimisers "collapse toward short, generic prompts," shedding the domain heuristics and failure-mode knowledge that make a context useful. <strong>Context collapse</strong>: monolithic rewriting destroys accumulated context, with a stark example <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a> <span class="tag emp">Empirical</span>:</p>
+  <blockquote class="q">at step 60 the context contained 18,282 tokens and achieved an accuracy of 66.7, but at the very next step it collapsed to just 122 tokens, with accuracy dropping to 57.1 — worse than the baseline accuracy of 63.7 without adaptation.<span class="src">— ACE <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a>, §Context Collapse</span></blockquote>
+  <p>The corporate-scale paper imports Breunig's "context rot" taxonomy of four degradation modes — context <em>poisoning, distraction, confusion, clash</em> — and cites a study showing a 39% quality drop when a single prompt was split across sequential turns <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a>. The code-generation survey independently names the same four ("poisoning, distraction, confusion, conflict") and concludes "many failures of intelligent agents do not stem from the models themselves, but rather from defects in the ingested context" <a class="cite" href="corpus.html#p-2508-00083">Dong+&nbsp;'25</a> <span class="tag def">Definition</span>. SWE-bench gives the base-rate version of distraction: performance falls as irrelevant context grows <a class="cite" href="corpus.html#p-2310-06770">Jimenez+&nbsp;'23</a>.</p>
+  <div class="grid g2">
+    <div class="card"><p class="ct">Poisoning</p><p class="small">false/hallucinated content enters the context and is trusted downstream.</p></div>
+    <div class="card"><p class="ct">Distraction</p><p class="small">volume of irrelevant context degrades focus and localisation.</p></div>
+    <div class="card"><p class="ct">Confusion</p><p class="small">superfluous or conflicting tool/info options muddle selection.</p></div>
+    <div class="card"><p class="ct">Clash / conflict</p><p class="small">contradictory instructions or facts coexist in the window.</p></div>
+  </div>
+  <p class="note">Sources: context-rot taxonomy via <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a>; four canonical modes also enumerated by <a class="cite" href="corpus.html#p-2508-00083">Dong+&nbsp;'25</a>.</p>
+
+  <h3>Context debt &amp; duplication</h3>
+  <p>The file studies surface a slower decay. Context files accrue <strong>context debt</strong> — low readability (Claude files at Flesch 16.6, "comparable to dense legal contracts") plus monotonic growth make them "unmaintainable and opaque to human collaborators" <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a> <span class="tag emp">Empirical</span>. And 28.7% of Cursor-rule lines are exact duplicates, much copied from templates — context budget spent on what the agent could already retrieve <a class="cite" href="corpus.html#p-2512-18925">Jiang&nbsp;&amp;&nbsp;Nam&nbsp;'26</a>.</p>
+
+  <h2>The maintenance liability</h2>
+  <p>Owning codified context means owning its upkeep, and the anchor identifies staleness as its <em>primary</em> failure mode — precisely because the mechanism that makes codified context powerful is the agent's deference to it:</p>
+  <blockquote class="q">treat specifications as load-bearing, because agents trust documentation absolutely and out-of-date specs cause silent failures.<span class="src">— Codified Context <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>, Guidelines</span></blockquote>
+  <p>The reported cost of preventing this was ≈1–2 hours/week of maintenance, with meta-infrastructure work at 4.3% of substantive prompts, and it motivated a mechanical defence — a Git-diff "context drift detector" that warns when source changes outpace spec updates <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>. At the framework level, the developer-practices study quantifies adjacent rot: logic failures are over a third of all framework failures, memory degrades past ≈20 turns, and 23.5% of obstacles are version/compatibility churn (e.g. the AutoGen v0.2→v0.4 break that "split the community") <a class="cite" href="corpus.html#p-2512-01939">Wang+&nbsp;'25</a> <span class="tag emp">Empirical</span>.</p>
+
+  <div class="box risk">
+    <p class="box-h">⚠ The core tension, stated plainly</p>
+    <p>An agent that "trusts documentation absolutely" is the source of both the benefit and the danger of codified context. The same deference that makes a good spec accelerate every adjacent feature makes a stale or poisoned spec fail silently and confidently. This is why the better systems in the corpus pair codified context with a <em>refresh or verification mechanism</em> — ACE's reflector + de-dup <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a>, the anchor's drift detector <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>, Confucius's hindsight notes <a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a>, and the proposed CI linters for context files <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a> — rather than treating the artifact as write-once. <span class="tag thy">my synthesis of the above sources</span></p>
+  </div>
+
+  <div class="pager">
+    <a href="architecture.html">← Architecture</a>
+    <a href="security.html">Security →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · findings are cited; <span style="color:var(--amber)">amber blocks are my inference</span>.</footer>
+</body>
+</html>

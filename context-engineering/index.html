@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context Engineering for AI Coding Agents — State of the Art</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;<span>Engineering</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All SotA</a>
+  <a class="nav active" href="index.html">Overview</a>
+  <a class="nav" href="foundations.html">Foundations</a>
+  <a class="nav" href="codified-context.html">Codified Context</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="architecture.html">Architecture</a>
+  <a class="nav" href="failure-modes.html">Failure Modes</a>
+  <a class="nav" href="security.html">Security</a>
+  <a class="nav" href="adoption.html">Adoption</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">State of the Art · mid-2026</p>
+  <h1>Context engineering for AI&nbsp;coding&nbsp;agents</h1>
+  <p class="lede">As coding agents moved from autocomplete to autonomous multi-step work over real codebases, the dominant lever on their behaviour stopped being the model and the single prompt. It became the <strong>context</strong> supplied to them — and the frontier practice is to <strong>codify</strong> that context as durable, version-controlled, machine-addressed artifacts: <span class="mono">AGENTS.md</span>/<span class="mono">CLAUDE.md</span>, Cursor rules, skills, MCP tools, sub-agent specs, persistent notes.</p>
+  <p>This is a synthesis of a 33-document research corpus — one anchor paper, five core and four support papers, and 23 references harvested from the anchor — spanning empirical studies of context files, context-engineering theory, multi-agent frameworks, coding-agent benchmarks and scaffolds, security, and developer practice. It reads as a connected set of pages; each idea is tied to its source.</p>
+
+  <div class="grid g3" style="margin-top:1.8em">
+    <div class="card stat"><div class="big">33</div><div class="lbl">documents read in full (10 thread papers + 23 references)</div></div>
+    <div class="card stat"><div class="big green">28.6%</div><div class="lbl">median runtime cut from adding an AGENTS.md, controlled study <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big amber">5%</div><div class="lbl">of 10,000 OSS repos had adopted <em>any</em> context file as of late 2025 <a class="cite" href="corpus.html#p-2510-21413">Mohsenimofidi+&nbsp;'26</a></div></div>
+  </div>
+
+  <h2>The reading convention</h2>
+  <p>The brief for this review was to keep provenance clear and to separate what the papers found from what I infer. Two devices do that work throughout:</p>
+  <ul class="clean">
+    <li><strong>Citation chips</strong> like <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a> follow every sourced claim and link to the <a href="corpus.html">Corpus</a> entry, which links onward to the paper on arXiv.</li>
+    <li><strong>Claim-type tags</strong> mark how strong a claim is in its source: <span class="tag emp">Empirical</span> <span class="tag thy">Theory</span> <span class="tag prop">Proposal</span> <span class="tag def">Definition</span>.</li>
+  </ul>
+  <div class="box finding">
+    <p class="box-h">▦ A finding from the papers</p>
+    <p>Blue-edged blocks restate what the corpus reports. They are always backed by a citation chip. Where I quote a paper verbatim, it appears as a teal-edged quotation with the source line.</p>
+  </div>
+  <div class="box inference">
+    <p class="box-h">⟡ My inference — not from the papers</p>
+    <p>Amber-edged blocks are my synthesis, extrapolation, or judgement connecting the sources. They are <em>not</em> claims any single paper makes. The <a href="synthesis.html">Synthesis</a> page is entirely of this kind; elsewhere these blocks are the exception, clearly fenced off from the findings around them.</p>
+  </div>
+
+  <h2>The state of the art in five claims</h2>
+  <p>Across the corpus, five claims recur with enough independent support to count as the field's working consensus.</p>
+
+  <h3>1 · Context — not raw model capability — is the dominant near-term lever</h3>
+  <p>A purpose-built agent–computer interface lifted SWE-bench resolution from 3.8% to 12.47% <em>without changing the model</em> <a class="cite" href="corpus.html#p-2405-15793">Yang+&nbsp;'24</a>. A scaffold can make a weaker model beat a stronger one: Confucius + Claude 4.5 Sonnet (52.7%) edged Claude 4.5 Opus on a proprietary scaffold (52.0%) on SWE-Bench-Pro <a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a>. The MAST study found multi-agent failure is "not merely a function of the underlying model" — better design alone added +9.4% with the same model <a class="cite" href="corpus.html#p-2503-13657">Cemri+&nbsp;'25</a>. <span class="tag emp">Empirical</span></p>
+
+  <h3>2 · Codified context measurably improves efficiency and correctness</h3>
+  <p>The first controlled isolation of a single context artifact — a paired within-task design over 124 real PRs — found AGENTS.md cut median runtime 28.64% and median output tokens 16.58% at comparable completion <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a>. A layered context pipeline doubled single-shot success (80% vs 40%) over a CLAUDE.md baseline <a class="cite" href="corpus.html#p-2508-08322">Haseeb&nbsp;'25</a>. Evolving "playbook" contexts added +10.6% (agents) / +8.6% (finance) <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a>; codified expert knowledge lifted output quality 206% in an industrial study <a class="cite" href="corpus.html#p-2601-15153">Ulan&nbsp;uulu+&nbsp;'26</a>. <span class="tag emp">Empirical</span> <a href="evidence.html">→ see the full evidence ledger</a></p>
+
+  <h3>3 · Context files are now a real software-artifact class — with anatomy, evolution, and debt</h3>
+  <p>Multiple independent studies converge on a shared anatomy: a shallow heading hierarchy, action-oriented content, and a striking neglect of non-functional requirements <a class="cite" href="corpus.html#p-2509-14744">Chatlatanagulchai+&nbsp;'25a</a> <a class="cite" href="corpus.html#p-2511-09268">Santos+&nbsp;'25</a> <a class="cite" href="corpus.html#p-2510-21413">Mohsenimofidi+&nbsp;'26</a>. The largest study (2,303 files) shows they "evolve like configuration code" and coins <em>context debt</em> for their low readability and length <a class="cite" href="corpus.html#p-2511-12884">Chatlatanagulchai+&nbsp;'25b</a>. <span class="tag emp">Empirical</span> <a href="codified-context.html">→ the anatomy of a context file</a></p>
+
+  <h3>4 · The single flat file does not scale — the frontier is structured, tiered, retrievable infrastructure</h3>
+  <p>The anchor's thesis is exactly this: "a 1,000-line prototype can be fully described in a single prompt, but a 100,000-line system cannot," so it replaces the manifest with hot/cold memory tiers, routed sub-agents, and an MCP knowledge base <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>. Parallel moves: ACE's incremental "playbooks" <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a>, Confucius's hierarchical memory + cross-session notes <a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a>, and the survey formalism of context as an assembled component set <a class="cite" href="corpus.html#p-2507-13334">Mei+&nbsp;'25</a>. <span class="tag prop">Proposal</span> <span class="tag thy">Theory</span></p>
+
+  <h3>5 · Codification cuts both ways — it adds new failure and attack surface</h3>
+  <p>The same artifacts that steer agents can misfire: the planner→coder handoff loses 75.3% of failures' worth of detail <a class="cite" href="corpus.html#p-2510-10460">Lyu+&nbsp;'26</a>; contexts "collapse" and degrade <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a>; agents "trust documentation absolutely," so stale specs fail silently <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>. And context files are an injection/supply-chain surface that needs system-level monitoring <a class="cite" href="corpus.html#p-2602-19844">Zhang+&nbsp;'26</a>. <span class="tag emp">Empirical</span> <span class="tag thy">Theory</span> <a href="failure-modes.html">→ failure modes</a> · <a href="security.html">security</a></p>
+
+  <h2>Map of the territory</h2>
+  <p>The nine pages that follow. Read in order, or jump to what you need.</p>
+  <div class="grid g2">
+    <a class="card cardlink" href="foundations.html"><p class="ct">01 · Foundations</p><h3>From prompts to context engineering</h3><p class="small">The vocabulary and the maturity model: prompt → context → intent → specification; the <span class="mono">C=A(c₁…cₙ)</span> formalism; promptware as a software discipline.</p></a>
+    <a class="card cardlink" href="codified-context.html"><p class="ct">02 · Codified Context</p><h3>The artifacts and their anatomy</h3><p class="small">AGENTS.md / CLAUDE.md / Cursor rules / skills / MCP, the empirical anatomy across thousands of files, and the anchor's three-tier infrastructure.</p></a>
+    <a class="card cardlink" href="evidence.html"><p class="ct">03 · Evidence</p><h3>Does it actually work?</h3><p class="small">A ledger of every measured effect in the corpus, with effect sizes, methods, and a candid read on how strong each result is.</p></a>
+    <a class="card cardlink" href="architecture.html"><p class="ct">04 · Architecture</p><h3>Multi-agent &amp; the harness</h3><p class="small">Single vs multi-agent; ChatDev/MetaGPT/AutoGen; the ACI and scaffolding lineage; Claude Code's "minimal scaffold, maximal harness."</p></a>
+    <a class="card cardlink" href="failure-modes.html"><p class="ct">05 · Failure Modes</p><h3>Where it breaks</h3><p class="small">MAST, the planner-coder gap, context rot/collapse, brevity bias, context debt, and spec staleness.</p></a>
+    <a class="card cardlink" href="security.html"><p class="ct">06 · Security</p><h3>The DevSecOps surface</h3><p class="small">Prompt injection via context/RAG, MCP tool &amp; registry supply chain, config drift, trust and review parity, agent identity.</p></a>
+    <a class="card cardlink" href="adoption.html"><p class="ct">07 · Adoption</p><h3>Practice in the wild</h3><p class="small">How fast agents and their context files spread, and how professional developers actually steer them: control, not vibe.</p></a>
+    <a class="card cardlink" href="synthesis.html"><p class="ct">08 · Synthesis <span class="tag prop" style="vertical-align:middle">inference</span></p><h3>Toward a context spine</h3><p class="small">My own reading: a reference model that ties the findings together, and the bets I'd make. Clearly marked as inference.</p></a>
+    <a class="card cardlink" href="corpus.html"><p class="ct">09 · Corpus</p><h3>Bibliography &amp; provenance</h3><p class="small">All 33 documents, with arXiv and local-file links. The target of every citation chip.</p></a>
+  </div>
+
+  <h2>How the corpus arrived here — a brief timeline</h2>
+  <div class="box inference">
+    <p class="box-h">⟡ My framing</p>
+    <p>The dates below are the corpus documents placed on a line; the grouping into "eras" is my reading of how the conversation moved, not a claim from any one paper.</p>
+  </div>
+  <div class="timeline">
+    <div class="tl-item"><div class="when">2023 · multi-agent frameworks</div><div class="what">ChatDev <a class="cite" href="corpus.html#p-2307-07924">Qian+&nbsp;'23</a>, MetaGPT <a class="cite" href="corpus.html#p-2308-00352">Hong+&nbsp;'23</a>, AutoGen <a class="cite" href="corpus.html#p-2308-08155">Wu+&nbsp;'23</a> establish role-played agents, encoded SOPs, and structured communication. SWE-bench <a class="cite" href="corpus.html#p-2310-06770">Jimenez+&nbsp;'23</a> sets the real-codebase yardstick.</div></div>
+    <div class="tl-item"><div class="when">2024 · the harness matters</div><div class="what">SWE-agent's ACI shows the interface, not the model, moves the needle <a class="cite" href="corpus.html#p-2405-15793">Yang+&nbsp;'24</a>. Architecture survey consolidates the design vocabulary <a class="cite" href="corpus.html#p-2404-11584">Masterman+&nbsp;'24</a>.</div></div>
+    <div class="tl-item"><div class="when">2025 (H1) · context engineering named</div><div class="what">"Promptware" <a class="cite" href="corpus.html#p-2503-02400">Chen+&nbsp;'25</a>, "programming with trust" <a class="cite" href="corpus.html#p-2502-13767">Roychoudhury+&nbsp;'25</a>, the MAST failure taxonomy <a class="cite" href="corpus.html#p-2503-13657">Cemri+&nbsp;'25</a>, and the 1,400-paper context-engineering survey <a class="cite" href="corpus.html#p-2507-13334">Mei+&nbsp;'25</a>.</div></div>
+    <div class="tl-item"><div class="when">2025 (H2) · context files get measured</div><div class="what">A wave of empirical studies dissects CLAUDE.md/AGENTS.md/Cursor-rules anatomy and evolution <a class="cite" href="corpus.html#p-2509-14744">'25a</a> <a class="cite" href="corpus.html#p-2511-09268">Santos+&nbsp;'25</a> <a class="cite" href="corpus.html#p-2511-12884">'25b</a>; ACE makes contexts self-improving <a class="cite" href="corpus.html#p-2510-04618">Zhang+&nbsp;'26</a>; Confucius makes scaffolding first-class <a class="cite" href="corpus.html#p-2512-10398">Wong+&nbsp;'25</a>.</div></div>
+    <div class="tl-item"><div class="when">2026 · infrastructure &amp; isolation of effects</div><div class="what">The anchor codifies context into tiered infrastructure <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>; AGENTS.md's effect is isolated in a controlled study <a class="cite" href="corpus.html#p-2601-20404">Lulla+&nbsp;'26</a>; Claude Code is reverse-engineered as a design space <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>; the maturity "Pyramid" reaches corporate scale <a class="cite" href="corpus.html#p-2603-09619">Vishnyakova&nbsp;'26</a>.</div></div>
+  </div>
+
+  <div class="pager">
+    <a href="corpus.html">← Corpus</a>
+    <a href="foundations.html">Foundations →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering — State-of-the-Art review · synthesised from a local arXiv corpus · findings are cited; <span style="color:var(--amber)">amber blocks are my inference</span>.</footer>
+</body>
+</html>

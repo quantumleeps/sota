@@ -30,9 +30,9 @@ print(f"== verifying {SITE} ==")
 
 topics = sorted(d for d in os.listdir(SITE)
                 if os.path.isdir(os.path.join(SITE, d))
-                and os.path.isfile(os.path.join(SITE, d, "corpus.html")))
+                and os.path.isfile(os.path.join(SITE, d, "index.html")))
 if not topics:
-    err("no topic dirs with a corpus.html found under the docs root")
+    err("no topic dirs (subdirs with an index.html) found under the docs root")
 print(f"[..]   topics: {', '.join(topics) or '(none)'}")
 
 if not os.path.isfile(os.path.join(SITE, "styles.css")):
@@ -68,8 +68,11 @@ for h in hrefs(hub):
 for t in topics:
     tdir = os.path.join(SITE, t)
     pages = sorted(glob.glob(os.path.join(tdir, "*.html")))
-    anchors = set(re.findall(r'id="(p-[A-Za-z0-9-]+)"',
-                             open(os.path.join(tdir, "corpus.html"), encoding="utf-8").read()))
+    # bibliography anchors live in corpus.html (size >=2) or inline in index.html (size 1)
+    bib = os.path.join(tdir, "corpus.html")
+    if not os.path.isfile(bib):
+        bib = os.path.join(tdir, "index.html")
+    anchors = set(re.findall(r'id="(p-[A-Za-z0-9-]+)"', open(bib, encoding="utf-8").read()))
     chips = set()
     for p in pages:
         b = os.path.basename(p)
@@ -77,6 +80,11 @@ for t in topics:
         if "styles.css" not in s: err(f"{t}/{b}: no stylesheet link")
         if 'class="topnav"' not in s: err(f"{t}/{b}: no .topnav")
         for h in hrefs(p):
+            if h.startswith("#p-"):                          # same-page chip (size-1 inline bib)
+                frag = h[1:]; chips.add(frag)
+                if frag not in anchors:
+                    err(f"{t}/{b}: chip {h} has no anchor in {t}")
+                continue
             if is_external(h):
                 continue
             if h in ("../styles.css", "../index.html"):
@@ -85,13 +93,13 @@ for t in topics:
             elif h.startswith("corpus.html#"):
                 frag = h.split("#", 1)[1]; chips.add(frag)
                 if frag not in anchors:
-                    err(f"{t}/{b}: chip #{frag} has no anchor in {t}/corpus.html")
+                    err(f"{t}/{b}: chip corpus.html#{frag} has no anchor in {t}/corpus.html")
             elif re.fullmatch(r'[A-Za-z0-9._-]+\.html(#[A-Za-z0-9-]+)?', h):
                 if not os.path.isfile(os.path.join(tdir, h.split('#')[0])):
                     err(f"{t}/{b}: internal link missing -> {h}")
             else:
                 err(f"{t}/{b}: unexpected link (absolute/parent?) -> {h}")
-    print(f"[ok]   {t}: {len(pages)} pages, {len(anchors)} corpus anchors, {len(chips)} chip targets resolve")
+    print(f"[ok]   {t}: {len(pages)} page(s), {len(anchors)} bib anchors, {len(chips)} chip targets resolve")
 
 print()
 print("RESULT: PASS — site is publish-ready" if fail == 0 else f"RESULT: FAIL — {fail} issue(s) above")

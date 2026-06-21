@@ -1,8 +1,17 @@
 # SotA — state-of-the-art review hub
 
-A self-contained, **topic-agnostic** working repo that turns a list of papers on any research topic into a hyperlinked, provenance-cited review and publishes it as one topic in a shared hub on GitHub Pages. `cd` here and run Claude Code; the `sota-site` skill does the rest.
+A self-contained, **topic-agnostic** working repo that turns a research topic into a hyperlinked, provenance-cited review and publishes it as one topic in a shared hub on GitHub Pages. `cd` here and run Claude Code. Two bundled skills compose into one pipeline: **`/arxiv-paper-finder`** discovers and ranks candidate papers, and **`/sota-site`** turns a chosen set into a published topic.
 
 **Live:** https://quantumleeps.github.io/sota/
+
+## Workflow: discover → review → publish
+
+1. **Discover — `/arxiv-paper-finder`.** Give it a topic ("explore LLM agent memory"). It pulls a candidate superset from arXiv / OpenAlex / Hugging Face (Semantic Scholar too, if `S2_API_KEY` is set), ranks by relevance (local embeddings) + recency + citations + has-code + social, and returns a shortlist. First use: `pip install -r .claude/skills/arxiv-paper-finder/requirements.txt`.
+2. **Review.** Read the ranked list with the user and curate it; re-rank with different weights (cheap — no re-fetch) until the set is right.
+3. **Hand off.** Re-run the ranker with `--emit-list <slug>.papers.txt` to write a sota-site-ready list (`<arxiv-id>  # <title>` per line).
+4. **Publish — `/sota-site`.** Feed that list as the corpus for a new topic: fetch full sources → read via parallel agents → digest → synthesize `docs/<slug>/` → regenerate the hub → verify → publish.
+
+**Slug / versioning:** if the topic already exists (see *Current topics*), use a `-v2` slug — e.g. exploring agent memory again → **`agent-memory-v2`**. Each version is a fresh corpus read in isolation and added alongside the existing topic on the hub (the skills never merge corpora unless told to).
 
 ## Layout
 

@@ -5,3 +5,5 @@ Thumbs.db
 
 # Working research material — corpora + digests are not published
 /topics-corpora/
+__pycache__/
+*.pyc

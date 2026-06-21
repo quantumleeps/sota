@@ -1,0 +1,9 @@
+# arxiv-paper-finder dependencies.
+# Only ONE optional dep — everything else is Python stdlib (urllib/json/xml).
+#
+#   pip install -r requirements.txt
+#
+# fastembed gives local ONNX relevance embeddings (keyless, no torch). Without it
+# the ranker falls back to BM25 (weaker, title-mostly matching) — it still runs,
+# just less accurately. First rank downloads a ~30 MB model (BAAI/bge-small-en-v1.5).
+fastembed>=0.3

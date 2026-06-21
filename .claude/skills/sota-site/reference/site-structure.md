@@ -1,9 +1,10 @@
 # Site structure
 
-The blueprint for Phase 3. A SotA site has a **fixed spine** of pages that apply to any topic, plus **thematic pages derived from this corpus**. Build `corpus.html` first (everything cites into it), then the thematic pages, then the framing pages (Overview, Synthesis) once you know the final shape.
+The blueprint for Phase 3. There is **no fixed page template to force** — the site is *sized to the corpus and the user's ask* (a 1–5 scale, below) and its thematic pages are **wholly derived from this corpus's own sub-topics**. The only constants at every size are the **bibliography with chip-anchors** (the provenance backbone), the **scope line** (this reviews N sources, not the field), and the provenance conventions. Build the bibliography first (everything cites into it), then the body, then the framing once you know the shape.
 
 ## Contents
-- Page set (spine + thematic)
+- Size scale (pick first)
+- Components (a menu, not a checklist)
 - Navigation
 - Overview page anatomy
 - Evidence page anatomy
@@ -12,31 +13,42 @@ The blueprint for Phase 3. A SotA site has a **fixed spine** of pages that apply
 - Corpus (bibliography) page
 - File & naming rules
 
-## Page set
+## Size scale (pick first — confirm with the user)
 
-**Fixed spine (always present):**
-| File | Page | Role |
-|---|---|---|
-| `index.html` | Overview | thesis, "state of the art in N claims", reading convention, map, timeline |
-| `evidence.html` | Evidence | ledger of measured effects + honest appraisal |
-| `failure-modes.html` | Failure Modes / Limitations | where it breaks; open problems (retitle to suit the topic) |
-| `synthesis.html` | Synthesis | wholly your inference: a reference model / your bets |
-| `corpus.html` | Corpus | bibliography backbone; every chip resolves here |
+| Size | Shape | Artifacts | When |
+|---|---|---|---|
+| **1** | single page | 1 | tiny corpus / a quick brief / the user wants one page |
+| **2** | brief | 2–3 | small corpus: Overview + Corpus (+ maybe Synthesis) |
+| **3** | standard | 4–5 | focused review: Overview + Evidence + Synthesis + Corpus (+1 thematic) |
+| **4** | full | 5–7 | Overview + 2–3 corpus-derived thematic pages + Evidence + Failure + Synthesis + Corpus |
+| **5** | comprehensive | 6–9 | rich corpus: the full multi-page treatment |
 
-**Thematic pages (derive 2–6 from THIS corpus):** group the digests into the natural sub-topics of the field and give each its own page (e.g. for codified-context the themes were Foundations, Codified Context, Architecture, Security, Adoption). Do not transplant another topic's section names — read what the corpus is actually about and name pages accordingly. A small corpus may need only 2–3 thematic pages; a broad one up to ~6.
+Default to **3–4** unless the user picks a size or the corpus clearly warrants 1 or 5. The driver is the corpus: many papers spanning several distinct sub-themes → larger; a handful on one tight question → smaller. State the chosen size when you confirm scope.
 
-Aim for ~8–11 pages total. Each idea on a page links to its source via a citation chip.
+## Components (a menu, not a checklist)
+
+Include components as the size warrants — don't force all of them. Two are **non-negotiable at every size**: the **bibliography** (chip-anchor backbone) and the **scope line**.
+
+- **Overview / thesis** — always. At size 1 it's the head of the single page.
+- **Bibliography (corpus)** — always. Inline section at size 1; its own `corpus.html` at size ≥2. Build it first.
+- **Thematic pages** — *wholly corpus-derived*: read what THIS corpus is actually about and name pages after its real sub-topics (e.g. codified-context yielded Foundations / Codified Context / Architecture / Security / Adoption — but that was that corpus). 0 at size 1–2, up to ~6 at size 5. Never transplant another topic's section names.
+- **Evidence** — ledger of measured effects (size ≥3).
+- **Failure / Limitations** — open problems (size ≥4).
+- **Synthesis** — your corpus-scoped inference (size ≥3; folded into the single page at size 1).
+
+**Size 1** folds it all into one page: thesis + scope line → key claims → compact evidence → brief amber synthesis → bibliography with `id="p-…"` anchors so chips resolve on-page. **Size 5** is the full flow: Overview → [thematic…] → Evidence → Failure Modes → Synthesis → Corpus. The per-component anatomies below are good defaults *for the components you include* — adapt them to the corpus, don't treat them as mandatory.
 
 ## Navigation
-Identical on every page (copy verbatim), brand + one `<a class="nav">` per page, in reading order: **Overview → [thematic…] → Evidence → Failure Modes → Synthesis → Corpus**. Mark the current page `class="nav active"`. Generate the nav once, then reuse — `verify_site.sh` will catch any page filename that doesn't exist.
+(Size 1 has no nav — it's a single page.) At size ≥2, the nav is identical on every page (copy verbatim), brand + one `<a class="nav">` per page that actually exists, in reading order: **Overview → [thematic…] → Evidence → Failure Modes → Synthesis → Corpus** (omit the components your size doesn't include). Mark the current page `class="nav active"`. Generate the nav once, then reuse — `verify_site.sh` will catch any page filename that doesn't exist.
 
 ## Overview page anatomy (index.html)
-1. `kicker` + `h1` + `lede` stating the **central thesis** of the field in plain language.
-2. A 3-card **stats strip** (`grid g3` of `card stat`) with 2–3 headline numbers, each chip-sourced.
-3. **The reading convention** (see provenance-conventions §6) so the visual language is legible.
-4. **"The state of the art in N claims"** — the 4–6 claims that recur across the corpus with enough independent support to count as consensus. Each claim: a short paragraph, multiple citation chips, a claim-type tag, and a link to the page that develops it.
-5. **Map of the territory** — `grid g2` of `card cardlink` linking each subsequent page with a one-line description.
-6. **Timeline** — corpus documents on a line. If you group them into "eras," flag that grouping as your inference (amber note), since the papers don't claim it.
+1. `kicker` + `h1` + `lede` stating the **central thesis that emerges across this corpus** (not "the field's" thesis) in plain language.
+2. A **scope line** — mandatory, near the top (in the lede or a `.note`): "A review of **N** sources gathered [roughly when]; a reading of *this corpus*, not a complete survey of the field." This is the one-sentence honesty anchor; do not omit it.
+3. A 3-card **stats strip** (`grid g3` of `card stat`) with 2–3 headline numbers, each chip-sourced.
+4. **The reading convention** (see provenance-conventions §6) so the visual language is legible.
+5. **"What recurs across these N papers"** — the 4–6 claims with enough independent support *within this corpus* to count as consensus *here*. Frame them as corpus observations ("across these papers, …"), not field-level verdicts. Each claim: a short paragraph, multiple citation chips, a claim-type tag, and a link to the page that develops it.
+6. **Map of the territory** — `grid g2` of `card cardlink` linking each subsequent page with a one-line description.
+7. **Timeline** — corpus documents on a line. If you group them into "eras," flag that grouping as your inference (amber note), since the papers don't claim it.
 
 ## Evidence page anatomy (evidence.html — use `wrap wide`)
 - A **ledger table**: each row = a measured effect (what was measured, result with `.pos`/`.neg`, method & scale, source chip, and a final **"my confidence"** column). The confidence column is YOUR appraisal — open the page with an amber box defining your scale (e.g. Strong / Moderate / Indicative) and stating it is not from the papers.
@@ -48,7 +60,7 @@ Identical on every page (copy verbatim), brand + one `<a class="nav">` per page,
 Synthesize the digests' "limitations / open problems" into families (e.g. coordination failures, decay, maintenance, security). Use `risk`/`gap` callouts. End with the cross-cutting tension you see (amber).
 
 ## Synthesis page (synthesis.html)
-Open with a prominent amber banner: this page is entirely your reasoning across the corpus; chips mark what you reason from, not agreement. Offer a **reference model** that unifies the findings and a set of **bets / design principles**, each grounded in (not claimed by) cited work. Add a grey "where I'd hold back" box for open bets you would not place. This is where opinion lives — keep it out of the other pages.
+Open with a prominent amber banner: this page is entirely your reasoning **across this corpus** — chips mark what you reason from, not agreement, and nothing here is a forecast of where the field is going. Offer a **reference model** that unifies *these papers'* findings and a set of **bets / design principles**, each grounded in (not claimed by) cited work and phrased as "what this corpus suggests," not "where the field is heading." Add a grey "where I'd hold back" box for open bets you would not place. This is where opinion lives — keep it out of the other pages, and keep even the opinion scoped to the corpus.
 
 ## Corpus page (corpus.html) — build this first
 The provenance backbone. Intro lede explains chips resolve here and link to arXiv. Group entries by role (Anchor → Core → Support → References, or just by relevance for a flat set). Each entry:

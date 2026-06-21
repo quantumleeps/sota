@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keeping memory true — LLM Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">LLM&nbsp;Agent&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="architectures.html">Architectures</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav active" href="consistency.html">Consistency</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">Page 03 · the validity problem</p>
+  <h1>Keeping memory true</h1>
+  <p class="lede">The most consistent — and most alarming — finding in this corpus is that getting information <em>into</em> memory is largely solved, but keeping that memory <em>correct, current, and authoritative</em> is not. Agents store the right fact, retrieve the right fact, and then answer from the stale one. This page collects the corpus's evidence on conflict, staleness, updates, and the discipline of maintaining state instead of hoarding it.</p>
+
+  <div class="box finding"><p class="box-h">▦ The shared failure</p>
+  <p>Across the validity-focused papers the anti-pattern is the same: <strong>append-only accumulation</strong>. Memory grows, old entries are never retired or overwritten, and at answer time the agent cannot tell which version is current. The fixes diverge — write-time adjudication, version-aware patches, retention-aware updates — but the diagnosis is shared.</p></div>
+
+  <h2>Implicit conflict and the "adjudication gap"</h2>
+  <p><strong>STALE</strong> isolates a failure mode prior benchmarks miss: <em>implicit conflict</em>, where a later observation invalidates an earlier memory <em>without</em> any explicit negation, so detecting it needs inference rather than string-matching. <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a> <span class="tag def">Definition</span> It probes three behaviours — can the model resolve the current state, resist a question that presupposes the stale state, and act on the update in a downstream task — across 400 expert-validated scenarios.</p>
+  <p>The results are blunt. The best model evaluated reaches only 55.2% overall; most external memory frameworks score below 10%, and several do <em>worse</em> than the plain model. <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a> <span class="tag emp">Empirical</span> A diagnostic on one framework shows the new evidence is present in retrieval for ~77% of cases — visibility is not the problem; <em>authority</em> is.</p>
+  <blockquote class="q">updated evidence can be stored and retrieved, but it does not reliably become the basis that governs subsequent answers. We term this the current-state adjudication gap.
+    <span class="src">— STALE <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a>, §How Do Memory Frameworks Adjudicate Current State</span>
+  </blockquote>
+  <p>The proposed fix is to move adjudication to <em>write</em> time: a prototype (CUPMem) that marks each memory KEEP / STALE / REPLACE / UNKNOWN as it ingests, and searches for propagated invalidations, lifts a weak backbone from 8.7% to 68.0% — though its own downstream-action score stays lower, so the gap is narrowed, not closed. <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">Models can identify outdated information under explicit probing, yet still comply when a query presupposes the outdated state.
+    <span class="src">— STALE <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a>, §Overall Performance</span>
+  </blockquote>
+
+  <h2>State collapse and version-aware updates</h2>
+  <p><strong>EvoArena</strong> diagnoses the structural reason memory goes stale: agents keep memory as "a single latest state," which collapses when different versions of an environment need different behaviour. <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <span class="tag thy">Theory</span> Its EvoMem patch history (see <a href="architectures.html">Architectures</a>) treats a <em>non-additive</em> update — one that revises or overwrites prior memory — as a first-class, traceable event with pre/post state, rationale, and evidence, rather than silently overwriting. <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <span class="tag prop">Proposal</span> Empirically it preserves more <em>complete</em> evidence sets (row-level capture rises most on temporal-trajectory questions) and cuts code-regression rates — but the authors are candid that on the hardest preference-conflict cases, retrieving historical patches can <em>add</em> ambiguity about which state is current. <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+
+  <h2>Maintenance over accumulation</h2>
+  <p><strong>WorldMemArena</strong> turns the validity question into an evaluation: its four-stage lifecycle (write → maintain → retrieve → use) lets it localise <em>where</em> memory breaks, and the "maintain" stage is where most systems fail — they are weak at updating and at rejecting distractors, accumulating rather than maintaining a consistent state. <a class="cite" href="corpus.html#p-2605-29341">WorldMemArena&nbsp;'26</a> <span class="tag emp">Empirical</span> It scores an update as successful only when the revised memory is kept <em>and</em> the old version is removed or overwritten — a strict definition most systems don't meet. <a class="cite" href="corpus.html#p-2605-29341">WorldMemArena&nbsp;'26</a> <span class="tag def">Definition</span> Two further findings reinforce the theme: higher storage quality does not translate into better answers, and increasing retrieval scope can hurt by surfacing redundant or outdated evidence. <a class="cite" href="corpus.html#p-2605-29341">WorldMemArena&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">Memory requires consistent state maintenance, not continuous accumulation.
+    <span class="src">— WorldMemArena <a class="cite" href="corpus.html#p-2605-29341">WorldMemArena&nbsp;'26</a>, §Discussion</span>
+  </blockquote>
+
+  <h2>Consolidation, forgetting, and what not to store</h2>
+  <p>If accumulation is the disease, deliberate forgetting is part of the cure — and several systems build it in. <strong>FluxMem</strong> prunes interfering links and consolidates recurrent trajectories offline, with a maturity metric (PEMS) that signals when consolidation should <em>stop</em> rather than running forever. <a class="cite" href="corpus.html#p-2605-28773">FluxMem&nbsp;'26</a> <span class="tag prop">Proposal</span> <strong>Bayesian-Agent</strong> makes forgetting an explicit, auditable decision — a skill whose posterior success falls is <em>retired</em>, not left to rot. <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a> <span class="tag prop">Proposal</span> And <strong>Personalize-then-Store</strong> attacks the upstream decision entirely: the cleanest way to avoid stale clutter is to never store transient sessions in the first place — though it shows current gating can't yet decide this reliably. <a class="cite" href="corpus.html#p-2605-25535">PerMem&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+
+  <div class="box inference"><p class="box-h">⟡ My reading — the binding constraint moved</p>
+  <p>Read together, these papers relocate the hard problem. A few years of memory work optimised <em>recall</em>; this corpus says recall is no longer where systems fail. The bottleneck is <strong>adjudication</strong> — deciding, among everything stored and retrieved, which belief currently governs the answer. STALE names it directly, WorldMemArena measures it as failed "maintain," and EvoMem's whole design is an attempt to make the current state recoverable from a history of changes. If that reading is right, the next round of memory systems will be judged less on what they can retrieve and more on whether they can say "this fact is now false."</p></div>
+
+  <div class="box risk"><p class="box-h">⚠ Why this matters beyond benchmarks</p>
+  <p>A memory that confidently serves stale state is a safety problem, not just an accuracy one: STALE shows agents comply with questions that presuppose an outdated fact, and EvoArena notes persistent adaptive memory "can surface outdated or context-specific information if the agent fails to judge whether a prior state remains applicable" <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a>. In a deployed agent — booking, code, health, finance — acting on a superseded memory is a wrong action, not a wrong answer.</p></div>
+
+  <div class="pager">
+    <a href="learning.html">← Learning</a>
+    <a href="evidence.html">Evidence →</a>
+  </div>
+</div>
+
+<footer class="site">LLM Agent Memory · a provenance-cited review of 14 papers (April–June 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

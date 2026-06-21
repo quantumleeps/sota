@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence ledger — LLM Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">LLM&nbsp;Agent&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="architectures.html">Architectures</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="consistency.html">Consistency</a>
+  <a class="nav active" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">Page 04 · the measured effects</p>
+  <h1>Evidence ledger</h1>
+  <p class="lede">Every headline number this corpus reports, in one place, each tied to its source and to my appraisal of how much weight it bears. The numbers are real and quoted exactly; the <em>confidence</em> column is mine.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My confidence scale — and a blanket caveat</p>
+  <p>I grade each row <strong>Strong</strong> / <strong>Moderate</strong> / <strong>Indicative</strong>. The blanket caveat first: <em>none</em> of these 14 papers report statistical significance tests, almost all are evaluated by their own authors — frequently on a benchmark the same paper introduces, and often with an LLM as judge — and all are un-peer-reviewed preprints with no independent replication. So nothing here earns <strong>Strong</strong>. <strong>Moderate</strong> = a clear, consistent effect across multiple backbones or benchmarks with a controlled ablation. <strong>Indicative</strong> = a single or self-introduced benchmark, small sample, or pure self-evaluation. Read the column as "how much I'd bet," not "how true it is."</p></div>
+
+  <h3>The most objective single result</h3>
+  <div class="grid g3">
+    <div class="card stat"><div class="big green">$81.52 → $10.58</div><div class="lbl">Continuous-session API cost on one benchmark, cut ~87% by cache-aware context management — measured from provider billing metadata, not a model-judged score. <a class="cite" href="corpus.html#p-2606-17016">TokenPilot&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big amber">55.2%</div><div class="lbl">Best model's ceiling on implicit memory conflict — the clearest "open problem" number in the corpus. <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">0 / 14</div><div class="lbl">Papers reporting any significance test or independent replication. Every result below is a point estimate. <a class="cite" href="corpus.html#p-2604-17091">corpus</a></div></div>
+  </div>
+
+  <h2>The ledger</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Measured effect</th><th>Result</th><th>Method &amp; scale</th><th>Source</th><th>My confidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Implicit-conflict accuracy, best model</td>
+        <td class="num">55.2% <span class="neg">(ceiling)</span></td>
+        <td>400 expert-validated scenarios, 1,200 probes; LLM-judge (human-validated κ=0.92)</td>
+        <td><a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Write-time state adjudication (CUPMem prototype)</td>
+        <td class="num"><span class="pos">8.7% → 68.0%</span></td>
+        <td>Same backbone (GPT-4o-mini) on STALE; author-built prototype</td>
+        <td><a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Continuous-session cost, cache-aware management</td>
+        <td class="num"><span class="pos">−87%</span> ($81.52→$10.58)</td>
+        <td>Claw-Eval continuous; real API billing; 10 baselines; one agent backbone</td>
+        <td><a class="cite" href="corpus.html#p-2606-17016">TokenPilot&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>KV-cache hit rate from prefix stabilization</td>
+        <td class="num"><span class="pos">38.7% → 79.2%</span></td>
+        <td>PinchBench; measured from provider cache metadata</td>
+        <td><a class="cite" href="corpus.html#p-2606-17016">TokenPilot&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Self-supervised memory pre-training, multi-hop QA</td>
+        <td class="num"><span class="pos">+5.2 / +17.7 pts</span></td>
+        <td>HotpotQA over MemAgent; two backbones; 3 seeds (post-training)</td>
+        <td><a class="cite" href="corpus.html#p-2606-03197">MemTrain&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Length generalization (degradation over 32× context)</td>
+        <td class="num"><span class="pos">−21.1 → −8.6 pts</span></td>
+        <td>HotpotQA 28k→896k tokens, Qwen2.5-7B</td>
+        <td><a class="cite" href="corpus.html#p-2606-03197">MemTrain&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>RL memorization policy, streaming video VQA</td>
+        <td class="num"><span class="pos">+5.3 to +7.0 pts</span></td>
+        <td>VideoMME / EgoLife / EgoTempo over Qwen3-VL-30B; Phase-1 mean±std (3 runs)</td>
+        <td><a class="cite" href="corpus.html#p-2605-31075">TaskMem&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Online personalization adapter size</td>
+        <td class="num">2,048 params</td>
+        <td>One additive vector at one layer; vs full fine-tune (forgetting)</td>
+        <td><a class="cite" href="corpus.html#p-2605-31075">TaskMem&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Self-evolving retrieval, LoCoMo F1</td>
+        <td class="num"><span class="pos">0.432 → 0.543</span> (+25.7% rel)</td>
+        <td>GPT-4o; vs SimpleMem; LLM-driven diagnosis vs random search (−9.6 F1)</td>
+        <td><a class="cite" href="corpus.html#p-2605-13941">EvolveMem&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Evolving graph connectivity, LoCoMo LMJ</td>
+        <td class="num"><span class="pos">81.23 → 95.06</span></td>
+        <td>GPT-4.1-mini; vs Full Context &amp; 8 memory baselines (author-run); LLM-judge</td>
+        <td><a class="cite" href="corpus.html#p-2605-28773">FluxMem&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Version-aware patch memory, chain-level</td>
+        <td class="num"><span class="pos">+3.7%</span> chain; +4.8–6.1% GAIA/LoCoMo</td>
+        <td>EvoArena (author benchmark); some per-model negative cases</td>
+        <td><a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Decoupled graph memory, long-video LVBench</td>
+        <td class="num"><span class="pos">+12.5 pts</span> (90.7); ~40× fewer ctx tokens</td>
+        <td>4 video benchmarks; mixed reproduction; internal numeric inconsistency flagged</td>
+        <td><a class="cite" href="corpus.html#p-2606-07512">MemDreamer&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Reasoning↔long-video correlation under decoupling</td>
+        <td class="num">R 0.702 → 0.897 (p&lt;0.01)</td>
+        <td>8 models, AIME2025 vs LVBench; correlation only (not causal)</td>
+        <td><a class="cite" href="corpus.html#p-2606-07512">MemDreamer&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Latent memory: exploration reward / token cost</td>
+        <td class="num">20.7 vs 8.4; <span class="pos">2.8×–22× fewer tokens</span></td>
+        <td>ScaleWoB, 10 unseen apps; novel coverage-reward metric</td>
+        <td><a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Personalized storage gating, F1</td>
+        <td class="num">up to 0.844; oracle&gt;universal persists</td>
+        <td>PerMem-Bench (synthetic, meta-validated); 20 users</td>
+        <td><a class="cite" href="corpus.html#p-2605-25535">PerMem&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Storage quality ≠ answer quality (lifecycle)</td>
+        <td class="num">qualitative + per-system table</td>
+        <td>461 multi-session multimodal tasks; long-context / hand-built / harness agents</td>
+        <td><a class="cite" href="corpus.html#p-2605-29341">WorldMemArena&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Skill memory: with-skills task success</td>
+        <td class="num"><span class="pos">53.2% → 68.4%</span>; +10.5 cross-agent</td>
+        <td>51/94 SkillsBench tasks, GPT-5.5, 5 runs (authors note wide CIs)</td>
+        <td><a class="cite" href="corpus.html#p-2605-27366">MUSE&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Density-maximized memory, long-horizon agent</td>
+        <td class="num">100% SOP/Lifelong; <span class="pos">−89.6%</span> tokens (self-evolution)</td>
+        <td>3 benchmarks; "distilled from practice rather than controlled ablations"</td>
+        <td><a class="cite" href="corpus.html#p-2604-17091">GenericAgent&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Posterior-guided skill repair (and its non-monotonicity)</td>
+        <td class="num"><span class="pos">45→65%</span> repair; <span class="neg">90→85%</span> online</td>
+        <td>SOP/Lifelong/RealFin, DeepSeek backbones; consolidated single runs (no error bars)</td>
+        <td><a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Figures are the papers' own primary results, quoted as written. Where a paper reported several numbers I show the headline; full detail and any internal inconsistencies are in each reading's digest. Model names (GPT-5.5, Claude Opus 4.6, Gemini 3.1, DeepSeek V4, etc.) are reproduced exactly from the sources.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My appraisal — where the evidence is consistent vs thin</p>
+  <p><strong>Most consistent:</strong> the <em>negative</em> result. That memory validity/adjudication is unsolved (STALE), that storage ≠ usefulness (WorldMemArena), and that append-only accumulation fails — these converge from independent papers using different methods, which is the strongest signal in the corpus. <strong>Reasonably supported:</strong> efficiency wins (TokenPilot, GenericAgent, JAMEL) and that learned/process-supervised memory beats heuristics (MemTrain, TaskMem), because they show clear ablations and, for cost, near-objective measurement. <strong>Thin:</strong> every "my system beats baselines" headline — almost all are author-run on self-introduced benchmarks with LLM judges, no significance, and at least two (EvoMem, Bayesian-Agent) document their own method <em>hurting</em> in some settings. The accuracy leaderboard numbers are the least trustworthy part of this corpus; the diagnostic findings are the most.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ What would raise confidence (from the papers' own future-work)</p>
+  <p>Shared cross-system benchmarks not authored by the method's proposers; statistical significance / repeated trials (authors of MUSE and Bayesian-Agent flag wide intervals themselves); replication on real (not synthetic) long-horizon traces (PerMem); dynamic, streaming evaluation rather than static snapshots (FluxMem, WorldMemArena); and schema-free conflict resolution in the wild rather than controlled single-conflict pairs (STALE).</p></div>
+
+  <div class="pager">
+    <a href="consistency.html">← Consistency</a>
+    <a href="limitations.html">Limitations →</a>
+  </div>
+</div>
+
+<footer class="site">LLM Agent Memory · a provenance-cited review of 14 papers (April–June 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

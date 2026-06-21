@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architectures of memory — LLM Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">LLM&nbsp;Agent&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav active" href="architectures.html">Architectures</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="consistency.html">Consistency</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">Page 01 · how memory is structured</p>
+  <h1>Architectures of memory</h1>
+  <p class="lede">What does an agent's memory actually <em>look like</em> in this corpus? The answers span graphs, layered stores, patch histories, latent vectors, and a fast working-memory tier — but they share a direction: memory is given a structure that is meant to change. This page maps the structural families and the working-memory layer that decides what stays in the context window.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My framing — not a paper's claim</p>
+  <p>Grouping these systems into "families" (graph / layered / patch / latent / working-memory) is <em>my</em> organisation of the corpus. The papers do not agree on a taxonomy; I use these buckets to make the design space legible. Chips mark the systems I am reasoning from.</p></div>
+
+  <h2>Graph &amp; connectivity memory</h2>
+  <p>Two systems represent memory as a graph and treat reasoning over it as traversal rather than flat retrieval.</p>
+  <p><strong>FluxMem</strong> models memory as a heterogeneous graph with three layers — semantic knowledge, episodic experiences, and procedural skills — and argues the agent's working context is just an activated subgraph, so optimizing context becomes <em>topological editing</em>: expanding under-connected links, pruning interfering ones, reshaping a unit's granularity, and distilling recurrent successful trajectories into procedural "circuits." <a class="cite" href="corpus.html#p-2605-28773">FluxMem&nbsp;'26</a> <span class="tag prop">Proposal</span> Its ablations attribute most of the LoCoMo gain to online feedback-driven refinement and most of the web-navigation gain to offline consolidation <a class="cite" href="corpus.html#p-2605-28773">FluxMem&nbsp;'26</a> <span class="tag emp">Empirical</span> — i.e. the two evolution stages do different jobs.</p>
+  <blockquote class="q">optimizing the working context is equivalent to performing targeted topological edits on the graph
+    <span class="src">— FluxMem <a class="cite" href="corpus.html#p-2605-28773">FluxMem&nbsp;'26</a>, §Context as Dynamically Induced Connectivity</span>
+  </blockquote>
+  <p><strong>MemDreamer</strong> applies the same intuition to long video: a perception model streams video into a persistent, purely-textual three-tier graph (video root → super-events → macro-events, over an entity/micro-event subgraph), and a separate reasoning model answers by an agentic Observation–Reason–Action loop with navigation, search, and graph-traversal tools. <a class="cite" href="corpus.html#p-2606-07512">MemDreamer&nbsp;'26</a> <span class="tag prop">Proposal</span> Crucially, hierarchy and the graph give <em>complementary</em> gains, and adding graph-traversal tools is the single largest jump in its retrieval ablation. <a class="cite" href="corpus.html#p-2606-07512">MemDreamer&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+
+  <h2>Layered &amp; hierarchical stores</h2>
+  <p>Where graph systems emphasise links, two others emphasise <em>tiers</em> with different retention rules.</p>
+  <p><strong>GenericAgent</strong> keeps a four-layer store — an always-on L1 index, an L2 fact layer, an L3 layer of consolidated SOPs, and an L4 raw session archive — plus a global meta-memory, injecting only meta-memory + the L1 index by default and routing to deeper layers on demand. <a class="cite" href="corpus.html#p-2604-17091">GenericAgent&nbsp;'26</a> <span class="tag prop">Proposal</span> Verified trajectories are consolidated into SOPs and then executable code under an explicit <em>"No Execution, No Memory"</em> rule, so guesses and failed branches never enter long-term memory. <a class="cite" href="corpus.html#p-2604-17091">GenericAgent&nbsp;'26</a> <span class="tag prop">Proposal</span> A memory-ablation finds a <em>condensed</em> memory matches a redundant one at a fraction of the tokens (165 vs 575 tokens at equal task success), so density, not volume, is what pays. <a class="cite" href="corpus.html#p-2604-17091">GenericAgent&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <p><strong>MUSE-Autoskill</strong> splits memory by scope: a compressed short-term task context, an <em>uncompressed</em> long-term cross-session note store, and — its distinctive move — a per-skill <span class="mono">.memory.md</span> file holding lessons and usage caveats for each skill. <a class="cite" href="corpus.html#p-2605-27366">MUSE&nbsp;'26</a> <span class="tag prop">Proposal</span> It also keeps a conversation as a DAG of nodes with a mutable active chain and immutable replayable history, so the working context can be compressed without losing recoverable state. <a class="cite" href="corpus.html#p-2605-27366">MUSE&nbsp;'26</a> <span class="tag def">Definition</span></p>
+  <blockquote class="q">skills should not be one-off generation outputs but long-lived, evolving assets of an agent system
+    <span class="src">— MUSE-Autoskill <a class="cite" href="corpus.html#p-2605-27366">MUSE&nbsp;'26</a>, §Introduction</span>
+  </blockquote>
+
+  <h2>Version-aware &amp; patch memory</h2>
+  <p><strong>EvoArena</strong> names a failure mode the layered and graph stores mostly share: <em>state collapse</em>, where memory is kept as "a single latest state" and breaks when different environment versions need different behaviour. Its remedy, <strong>EvoMem</strong>, is a "git-like" append-only patch history that records only <em>non-additive</em> updates — each patch storing the pre-update and post-update memory, the rationale, and the triggering evidence — so memory becomes a traceable history rather than an overwrite. <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <span class="tag prop">Proposal</span> It helps most at the multi-step "chain" level (+3.7% chain accuracy on its benchmark) and reduces code-regression rates, but the authors are explicit that it is "not a replay buffer." <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">reliable agents in changing environments should treat memory as an evolving history of grounded updates, keeping the latest state connected to the prior states, rationales, and evidence that produced it
+    <span class="src">— EvoArena / EvoMem <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a>, §Introduction</span>
+  </blockquote>
+
+  <h2>Self-evolving retrieval infrastructure</h2>
+  <p>Most systems evolve stored content but freeze the machinery that queries it. <strong>EvolveMem</strong> makes the opposite move: it exposes the entire retrieval configuration — semantic / keyword / structured top-k, fusion weights, per-category overrides, answer policy — as an action space, and lets an LLM-driven diagnosis module read per-question failure logs and rewrite that configuration in a closed "AutoResearch" loop, reverting changes that regress. <a class="cite" href="corpus.html#p-2605-13941">EvolveMem&nbsp;'26</a> <span class="tag prop">Proposal</span> The loop even proposes parameters absent from the original space (adversarial entity-swap, query decomposition, answer verification), and replacing the LLM diagnosis with random search over the same space costs roughly a tenth of the F1 — evidence the failure logs carry real signal. <a class="cite" href="corpus.html#p-2605-13941">EvolveMem&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">truly adaptive memory requires co-evolution at two levels: the stored knowledge and the retrieval mechanism that queries it
+    <span class="src">— EvolveMem <a class="cite" href="corpus.html#p-2605-13941">EvolveMem&nbsp;'26</a>, §Abstract</span>
+  </blockquote>
+
+  <h2>Latent &amp; compressed memory</h2>
+  <p>Not all memory in the corpus is human-readable text. <strong>JAMEL</strong> compresses each interaction step — an (observation, action) pair — into a single latent memory token (a frozen vision-language model's hidden state), aligns it into the policy's embedding space, and keeps the whole session as a soft prefix. <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a> <span class="tag prop">Proposal</span> This avoids context truncation entirely and matches cloud-model exploration depth at 2.8×–22× lower token cost <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a> <span class="tag emp">Empirical</span> — but the paper is candid about the catch.</p>
+  <blockquote class="q">Latent memory is usually more efficient but much harder to supervise, because its compressed vectors lack human-readable semantics.
+    <span class="src">— JAMEL <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a>, §Introduction</span>
+  </blockquote>
+
+  <h2>The fast tier: working memory &amp; context management</h2>
+  <p>Underneath every long-term store sits the context window — the fast, scarce tier of an agent's memory hierarchy — and two systems treat managing it as a memory problem in its own right.</p>
+  <p><strong>TokenPilot</strong> argues that the usual context-reduction tricks (pruning text, evicting old memory) save tokens but mutate the prompt layout, which shatters KV-cache prefix continuity and triggers cache-miss penalties that "ultimately override any financial savings from text reduction." <a class="cite" href="corpus.html#p-2606-17016">TokenPilot&nbsp;'26</a> <span class="tag thy">Theory</span> Its answer is a working-memory lifecycle: segments move active → completed → evictable, and a completed segment keeps its physical cache slots as long as its <em>residual utility</em> is non-zero, so cross-task document knowledge is preserved rather than re-read. <a class="cite" href="corpus.html#p-2606-17016">TokenPilot&nbsp;'26</a> <span class="tag prop">Proposal</span> Prefix stabilization alone raises the cache hit rate from 38.7% to 79.2% on one benchmark. <a class="cite" href="corpus.html#p-2606-17016">TokenPilot&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <p><strong>GenericAgent</strong> attacks the same tier from the density side, targeting a budget under ~30k tokens through head-tail truncation, periodic tag-level compression, FIFO eviction, and a working-memory anchor of recent turn-summaries — and reports that lower token consumption tracks <em>better</em> task performance, not worse. <a class="cite" href="corpus.html#p-2604-17091">GenericAgent&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">token consumption reflects the symptoms of an agent's context management quality, rather than the thoroughness of reasoning
+    <span class="src">— GenericAgent <a class="cite" href="corpus.html#p-2604-17091">GenericAgent&nbsp;'26</a>, §Discussion</span>
+  </blockquote>
+
+  <div class="box inference"><p class="box-h">⟡ My reading of the architecture space</p>
+  <p>Two axes organise this corpus for me. The first is <strong>representation</strong>: human-readable (graphs, layered text stores, patch logs) versus latent (JAMEL's vectors). Readable memory is auditable and editable — which is exactly what the consistency work needs — while latent memory is cheaper but, by its own authors' admission, hard to supervise. The second is <strong>what evolves</strong>: most systems evolve stored content; EvolveMem is the outlier that evolves the retrieval machinery, and EvoMem evolves the <em>edit history</em> rather than the state. If I had to name the through-line, it is that everyone is adding a layer whose job is to <em>decide what the memory should become</em> — and that layer, not the store, is where these systems differ.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ What this page can't tell you</p>
+  <p>Every system here is evaluated by its own authors on its own chosen benchmarks; there is no shared architecture comparison in the corpus, so "which structure is best" is not answerable from these papers. WorldMemArena (on <a href="consistency.html">Consistency</a>) is the closest thing to a neutral cross-design comparison, and it is multimodal-specific.</p></div>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="learning.html">Learning →</a>
+  </div>
+</div>
+
+<footer class="site">LLM Agent Memory · a provenance-cited review of 14 papers (April–June 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

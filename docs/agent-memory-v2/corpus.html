@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpus — LLM Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">LLM&nbsp;Agent&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="architectures.html">Architectures</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="consistency.html">Consistency</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav active" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">Bibliography · the provenance backbone</p>
+  <h1>Corpus</h1>
+  <p class="lede">The 14 papers this review reads — every citation chip elsewhere on the site resolves to an entry here, and each entry links onward to the paper on arXiv. The chain is always <em>claim → chip → this page → arXiv</em>. This is a sealed corpus, read in isolation: a sample surfaced by an arXiv-relevance search for "LLM agent memory" and filtered to work posted <strong>on or after 1 January 2026</strong>; in practice every paper here dates to <strong>April–June 2026</strong>. It is not a census of the field.</p>
+
+  <div class="box finding"><p class="box-h">▦ How to read an entry</p>
+  <p>Each entry carries a <strong>role</strong> badge (how central it is to this corpus), its arXiv id, first authors and affiliations, a type, the short <strong>cite label</strong> used in chips across the site, and a one-paragraph note on what it contributes. Papers are known here by their system/benchmark name where they have one (e.g. <span class="mono">FluxMem</span>, <span class="mono">STALE</span>), which is also the chip label.</p></div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:#eef1fb;border-color:#d4ddf6"></span> Core — central to the corpus</span>
+    <span><span class="sw" style="background:#f4f1e8;border-color:#e3e0d8"></span> Support — adjacent / domain-specific</span>
+    <span><span class="tag emp">Empirical</span> measured result</span>
+    <span><span class="tag prop">Proposal</span> proposed design</span>
+    <span><span class="tag def">Definition</span> taxonomy / benchmark</span>
+  </div>
+
+  <h2>Core sources</h2>
+
+  <div class="bibentry" id="p-2606-13681">
+    <span class="role core">Core</span><span class="bt">EvoArena: Tracking Memory Evolution for Robust LLM Agents in Dynamic Environments</span>
+    <div class="meta"><span class="idtag">arXiv:2606.13681</span> · Jundong Xu, Qingchuan Li et al. (NUS · SMU · UW · UCL · UPenn · NTU · MIT), 2026 · benchmark + framework · <strong>cite: EvoArena&nbsp;'26</strong></div>
+    <div class="rel">A benchmark for <em>persistent environment evolution</em> (interfaces, code, and preferences that change across versions) plus <strong>EvoMem</strong>, a "git-like" patch memory that records non-additive updates as an append-only history with pre/post state, rationale, and evidence. Diagnoses the dominant "state-collapse" failure where memory is kept as a single latest snapshot, and shows version-aware memory helps most at chain (multi-step) level.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.13681" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-28773">
+    <span class="role core">Core</span><span class="bt">FluxMem: Rethinking Memory as Continuously Evolving Connectivity</span>
+    <div class="meta"><span class="idtag">arXiv:2605.28773</span> · Jizhan Fang et al. (Zhejiang University · Alibaba · MemTensor · Tongji), 2026 · framework + empirical · <strong>cite: FluxMem&nbsp;'26</strong></div>
+    <div class="rel">Models memory as a continuously evolving heterogeneous graph (semantic / episodic / procedural layers) whose <em>connectivity</em> is refined online and consolidated offline, recasting context optimization as topological editing of an activated subgraph. Introduces a maturity metric (PEMS) to decide when consolidation should stop. Reports strong results on LoCoMo, Mind2Web, and GAIA.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.28773" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-17016">
+    <span class="role core">Core</span><span class="bt">TokenPilot: Cache-Efficient Context Management for LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2606.17016</span> · Buqiang Xu et al. (Zhejiang University · UESTC · Xidian · HomologyAI), 2026 · system/tool · <strong>cite: TokenPilot&nbsp;'26</strong></div>
+    <div class="rel">Argues that text-pruning and memory-eviction methods save tokens but mutate the prompt layout, shattering KV-cache prefix continuity and erasing the savings. Reconciles text sparsity with cache alignment via global ingestion-aware compaction (stable prefixes) and a local active→completed→evictable lifecycle gated by <em>residual utility</em>. Frames working memory as a hardware-cache problem, not just a token-count problem.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.17016" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-29341">
+    <span class="role core">Core</span><span class="bt">WorldMemArena: Evaluating Multimodal Agent Memory Through Action–World Interaction</span>
+    <div class="meta"><span class="idtag">arXiv:2605.29341</span> · Chengzhi Liu, Yuzhe Yang et al. (UC Santa Barbara · JPMorganChase · ETH Zurich · Stanford · JHU · CMU), 2026 · benchmark · <strong>cite: WorldMemArena&nbsp;'26</strong></div>
+    <div class="rel">Reframes multimodal memory evaluation as a four-stage lifecycle — write → maintain → retrieve → use — with 461 multi-session tasks and stage-level annotations that localize <em>where</em> memory fails. Head-to-head across long-context, hand-designed memory systems, and self-managing harness agents. Headline finding: better writing/storage does not guarantee better answers; using the right evidence at answer time is the binding constraint.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.29341" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-13941">
+    <span class="role core">Core</span><span class="bt">EvolveMem: Self-Evolving Memory Architecture via AutoResearch for LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2605.13941</span> · Jiaqi Liu, Xinyu Ye et al. (UNC-Chapel Hill · UC Berkeley · UC Santa Cruz), 2026 · system/tool · <strong>cite: EvolveMem&nbsp;'26</strong></div>
+    <div class="rel">Observes that most memory systems evolve stored <em>content</em> but freeze the <em>retrieval infrastructure</em> at deployment. Exposes the full retrieval configuration as an action space and lets an LLM-driven diagnosis module self-tune it in a closed "AutoResearch" loop — reading per-question failure logs, proposing changes (even parameters absent from the original space), and reverting regressions. Reports positive cross-benchmark transfer.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.13941" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-25535">
+    <span class="role core">Core</span><span class="bt">Personalize-then-Store: Benchmarking and Learning Personalized Memory for Long-horizon Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2605.25535</span> · Yeonjun In et al. (KAIST), 2026 · benchmark + empirical · <strong>cite: PerMem&nbsp;'26</strong></div>
+    <div class="rel">Argues that "worth-storing" is user-specific, not domain-intrinsic, and introduces PerMem-Bench (multi-year, multi-domain histories for 20 users) to evaluate <em>personalized</em> memory. Proposes lightweight session-level storage gating. Finds large retention gains under perfect (oracle) gating but that current gating methods can't realize them — a precise measure of unrealized headroom.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.25535" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-03197">
+    <span class="role core">Core</span><span class="bt">MemTrain: Self-Supervised Context Memory Training</span>
+    <div class="meta"><span class="idtag">arXiv:2606.03197</span> · Ziheng Li, Xingrun Xing et al. (Peking University · Samsung Research Beijing), 2026 · empirical (training framework) · <strong>cite: MemTrain&nbsp;'26</strong></div>
+    <div class="rel">Trains a model's fixed-size <em>context memory</em> with two self-supervised proxy tasks over unlabeled Wikipedia — end-to-end masked reconstruction (outcome-level) and intermediate memory recall (process-level) — as a better initialization for downstream memory post-training. Shows strong length generalization (7k→896k tokens) and that memory training raises a ceiling post-training scaling alone cannot reach.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.03197" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2604-17091">
+    <span class="role core">Core</span><span class="bt">GenericAgent: A Token-Efficient Self-Evolving LLM Agent via Contextual Information Density Maximization</span>
+    <div class="meta"><span class="idtag">arXiv:2604.17091</span> · Jiaqing Liang, Jinyi Han et al. (Fudan University · Shenzhen Aquaintelling / A3 Lab), 2026 · system/tool · <strong>cite: GenericAgent&nbsp;'26</strong></div>
+    <div class="rel">A general agent built on one principle: maximize <em>decision-relevant information per unit of finite context budget</em> (target &lt;30k tokens). Combines a minimal atomic toolset, an on-demand four-layer memory (index / fact / SOP / raw archive), episodic→procedural→code consolidation under a "No Execution, No Memory" rule, and aggressive context trimming. Argues a non-retrieval, organization-based memory can beat embedding/vector-DB systems on long-term recall.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2604.17091" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-06527">
+    <span class="role core">Core</span><span class="bt">STALE: Can LLM Agents Know When Their Memories Are No Longer Valid?</span>
+    <div class="meta"><span class="idtag">arXiv:2605.06527</span> · Hanxiang Chao, Yihan Bai et al. (Wuhan University · CUHK · HKUST), 2026 · benchmark (+ prototype) · <strong>cite: STALE&nbsp;'26</strong></div>
+    <div class="rel">Isolates <em>implicit conflict</em> — when a later observation invalidates an earlier memory without explicit negation — across 400 expert-validated scenarios and three probes (state resolution, premise resistance, implicit policy adaptation). Names the "current-state adjudication gap": updated evidence is retrieved but does not govern the answer. A prototype (CUPMem) that adjudicates at write time lifts a weak backbone from 8.7% to 68.0%.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.06527" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Supporting sources</h2>
+
+  <div class="bibentry" id="p-2605-31075">
+    <span class="role support">Support</span><span class="bt">TaskMem: Task-Focused Memorization for Multimodal Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2605.31075</span> · Tao Zou, Yichen He et al. (ByteDance Seed · Fudan University), 2026 · empirical (+ framework) · <strong>cite: TaskMem&nbsp;'26</strong></div>
+    <div class="rel">Frames memory <em>generation</em> as a learnable RL policy: first trained for general memory quality, then adapted online via a tiny (2,048-parameter) steering vector so the agent learns <em>what</em> to remember for its task. Demonstrated on streaming multimodal (video) VQA; positions the adapter as a form of "parametric personalized memory" that resists catastrophic forgetting.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.31075" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-01528">
+    <span class="role support">Support</span><span class="bt">JAMEL: Joint Agent Memory and Exploration Learning via Novelty Signals</span>
+    <div class="meta"><span class="idtag">arXiv:2606.01528</span> · Shizuo Tian et al. (Tsinghua · SYSU · Baidu · Tongji · Peking University), 2026 · empirical (system) · <strong>cite: JAMEL&nbsp;'26</strong></div>
+    <div class="rel">Trains a compact latent memory jointly with exploration, using a deterministic, annotation-free novelty signal (GUI code coverage) as step-level supervision. Each interaction is compressed into a single latent memory token (a frozen-VLM hidden state) and retained as a soft prefix — matching cloud models' exploration depth at 2.8×–22× lower token cost. A worked case for the "latent memory is efficient but hard to supervise" tension.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.01528" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-27366">
+    <span class="role support">Support</span><span class="bt">MUSE-Autoskill: Self-Evolving Agents via Skill Creation, Memory, Management, and Evaluation</span>
+    <div class="meta"><span class="idtag">arXiv:2605.27366</span> · Huawei Lin et al. (ByteDance · Rochester Institute of Technology), 2026 · system/tool + framework · <strong>cite: MUSE&nbsp;'26</strong></div>
+    <div class="rel">Treats skills as long-lived, testable assets managed through a five-stage lifecycle, with a multi-level memory: short-term (compressed task context), long-term (uncompressed cross-session notes), and a per-skill <span class="mono">.memory.md</span> experience store. A deliberate design stance for the thread: transferable capability (the skill) is shipped, but accumulated experience (the memory) is kept per-agent.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.27366" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-07512">
+    <span class="role support">Support</span><span class="bt">MemDreamer: Decoupling Perception and Reasoning for Long Video Understanding via Hierarchical Graph Memory and Agentic Retrieval</span>
+    <div class="meta"><span class="idtag">arXiv:2606.07512</span> · Cong Chen, Guo Gan, Kaixiang Ji et al. (Ant Group · Zhejiang University · Central South University · HKUST-GZ), 2026 · system/tool + empirical · <strong>cite: MemDreamer&nbsp;'26</strong></div>
+    <div class="rel">Decouples perception from reasoning: a perception model streams long video into a persistent, purely-textual three-tier graph memory; a separate reasoning model answers by agentic tool-augmented retrieval over that memory (~2% of full-context tokens). Evidence that structured graph memory plus multi-hop traversal beats flat embedding RAG and naive full-context dumping — and that good memory organization lets reasoning ability express itself.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.07512" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-08348">
+    <span class="role support">Support</span><span class="bt">Bayesian-Agent: Posterior-Guided Skill Evolution for LLM Agent Harnesses</span>
+    <div class="meta"><span class="idtag">arXiv:2606.08348</span> · Xiaojun Wu, Cehao Yang et al. (IDEA Research · HKUST-GZ · DataArcTech), 2026 · framework + empirical · <strong>cite: Bayesian-Agent&nbsp;'26</strong></div>
+    <div class="rel">Treats reusable harness assets (skills, SOPs, failure patches) as evidence-bearing Bayesian hypotheses about whether a <em>frozen</em> model will succeed, updating belief only from externally verified outcomes (never the model's self-assessment). A posterior maps to five inspectable actions — explore, patch, split, compress, retire — making consolidation/forgetting auditable. Shows online skill-memory growth can hurt as well as help.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.08348" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="box gap"><p class="box-h">◇ Scope &amp; provenance note</p>
+  <p>These 14 papers were surfaced by an automated arXiv-relevance ranking for the query "LLM agent memory," then filtered to a January 2026 date floor. The selection is therefore shaped by query phrasing and by what was on arXiv in mid-2026 — it over-represents Chinese-lab and large-industry preprints and the May–June 2026 window, and almost all sources are un-peer-reviewed preprints with no independent replication. Several papers report results against forward-dated model names (e.g. GPT-5.5, Claude Opus 4.6, Gemini 3.1, DeepSeek V4); these are reproduced exactly as written in the sources. Read the site as a faithful reading of <em>this</em> sample, not a verdict on the field.</p></div>
+
+  <div class="pager">
+    <a href="synthesis.html">← Synthesis</a>
+    <a href="index.html">Overview →</a>
+  </div>
+</div>
+
+<footer class="site">LLM Agent Memory · a provenance-cited review of 14 papers (April–June 2026) · every chip → this bibliography → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

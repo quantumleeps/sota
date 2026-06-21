@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations &amp; open problems — LLM Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">LLM&nbsp;Agent&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="architectures.html">Architectures</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="consistency.html">Consistency</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav active" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">Page 05 · what the corpus itself flags</p>
+  <h1>Limitations &amp; open problems</h1>
+  <p class="lede">These are the gaps the papers admit to — plus the ones visible only when you read all 14 together. I have grouped them into families. Several are not weaknesses of individual systems but of the corpus as a body of evidence.</p>
+
+  <h2>1 · The evaluation base is fragile</h2>
+  <p>This is the limitation that colours everything else. The corpus advances faster than its ability to measure itself.</p>
+  <div class="box risk"><p class="box-h">⚠ Self-evaluation, synthetic data, no significance</p>
+  <p>Most "beats baseline" numbers come from a benchmark the proposing paper introduces, scored by an LLM judge, with no significance test and no independent replication. Concretely: PerMem-Bench is fully synthetic (20 users) <a class="cite" href="corpus.html#p-2605-25535">PerMem&nbsp;'26</a>; EvolveMem's MemBench evaluation is 28 samples with default hyperparameters tuned on just 2 LoCoMo samples <a class="cite" href="corpus.html#p-2605-13941">EvolveMem&nbsp;'26</a>; MUSE covers 51 of 94 tasks and its authors note "confidence intervals for individual tasks are wide" <a class="cite" href="corpus.html#p-2605-27366">MUSE&nbsp;'26</a>; STALE's scenarios are LLM-generated then human-validated <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a>; and at least two papers (EvoArena, MemDreamer) contain internal numeric inconsistencies between main text and appendix/tables <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-07512">MemDreamer&nbsp;'26</a>.</p></div>
+
+  <h2>2 · Adjudication — knowing which memory is current — is unsolved</h2>
+  <p>The corpus's central open problem (see <a href="consistency.html">Consistency</a>) remains open even in the papers that tackle it. STALE's own fix depends on a predefined state schema and concedes that schema-free, open-domain state inference is "fundamental and far from solved." <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a> <span class="tag emp">Empirical</span> EvoMem's traceable history can itself <em>introduce</em> ambiguity about which state is current on hard preference conflicts. <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <span class="tag emp">Empirical</span> And WorldMemArena finds the "maintain" stage — update plus distractor rejection — is where most systems fail outright. <a class="cite" href="corpus.html#p-2605-29341">WorldMemArena&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+
+  <h2>3 · Evolving memory has a cost the papers rarely measure</h2>
+  <div class="box gap"><p class="box-h">◇ The overhead of "self-evolving"</p>
+  <p>Adaptive memory runs extra LLM calls, and most papers don't price them. FluxMem's online refinement and offline consolidation use iterative LLM calls whose latency, API cost, and token consumption are explicitly not measured <a class="cite" href="corpus.html#p-2605-28773">FluxMem&nbsp;'26</a>; a full EvolveMem self-evolution run takes 25–35 minutes on a single sample <a class="cite" href="corpus.html#p-2605-13941">EvolveMem&nbsp;'26</a>; MemTrain adds a self-supervised pre-training stage with real GPU cost <a class="cite" href="corpus.html#p-2606-03197">MemTrain&nbsp;'26</a>. The efficiency-focused systems (TokenPilot, GenericAgent) are the exception that proves the rule — they measure cost because cost is their thesis.</p></div>
+
+  <h2>4 · Learned memory inherits a supervision problem</h2>
+  <p>Moving memory from heuristics to learning relocates the difficulty to the training signal (see <a href="learning.html">Learning</a>), and the corpus shows the seams:</p>
+  <ul class="clean">
+    <li>JAMEL's novelty signal is GUI-specific (code coverage); embodied analogues are mentioned but not evaluated, and dense interfaces still cause "entrapment." <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a></li>
+    <li>TaskMem needs a "richness reward" to stop the policy reward-hacking toward empty memories, relies on as few as 5–10 feedback items, and uses the same model (GPT-4o) to both build preferences and answer. <a class="cite" href="corpus.html#p-2605-31075">TaskMem&nbsp;'26</a></li>
+    <li>Bayesian-Agent documents that online skill-memory growth is non-monotonic — it can make a frozen model <em>worse</em> when evidence is sparse. <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a></li>
+    <li>No paper demonstrates a learned-memory recipe transferring across domains without a domain-specific signal.</li>
+  </ul>
+
+  <h2>5 · Narrow scope and modality</h2>
+  <p>Most systems are demonstrated in one regime, and generalization is conjecture. TaskMem covers only episodic memory (semantic/visual memory left to future work) <a class="cite" href="corpus.html#p-2605-31075">TaskMem&nbsp;'26</a>; EvoArena spans three evolution regimes and calls for robotics/embodied/scientific extensions <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a>; PerMem gates storage only and offers no mechanism to evict a wrongly-stored entry <a class="cite" href="corpus.html#p-2605-25535">PerMem&nbsp;'26</a>; GenericAgent's skill-tree maintenance (merging, deprecating) is entirely manual <a class="cite" href="corpus.html#p-2604-17091">GenericAgent&nbsp;'26</a>; and multimodal memory remains largely text-centric, with visual detail compressed into captions and lost <a class="cite" href="corpus.html#p-2605-29341">WorldMemArena&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-07512">MemDreamer&nbsp;'26</a>.</p>
+
+  <h2>6 · Latent memory is opaque where the field needs auditability</h2>
+  <p>The cheapest memory in the corpus is the hardest to inspect. JAMEL's own framing — latent vectors "lack human-readable semantics" and are hard to supervise <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a> — sits in direct tension with the consistency work, which needs memory you can read, mark stale, and adjudicate. The corpus offers no way to debug a latent memory that has silently encoded a wrong or outdated belief.</p>
+
+  <div class="box inference"><p class="box-h">⟡ The cross-cutting tension I see</p>
+  <p>The corpus wants two things that pull apart. It wants memory to <strong>evolve</strong> — grow richer, restructure, accumulate skills and experience — and it wants memory to stay <strong>stable and correct</strong> — never serve a stale belief, never accumulate clutter, always know the current state. Every paper sits somewhere on that adaptivity-vs-stability axis, and none resolves it: the self-evolving systems (FluxMem, EvolveMem, EvoMem) are the ones most exposed to the staleness and ambiguity problems the consistency papers (STALE, WorldMemArena) measure. A second, quieter tension runs alongside: <strong>autonomy vs auditability</strong> — the more memory self-evolves (and the more it goes latent), the less a human or a verifier can inspect what it has come to believe. Bayesian-Agent's insistence on updating only from <em>externally verified</em> evidence reads, to me, as an early answer to that second tension. I think the field's progress will be measured by how well the next systems hold both ends at once, not by another point on a recall leaderboard.</p></div>
+
+  <div class="pager">
+    <a href="evidence.html">← Evidence</a>
+    <a href="synthesis.html">Synthesis →</a>
+  </div>
+</div>
+
+<footer class="site">LLM Agent Memory · a provenance-cited review of 14 papers (April–June 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

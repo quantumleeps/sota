@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning to remember — LLM Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">LLM&nbsp;Agent&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="architectures.html">Architectures</a>
+  <a class="nav active" href="learning.html">Learning</a>
+  <a class="nav" href="consistency.html">Consistency</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">Page 02 · memory as a learned policy</p>
+  <h1>Learning to remember</h1>
+  <p class="lede">A recurring move in this corpus is to stop hand-coding memory heuristics — "summarise every N turns," "retrieve top-k by cosine" — and instead <em>train</em> the memory behaviour: what to write, what to keep, what to retrieve, and which past experience to trust. The supervision signals differ wildly, and that turns out to be the interesting part.</p>
+
+  <div class="box inference"><p class="box-h">⟡ The question this page asks</p>
+  <p>If memory should be learned, the binding question is <em>where the training signal comes from</em>. The papers below answer it five different ways — masked reconstruction, task reward, novelty, verified outcomes, and oracle gating — and comparing those answers is my organising lens, not a claim any one paper makes.</p></div>
+
+  <h2>Self-supervised context memory — supervise the <em>process</em>, not just the outcome</h2>
+  <p><strong>MemTrain</strong> trains a model's fixed-size context memory on unlabeled Wikipedia with two coupled proxy tasks: end-to-end masked reconstruction (an outcome signal — recover a masked entity after reading chunked passages) and <em>intermediate memory recall</em> (a process signal — at a random mid-step, recover an earlier masked fact from the current memory state). <a class="cite" href="corpus.html#p-2606-03197">MemTrain&nbsp;'26</a> <span class="tag prop">Proposal</span> The process signal matters: removing it drops average accuracy from 70.31% to 63.28%, and the framework generalizes across a 32× context increase (a 21-point drop for the baseline shrinks to ~8.6 points). <a class="cite" href="corpus.html#p-2606-03197">MemTrain&nbsp;'26</a> <span class="tag emp">Empirical</span> Its sharpest claim is that this is <em>pre</em>-training for memory: it raises a ceiling that simply running more downstream post-training cannot reach. <a class="cite" href="corpus.html#p-2606-03197">MemTrain&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">End-to-end rewards alone are often coarse and may not sufficiently constrain the quality of intermediate memory states.
+    <span class="src">— MemTrain <a class="cite" href="corpus.html#p-2606-03197">MemTrain&nbsp;'26</a>, §Intermediate Memory Recall</span>
+  </blockquote>
+
+  <h2>Learning <em>what</em> to memorize from task reward</h2>
+  <p><strong>TaskMem</strong> reframes memory generation as a reinforcement-learned policy rather than a fixed summarization step, in two phases: first train for general memory quality, then — after deployment — adapt online with a tiny 2,048-parameter steering vector so the policy learns what is worth remembering <em>for this task</em>. <a class="cite" href="corpus.html#p-2605-31075">TaskMem&nbsp;'26</a> <span class="tag prop">Proposal</span> On streaming video QA it improves accuracy by 5.3–7.0 points over its backbone, and the adapter learns <em>task-specific</em> focus — only the matched task's adapter helps, others don't — while resisting the catastrophic forgetting that full fine-tuning induces. <a class="cite" href="corpus.html#p-2605-31075">TaskMem&nbsp;'26</a> <span class="tag emp">Empirical</span> A "richness reward" is needed to stop the policy reward-hacking toward short, accurate-but-empty memories. <a class="cite" href="corpus.html#p-2605-31075">TaskMem&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">memory is not merely a passive storage system, but an active, goal-driven process. An effective agent should continuously retain information that maximizes future utility.
+    <span class="src">— TaskMem <a class="cite" href="corpus.html#p-2605-31075">TaskMem&nbsp;'26</a>, §Introduction</span>
+  </blockquote>
+
+  <h2>Supervising latent memory with novelty</h2>
+  <p>Latent memory is efficient but, as <strong>JAMEL</strong> notes, hard to supervise because its vectors have no human-readable semantics — and ordinary task demonstrations don't supply step-level signal. Its fix is a deterministic, annotation-free novelty reward: in the GUI domain, code coverage is a clean proxy for "have I seen this before," and a <em>persistent</em> coverage baseline (a state never registers as novel twice) turns into a self-generated curriculum. <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a> <span class="tag prop">Proposal</span> Trained this way, the latent memory matches closed-model exploration depth while spending a fraction of the tokens. <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">memory and exploration form a mutually dependent loop … novelty-seeking interaction provides the supervision needed to make memory useful for future exploration.
+    <span class="src">— JAMEL <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a>, §Abstract</span>
+  </blockquote>
+
+  <h2>Learning to tune the memory system itself</h2>
+  <p><strong>EvolveMem</strong> (also on <a href="architectures.html">Architectures</a>) belongs here too: instead of learning what to store, it learns how to <em>retrieve</em>, using an LLM to diagnose per-question failures and rewrite the retrieval configuration. The control comparison is the telling one — swapping the LLM diagnosis for random search over the identical action space costs ~9.6 F1, so the learning signal is the model's reading of <em>why</em> a query failed, not just trial-and-error. <a class="cite" href="corpus.html#p-2605-13941">EvolveMem&nbsp;'26</a> <span class="tag emp">Empirical</span> The authors frame the loop as an autonomous "observe–hypothesize–experiment–validate" cycle replacing manual tuning. <a class="cite" href="corpus.html#p-2605-13941">EvolveMem&nbsp;'26</a> <span class="tag prop">Proposal</span></p>
+
+  <h2>Posterior belief over skills — learn only from verified outcomes</h2>
+  <p><strong>Bayesian-Agent</strong> treats reusable harness assets (skills, SOPs, failure patches) as Bayesian hypotheses about whether a <em>frozen</em> model will succeed, and updates belief <em>only</em> from externally verified trajectory outcomes — explicitly not from the model's own self-assessment. <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a> <span class="tag prop">Proposal</span> The posterior maps to five inspectable actions (explore, patch, split, compress, retire), and a deliberately negative case study shows repeated failures driving a skill toward "retire" rather than hiding the rot. <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a> <span class="tag emp">Empirical</span> Importantly, it documents that learned skill-memory growth is <em>non-monotonic</em>: full online evolution sometimes underperforms the static baseline when evidence is still sparse. <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">the LLM may propose explanations or repairs, but the belief state is updated by externally checked evidence.
+    <span class="src">— Bayesian-Agent <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a>, §Trajectory Evidence</span>
+  </blockquote>
+
+  <h2>Learning what is worth storing — per user</h2>
+  <p><strong>Personalize-then-Store</strong> attacks the write decision: which sessions are even worth committing to memory? Its claim is that "worth-storing" is user-specific, not domain-intrinsic — the same domain is long-horizon for one user and transient for another — so a universal policy misallocates a fixed budget. <a class="cite" href="corpus.html#p-2605-25535">PerMem&nbsp;'26</a> <span class="tag def">Definition</span> It introduces session-level storage gating and shows that <em>perfect</em> (oracle) personalized gating yields large retention gains, especially under tight budgets — but that current learned/heuristic gating cannot realise them, and often underperforms storing everything. <a class="cite" href="corpus.html#p-2605-25535">PerMem&nbsp;'26</a> <span class="tag emp">Empirical</span></p>
+  <blockquote class="q">The gap between Oracle and the best gating method thus represents unrealized potential — not an argument against personalization, but a precise measure of how much headroom remains.
+    <span class="src">— Personalize-then-Store <a class="cite" href="corpus.html#p-2605-25535">PerMem&nbsp;'26</a>, §Finding 3</span>
+  </blockquote>
+
+  <div class="box inference"><p class="box-h">⟡ What the signals have in common — my reading</p>
+  <p>The five training signals line up on a single axis: <strong>how cheap and how trustworthy</strong> the supervision is. Masked reconstruction (MemTrain) and code-coverage novelty (JAMEL) are nearly free and fully automatic but indirect. Task reward (TaskMem) and verified outcomes (Bayesian-Agent) are more faithful but need an environment with a grader. Oracle gating (PerMem) is the most faithful and the least available — which is exactly why PerMem can only measure the headroom, not capture it. My takeaway: the papers that work end-to-end are the ones that found a <em>deterministic, automatic</em> proxy for "good memory" (reconstruction, coverage); the ones that stall are waiting on a signal that doesn't exist cheaply yet (per-user worth, real-world task reward).</p></div>
+
+  <div class="box gap"><p class="box-h">◇ Open problem the corpus inherits</p>
+  <p>Learned memory shifts the bottleneck from engineering to <em>reward design</em>. Two papers here explicitly hit reward-hacking or non-monotonic learning (TaskMem's empty-memory hack, Bayesian-Agent's online regressions), and none demonstrates a single learned-memory recipe that transfers across domains without a domain-specific signal. That gap is developed on <a href="limitations.html">Limitations</a>.</p></div>
+
+  <div class="pager">
+    <a href="architectures.html">← Architectures</a>
+    <a href="consistency.html">Consistency →</a>
+  </div>
+</div>
+
+<footer class="site">LLM Agent Memory · a provenance-cited review of 14 papers (April–June 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

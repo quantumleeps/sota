@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthesis — LLM Agent Memory · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">LLM&nbsp;Agent&nbsp;<span>Memory</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="architectures.html">Architectures</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="consistency.html">Consistency</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav active" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">Page 06 · my inference across the corpus</p>
+  <h1>Synthesis</h1>
+
+  <div class="box inference"><p class="box-h">⟡ This whole page is my inference — not the papers' claims</p>
+  <p>Everything below is my reasoning <em>across these 14 papers</em>. Citation chips mark what I reason <em>from</em>, not sources that agree with my conclusion. Nothing here is a forecast of where the field is going — it is "what this corpus suggests" if you read it as one body of work, scoped to a three-month, search-shaped sample of preprints. Treat it as an argument, not a result.</p></div>
+
+  <h2>A reference model that unifies the corpus</h2>
+  <p>No single paper offers a complete memory stack, but the 14 slot together into one. Read as a pipeline, the corpus describes seven layers — and almost every paper is contributing a different layer, which is the strongest evidence that this decomposition is real and not imposed.</p>
+
+  <div class="grid g2">
+    <div class="card"><p class="ct">Layer 1 · Fast tier</p><h3>Working memory &amp; context</h3><p>The context window as a cache: protect KV-cache prefixes, evict by residual utility, maximize information density. <a class="cite" href="corpus.html#p-2606-17016">TokenPilot&nbsp;'26</a> <a class="cite" href="corpus.html#p-2604-17091">GenericAgent&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Layer 2 · Write gate</p><h3>Decide what's worth storing</h3><p>Per-task and per-user gating, learned rather than universal — most of the headroom is here and unrealized. <a class="cite" href="corpus.html#p-2605-25535">PerMem&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-31075">TaskMem&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Layer 3 · Store</p><h3>A structured, evolving substrate</h3><p>Graph, layered, or patch-versioned — readable and editable; optionally latent for cheapness. <a class="cite" href="corpus.html#p-2605-28773">FluxMem&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Layer 4 · Adjudication</p><h3>Keep the current state authoritative</h3><p>Mark stale, resolve implicit conflict, ensure the live belief governs the answer — the corpus's weakest layer. <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-29341">WorldMemArena&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Layer 5 · Consolidation</p><h3>Forget on purpose</h3><p>Distill episodes into skills/SOPs, prune interference, retire stale assets — stop appending. <a class="cite" href="corpus.html#p-2605-27366">MUSE&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Layer 6 · Evolution control</p><h3>Learn to tune the stack</h3><p>An LLM-driven (or trained) controller that reconfigures retrieval and write policy from failure signal. <a class="cite" href="corpus.html#p-2605-13941">EvolveMem&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-03197">MemTrain&nbsp;'26</a></p></div>
+  </div>
+  <p>The seventh layer is a <strong>verification spine</strong> threaded through all of them: update belief only from externally checked outcomes, never from the model's self-report <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a>. In my reading, that spine is what separates the systems that should be trusted in deployment from the ones that merely score well.</p>
+
+  <h2>What this corpus suggests — design bets</h2>
+
+  <h3>Bet 1 · Adjudicate at write time, not read time</h3>
+  <p>The single most leveraged result in the corpus is STALE's jump from 8.7% to 68.0% by adjudicating state as memory is written rather than when it is read <a class="cite" href="corpus.html#p-2605-06527">STALE&nbsp;'26</a>. If retrieval already surfaces the right evidence ~77% of the time and the failure is authority, then the fix belongs upstream of retrieval. I would build the "is this still true?" decision into ingestion.</p>
+
+  <h3>Bet 2 · Treat updates as non-additive events, and keep memory readable</h3>
+  <p>EvoMem's version-aware patches and FluxMem's editable graph both say: don't silently overwrite, and don't store opaquely <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-28773">FluxMem&nbsp;'26</a>. Readable memory is what makes adjudication, forgetting, and audit possible at all — which is why I would treat latent memory as an optimization, not a default.</p>
+
+  <h3>Bet 3 · Budget memory like a cache; density beats volume</h3>
+  <p>Three independent results — condensed memory matching redundant at a fraction of the tokens <a class="cite" href="corpus.html#p-2604-17091">GenericAgent&nbsp;'26</a>, cache-aware eviction cutting cost ~87% <a class="cite" href="corpus.html#p-2606-17016">TokenPilot&nbsp;'26</a>, and latent compression at 2.8–22× <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a> — point one way: more stored memory is a liability, not an asset, unless it raises decision-relevant density.</p>
+
+  <h3>Bet 4 · Learn memory from deterministic or verified signals</h3>
+  <p>The learned-memory systems that work end-to-end found a cheap, automatic proxy for "good memory" — masked reconstruction <a class="cite" href="corpus.html#p-2606-03197">MemTrain&nbsp;'26</a>, code-coverage novelty <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a>, verified task outcomes <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a>. The ones that stall wait on a signal that isn't cheap (per-user worth <a class="cite" href="corpus.html#p-2605-25535">PerMem&nbsp;'26</a>). Pick the layer where you have a deterministic signal; hand-engineer the rest for now.</p>
+
+  <h3>Bet 5 · Evaluate the lifecycle, not recall</h3>
+  <p>WorldMemArena's write→maintain→retrieve→use framing and EvoArena's chain-level evaluation both reveal failures that single-shot recall benchmarks hide <a class="cite" href="corpus.html#p-2605-29341">WorldMemArena&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a>. If you can only measure one thing, measure whether the agent acts on the <em>current</em> state across a long horizon.</p>
+
+  <div class="box gap"><p class="box-h">◇ Where I'd hold back — bets I would not place</p>
+  <p><strong>That any one architecture wins.</strong> There is no neutral cross-design comparison in this corpus; every system is its own benchmark's champion. <strong>That self-evolution is net-positive by default.</strong> Bayesian-Agent and EvoMem both document their own methods <em>hurting</em> in some settings — adaptivity is conditional, not free <a class="cite" href="corpus.html#p-2606-08348">Bayesian-Agent&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-13681">EvoArena&nbsp;'26</a>. <strong>That latent memory is ready for agents that must be audited.</strong> Its own proponents call it hard to supervise <a class="cite" href="corpus.html#p-2606-01528">JAMEL&nbsp;'26</a>. <strong>And that the accuracy leaderboards will replicate</strong> — with zero significance tests and self-authored benchmarks across the corpus, I treat the diagnostic findings as the durable contribution and the leaderboard wins as provisional.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ If I had to compress this corpus to one sentence</p>
+  <p>Within these 14 papers, agent memory is being rebuilt from a retrieval problem into a <em>state-management</em> problem — and the systems worth watching are the ones that make memory readable, adjudicate the current state at write time, forget on purpose, and update only from evidence they can verify.</p></div>
+
+  <div class="pager">
+    <a href="limitations.html">← Limitations</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">LLM Agent Memory · a provenance-cited review of 14 papers (April–June 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

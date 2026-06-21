@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations — Spec-Driven Development & the AI SDLC · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Spec-Driven&nbsp;<span>Development</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="spec-first.html">Spec-First</a>
+  <a class="nav" href="lifecycle.html">Agentic&nbsp;SDLC</a>
+  <a class="nav" href="verification.html">Verification</a>
+  <a class="nav" href="intent.html">Intent-Centric</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav active" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">06 · Limitations</p>
+  <h1>Open problems the papers name themselves</h1>
+  <p class="lede">These are the failure modes and caveats the corpus raises about its own program — grouped into families. They are notable because they come from inside the work: the same papers proposing spec-driven workflows are candid that the evidence is early, the artifacts decay, the gates can be gamed, and the hardest step — getting the spec right — is itself unsolved.</p>
+
+  <h2>1 · The evidence is early and structurally thin</h2>
+  <div class="box gap"><p class="box-h">◇ Proposals outnumber measurements</p>
+  <p>Nine of the 14 papers are surveys, taxonomies, or position/vision pieces; even the empirical ones lean single-model and single-domain. Hasanli's TDD-governance evaluation is explicitly "preliminary" with no controlled metrics yet <a class="cite" href="corpus.html#p-2604-26615">Hasanli+&nbsp;'26</a>; de Macedo's framework scores come from a single rater with no inter-rater reliability <a class="cite" href="corpus.html#p-2606-04967">de Macedo&nbsp;'26</a>; Mandl rests on one exploratory case "not intended to validate the model empirically" <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a>; Grynets used 3 replications on one domain/model <a class="cite" href="corpus.html#p-2606-00167">Grynets+&nbsp;'26</a>; Monperrus and Koch are explicitly syntheses, not new studies <a class="cite" href="corpus.html#p-2606-13175">Monperrus&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>.</p></div>
+  <div class="box gap"><p class="box-h">◇ No benchmark for the whole process</p>
+  <p>Multiple papers note there is no benchmark for spec-driven development <em>as a process</em> — SWE-bench-style suites assume the spec is correct and test only implementation. de Macedo lists "lack of benchmarks for the complete process" as a headline risk <a class="cite" href="corpus.html#p-2606-04967">de Macedo&nbsp;'26</a>; Hamblin built SpecBench precisely because existing benchmarks "assume specifications are correct and complete" <a class="cite" href="corpus.html#p-2605-30314">Hamblin+&nbsp;'26</a>; Bhati calls for evaluation "beyond SWE-bench" <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>.</p></div>
+
+  <h2>2 · Specs and context artifacts drift, decay, and can backfire</h2>
+  <div class="box risk"><p class="box-h">⚠ Drift between spec and code; "living artifacts" rot</p>
+  <p>de Macedo names "drift between spec and code" and the maintenance of "living artifacts" as recurring risks, and warns context absence "produces functional hallucinations: code that compiles, but violates implicit contracts" <a class="cite" href="corpus.html#p-2606-04967">de Macedo&nbsp;'26</a>. Taghavi's whole premise — "context blindness" — is that artifacts go stale against the repository they target <a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a>.</p></div>
+  <div class="box risk"><p class="box-h">⚠ More context is not always better</p>
+  <p>Koch's "minimal-context principle" exists because repository instruction files can <em>reduce</em> task success and raise cost "when imposing unnecessary or mismatched requirements" — context must be short, current, non-contradictory, and tied to executable feedback, not maximal <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>.</p></div>
+
+  <h2>3 · Correlated reviewers and a new attack surface</h2>
+  <div class="box risk"><p class="box-h">⚠ When the same model writes and reviews, blind spots correlate</p>
+  <p>Monperrus flags that having one model family generate <em>and</em> review code creates correlated blind spots and silent false-negative approvals, and that prompt injection is "a qualitatively new attack surface that does not exist for human reviewers" with "no fully solved defences" <a class="cite" href="corpus.html#p-2606-13175">Monperrus&nbsp;'26</a>. Alenezi independently observes emerging "closed loops" where an agent's output is reviewed mainly by a same-provider bot, with trusted security review still substantially rule-based <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a>. The risk: automated acceptance that looks like assurance but shares the generator's failure modes.</p></div>
+
+  <h2>4 · Security and permissions are mitigated, not solved</h2>
+  <div class="box risk"><p class="box-h">⚠ An explicit security spec still left 36/221 tests failing</p>
+  <p>Grynets' best condition — an application-specific security model — still failed 36 of 221 hidden tests, and the authors are explicit it is "a security-requirement operationalization layer, not… a guarantee of secure code"; hidden black-box testing remains necessary <a class="cite" href="corpus.html#p-2606-00167">Grynets+&nbsp;'26</a>. Koch cites a stress-test where permission-gate assumptions failed under ambiguous state-changing scenarios — especially when equivalent effects were reachable via file edits instead of shell commands <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>. De La Cruz names the structural gap: "governance and provenance debt" when agents get tool/repo access without identities, logging, and rollback <a class="cite" href="corpus.html#p-2605-11027">De La Cruz&nbsp;'26</a>.</p></div>
+
+  <h2>5 · Orchestration cannot exceed the base model</h2>
+  <div class="box gap"><p class="box-h">◇ The base LLM is a ceiling, not a bottleneck</p>
+  <p>Li found multi-agent orchestration acts as a "capability amplifier" that exposes weaker models' deficiencies — the base LLM's competence sets a "performance ceiling for the entire pipeline" <a class="cite" href="corpus.html#p-2606-01385">Li+&nbsp;'26</a>. Consistent with this, Taghavi's context-grounding helped least where defects sat in deep application/library logic weakly exposed by local tests <a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a>, and Suresh's Spec-Agent struggled to find the strongest contract for the most complex functions, "possibly indicating a ceiling in current techniques" <a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a>. Process discipline reorganises capability; it does not manufacture it.</p></div>
+
+  <h2>6 · The upstream step — getting the spec right — is itself unsolved</h2>
+  <div class="box gap"><p class="box-h">◇ Specification-level reasoning sits at 44.4%</p>
+  <p>The paradigm assumes a good spec exists, but the corpus's one direct measurement of that capability shows agents below 45% at identifying spec deficiencies before code — and SpecBench so far covers only deficiency <em>identification</em>, not spec <em>revision</em>, with LLM-only judges and gold labels pending human validation <a class="cite" href="corpus.html#p-2605-30314">Hamblin+&nbsp;'26</a>. Mandl's caution follows: AI-generated requirements are "drafts that require systematic review and domain-specific approval," not finished specs <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a>.</p></div>
+
+  <h2>7 · Long-horizon debt and maintenance are unmeasured</h2>
+  <div class="box gap"><p class="box-h">◇ The technical-debt hypothesis</p>
+  <p>Bhati raises the worry that agents bias toward producing more code and local fixes (global redesign being token-expensive), potentially inflating long-term maintenance burden — and notes no longitudinal repository-health studies exist yet <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>. De La Cruz and Alenezi echo the call for 6/12/24-month studies of AI-generated code's effect on debt and maintainability <a class="cite" href="corpus.html#p-2605-11027">De La Cruz&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a>.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ The cross-cutting tension I see</p>
+  <p>A specification in this corpus must be two contradictory things at once: <strong>machine-checkable</strong> (so gates, fuzzers, and deterministic engines can enforce it at agent throughput) and <strong>human-meaningful</strong> (so it actually captures intent and someone can be accountable for it). The verification cluster optimises the first; the intent-centric cluster insists on the second; and almost nothing in the corpus measures whether a spec that satisfies the machines still means what the humans intended. Until there are process-level benchmarks and longitudinal studies, "spec-driven development" rests on a plausible mechanism whose end-to-end payoff — and whose failure rate when the checkable spec and the intended spec diverge — is, in this corpus, asserted more than shown. This is my reading, not a claim any single paper makes.</p></div>
+
+  <div class="pager">
+    <a href="evidence.html">← Evidence</a>
+    <a href="synthesis.html">Synthesis →</a>
+  </div>
+</div>
+
+<footer class="site">Spec-Driven Development &amp; the AI SDLC · a provenance-cited review of 14 arXiv papers (Apr–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

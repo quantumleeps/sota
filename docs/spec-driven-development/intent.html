@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Intent-Centric Turn — Spec-Driven Development & the AI SDLC · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Spec-Driven&nbsp;<span>Development</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="spec-first.html">Spec-First</a>
+  <a class="nav" href="lifecycle.html">Agentic&nbsp;SDLC</a>
+  <a class="nav" href="verification.html">Verification</a>
+  <a class="nav active" href="intent.html">Intent-Centric</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">04 · The Intent-Centric Turn</p>
+  <h1>When code is abundant, judgment and accountability become the work</h1>
+  <p class="lede">The corpus's two reflective papers — plus threads in several others — argue that spec-driven development is a symptom of a larger reframe: software engineering is moving from authoring code to authoring <em>intent</em> and owning <em>accountability</em>. As generation gets cheap, the durable human contributions become specifying the problem, calibrating trust in agent output, and governing autonomy. This page is heavier on theory than measurement — both anchor papers are interpretive, not experimental.</p>
+
+  <h2>Code-centric → intent-centric</h2>
+  <p>De La Cruz's reflexive thematic analysis names the shift and its central tension <span class="tag def">Definition</span> <span class="tag thy">Theory</span>:</p>
+  <blockquote class="q">GenAI makes creation cheaper, while agentic software engineering makes accountability more important.
+    <span class="src">— From Code-Centric to Intent-Centric Software Engineering <a class="cite" href="corpus.html#p-2605-11027">De La Cruz&nbsp;'26</a>, §Findings</span></blockquote>
+  <p>"Intent-centric" engineering means humans express outcomes, constraints, quality attributes, policies, and acceptance evidence while agents generate, test, repair, and explain. The paper's destination is not autonomy but <strong>bounded autonomy</strong> <span class="tag def">Definition</span>:</p>
+  <blockquote class="q">The trajectory is not autonomy without humans. It is bounded autonomy inside engineered control loops.
+    <span class="src">— <a class="cite" href="corpus.html#p-2605-11027">De La Cruz&nbsp;'26</a>, §Introduction</span></blockquote>
+  <p>It also names a new liability the spec-driven SDLC creates — <strong>governance and provenance debt</strong> <span class="tag def">Definition</span>: the deficit that accrues when agents gain tool/repo access without identities, permissions, sandboxing, review gates, audit logs, provenance, and rollback. Governance, the paper insists, "cannot be an afterthought." The analysis is organised as eight themes and a five-stage maturity pathway (individual assistance → governed team use → lifecycle-integrated workflows → intent-centric platforms → bounded-autonomous engineering), and a matrix of six "acceleration vs accountability" dichotomies (e.g. augmentation vs automation, prompting vs architecture, autonomy vs governance) <a class="cite" href="corpus.html#p-2605-11027">De La Cruz&nbsp;'26</a>.</p>
+  <div class="box gap"><p class="box-h">◇ What kind of evidence this is</p>
+  <p>De La Cruz is a qualitative discourse analysis of public + scholarly sources (talks, essays, posts, papers), not an interview or repository study. Its per-theme "source support" counts (e.g. 25 artifacts for the convergence theme) "indicate traceability breadth," not statistical weight, and the maturity pathway is "an analytic projection rather than a predictive model" <a class="cite" href="corpus.html#p-2605-11027">De La Cruz&nbsp;'26</a>.</p></div>
+
+  <h2>The competencies that gain value</h2>
+  <p>Alenezi's interpretive synthesis reaches a compatible conclusion about the workforce <span class="tag thy">Theory</span> <span class="tag prop">Proposal</span>:</p>
+  <blockquote class="q">as code becomes abundant, the durable value of the software engineer increasingly resides in intent specification, critical judgment, and accountable oversight rather than in the sheer volume of code produced.
+    <span class="src">— Human-AI Collaboration and the Transformation of SE Work <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a>, §Abstract</span></blockquote>
+  <p>The paper frames three coexisting paradigms (Traditional / GenAI-enabled / Agentic, on an SE 1.0→3.0 ladder) and contributes a Future Software Engineering Competency Framework (FSE-CF). Its competency matrix inverts the traditional coding-centric hierarchy: the competencies with the lowest AI-substitutability and highest strategic criticality are cognitive and governance — critical judgment, systems thinking, <em>trust calibration</em>, and autonomy/accountability policy — with "intent specification" the top cognitive competency that "converts ambiguity into testable acceptance criteria" <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a>. Engineers, it argues, need a "barbell" profile: deep foundations plus AI-collaboration skills, with the routine middle delegated.</p>
+
+  <div class="box finding"><p class="box-h">▦ Trust is produced by the loop, not assumed of the generator <span class="tag thy">Theory</span></p>
+  <p>Alenezi grounds the reframe in cited adoption data (an AIDev dataset of 456,535 agent-authored PRs across 61,453 repos; one developer producing 164 agent PRs in three days vs 176 human PRs over three years) but argues capability has outrun trust: "the binding constraint is shifting from how fast code can be produced to how reliably it can be trusted, integrated, and maintained," and "trust is produced by the loop, not assumed of the generator" <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a>. (Those PR figures are cited from other studies, not Alenezi's own measurement.)</p></div>
+
+  <h2>The human relocates to the edges of the loop</h2>
+  <p>This reframe shows up across the corpus as a consistent picture of <em>where</em> the human goes. Bhati: "the developer's role shifts from producing to orchestrating, reviewing, and directing" <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>. Monperrus, having argued away per-commit review, relocates scrutiny upstream and downstream — developers become "specifiers and orchestrators" whose craft "shifts from line-by-line inspection to system-level judgment" <a class="cite" href="corpus.html#p-2606-13175">Monperrus&nbsp;'26</a>. Mandl keeps humans on approval for "merges, deployments, schema changes, permission changes" <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a>. The throughline: humans own intent at the top of the loop and accountability at the gates, not the keystrokes in between.</p>
+
+  <blockquote class="q">When autonomy is delegated, accountability does not disappear — it concentrates.
+    <span class="src">— <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a>, §Theoretical Implications</span></blockquote>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — "intent-centric" is the demand-side story for spec-driven development</p>
+  <p>The Spec-First and Verification pages describe the <em>supply side</em> — the artifacts and gates that make spec-driven development work mechanically. This page is the <em>demand side</em>: why anyone bothers. If code is cheap and trust is scarce, the spec is where humans exert leverage and where accountability attaches. That reframe is, in this corpus, argued rather than measured — both anchor papers are interpretive, and "intent-centric platforms / bounded-autonomous engineering" sit at the far, least-evidenced end of their own maturity ladders. I find the direction coherent and the timing unproven. Chips mark what I reason from.</p></div>
+
+  <div class="pager">
+    <a href="verification.html">← Verification &amp; Gates</a>
+    <a href="evidence.html">Evidence →</a>
+  </div>
+</div>
+
+<footer class="site">Spec-Driven Development &amp; the AI SDLC · a provenance-cited review of 14 arXiv papers (Apr–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec-First — Spec-Driven Development & the AI SDLC · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Spec-Driven&nbsp;<span>Development</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav active" href="spec-first.html">Spec-First</a>
+  <a class="nav" href="lifecycle.html">Agentic&nbsp;SDLC</a>
+  <a class="nav" href="verification.html">Verification</a>
+  <a class="nav" href="intent.html">Intent-Centric</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">01 · Spec-First</p>
+  <h1>The specification as the primary artifact</h1>
+  <p class="lede">The defining claim of this corpus is that the specification stops being documentation <em>about</em> the system and becomes the thing you actually author — the contract an agent implements, tests against, and is sandboxed by. This page covers what these papers mean by "specification," the landscape of frameworks that operationalise it, and the recurring requirement that intermediate spec artifacts be <em>grounded</em> in reality rather than trusted on sight.</p>
+
+  <h2>"Spec-centered," in their own words</h2>
+  <p>The strongest statement of the thesis is Marron's "spec-centered" development, in which the spec is the root from which everything else flows <span class="tag prop">Proposal</span>:</p>
+  <blockquote class="q">specifications are the primary artifact of the software development process, and from them, flows the implementation, testing, deployment, and interaction with AI agents, data, and other systems.
+    <span class="src">— Specifications for Humans, Agents, and Tooling <a class="cite" href="corpus.html#p-2606-15084">Marron&nbsp;'26</a>, §Introduction</span></blockquote>
+  <p>For Marron, that means an API specification should be "more akin to a programming language than simply a description of a data-transport schema" <a class="cite" href="corpus.html#p-2606-15084">Marron&nbsp;'26</a>. The BAPI ecosystem makes the spec carry data <em>and</em> behaviour <em>and</em> resource constraints: executable pre/post-conditions written in the Bosque language, validated-string types that cannot trigger ReDoS, an <span class="mono">env={…}</span>/<span class="mono">permissions={…}</span> sandbox using URIs and globs, and a first-class tamper-proof <span class="mono">$events</span> log for temporal constraints <span class="tag def">Definition</span> <span class="tag prop">Proposal</span>. A motivating question frames why this matters once an agent is the consumer:</p>
+  <blockquote class="q">Would you trust your AI agent to use the API below to make payments from your bank account?
+    <span class="src">— <a class="cite" href="corpus.html#p-2606-15084">Marron&nbsp;'26</a>, §Introduction</span></blockquote>
+
+  <div class="box finding"><p class="box-h">▦ Specs for agents must be multi-modal <span class="tag prop">Proposal</span></p>
+  <p>Marron argues an effective spec for agentic development combines natural language + examples + logical constraints, and adds an <span class="mono">example</span> keyword so examples serve as both tests and agent context. The classic case: a sort spec that guarantees <em>isSorted</em> but forgets <em>output-is-a-permutation</em> — a single example communicates the intent the logic missed and stops an LLM generating a plausibly-wrong implementation <a class="cite" href="corpus.html#p-2606-15084">Marron&nbsp;'26</a>.</p></div>
+
+  <p>This intent-as-artifact framing recurs well beyond Marron. De La Cruz observes that "intent clarity becomes more scarce as code production becomes less scarce" <a class="cite" href="corpus.html#p-2605-11027">De La Cruz&nbsp;'26</a>; Alenezi describes prompts functioning "like executable specifications with clear constraints and guardrails" <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a>; and Mandl recommends structuring requirements with controlled language and explicit, measurable acceptance criteria (citing EARS) rather than free text <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a>.</p>
+
+  <h2>The framework landscape</h2>
+  <p>The clearest map of operational SDD tooling is de Macedo's process taxonomy, which scores six high-traction frameworks on six dimensions (specification, context, roles, execution, validation, portability), each 0 (absent) / 1 (partial) / 2 (strong) <span class="tag def">Definition</span> <span class="tag prop">Proposal</span>. The headline finding: <strong>no framework scores 2 on all six</strong> — there is a structural trade-off between process depth and portability, and "specification" is the saturated common denominator that therefore distinguishes the frameworks least.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Framework <a class="cite" href="corpus.html#p-2606-04967">de Macedo&nbsp;'26</a></th><th class="num">Spec</th><th class="num">Ctx</th><th class="num">Roles</th><th class="num">Exec</th><th class="num">Valid</th><th class="num">Port</th><th class="num">Total /12</th></tr></thead>
+    <tbody>
+      <tr><td>BMAD Method</td><td class="num">2</td><td class="num">2</td><td class="num">2</td><td class="num">1</td><td class="num">2</td><td class="num">1</td><td class="num"><strong>10</strong></td></tr>
+      <tr><td>Spec Kitty</td><td class="num">2</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">2</td><td class="num">1</td><td class="num"><strong>9</strong></td></tr>
+      <tr><td>GitHub Spec Kit</td><td class="num">2</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num"><strong>8</strong></td></tr>
+      <tr><td>OpenSpec</td><td class="num">2</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">2</td><td class="num"><strong>6</strong></td></tr>
+      <tr><td>Reversa</td><td class="num">2</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num"><strong>6</strong></td></tr>
+      <tr><td>GSD</td><td class="num">1</td><td class="num">2</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num"><strong>4</strong></td></tr>
+      <tr><td><em>Spec-Flow (out-of-sample)</em></td><td class="num">2</td><td class="num">2</td><td class="num">2</td><td class="num">2</td><td class="num">2</td><td class="num">1</td><td class="num"><strong>11</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Scores are a single author's judgement from each framework's official docs (no second coder / inter-rater reliability) — read them as a structured qualitative reading, not measurement. The out-of-sample Spec-Flow (~85 GitHub stars) scoring highest is de Macedo's evidence that "adoption (stars) and process completeness are orthogonal." For context, the most-adopted framework, GitHub Spec Kit, had 106,786 stars in the May 2026 snapshot.</p>
+
+  <p>de Macedo's deeper point is a convergence across all six frameworks: "the unit of interaction is no longer the isolated prompt; it becomes an autonomous session over the repository" — persistent artifacts, work contracts, traceability and human review replace loose chat <a class="cite" href="corpus.html#p-2606-04967">de Macedo&nbsp;'26</a>. The central value of these frameworks, the paper argues, "lies less in automating the writing of code and more in how they structure the cognitive and operational work around the agent."</p>
+
+  <div class="box risk"><p class="box-h">⚠ Without grounding, frameworks risk "institutionalising vibe coding"</p>
+  <p>de Macedo warns that lacking a base of context, validation and traceability, "AI frameworks run the risk of merely institutionalizing 'vibe coding' with an extra layer of terminology," and flags supply-chain risk in installable command/skill kits and platform lock-in <a class="cite" href="corpus.html#p-2606-04967">de Macedo&nbsp;'26</a>.</p></div>
+
+  <h2>Context-grounding: specs are not enough if they are wrong</h2>
+  <p>A spec-first workflow only helps if the spec matches the repository it targets. Taghavi names the failure mode directly — <strong>context blindness</strong> <span class="tag def">Definition</span>:</p>
+  <blockquote class="q">the agent's intermediate artifacts can be internally coherent while being incompatible with the repository as it exists
+    <span class="src">— Spec Kit Agents <a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a>, §Introduction</span></blockquote>
+  <p>Spec Kit Agents augments GitHub Spec Kit's staged <strong>Specify → Plan → Tasks → Implement</strong> workflow with two hook types <span class="tag prop">Proposal</span>: read-only <em>discovery hooks</em> that probe repository state (globbing, grep, git history) before each phase, and <em>validation hooks</em> that check each artifact afterward. The key move is shifting verification earlier:</p>
+  <blockquote class="q">Rather than concentrating verification after implementation, we validate intermediate artifacts (SPEC/PLAN/TASKS) before code generation, catching hallucinated APIs, invalid paths, and architectural mismatches early.
+    <span class="src">— <a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a>, §Verification, context-grounding, and tool-based validation</span></blockquote>
+  <p>Empirically the effect is modest-but-real: judged quality rose from 3.51 to 3.66 (composite of completeness/correctness/style/maintainability, 1–5) on the 90-minute workflow, statistically significant on the paired completed-task subset (Wilcoxon, p&lt;0.05), while maintaining 99.7–100% repository test compatibility; on SWE-bench Lite, grounding lifted Pass@1 from 56.5% to 58.2% <span class="tag emp">Empirical</span> <a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a>. The authors are careful that "the primary benefit is not a dramatic jump in average score, but earlier detection and prevention of compounding context errors." See the <a href="evidence.html">Evidence</a> page for the full ledger and caveats (including a blinded human-preference test that did <em>not</em> favour the grounded variant).</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — "spec-first" is really "grounded-spec-first"</p>
+  <p>Reading these together, the corpus's operative unit is not the spec alone but the spec <em>plus a binding to repository reality and to executable checks</em>. Taghavi grounds the artifact against the repo; Marron makes the spec itself executable and sandboxed; de Macedo finds the frameworks that survive are the ones that add context, validation and traceability around the prompt. A spec that an agent cannot mechanically check against the world is, on this corpus's logic, closer to a prompt than to a program. Chips here mark what I reason from, not papers that state this conclusion.</p></div>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="lifecycle.html">The Agentic SDLC →</a>
+  </div>
+</div>
+
+<footer class="site">Spec-Driven Development &amp; the AI SDLC · a provenance-cited review of 14 arXiv papers (Apr–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

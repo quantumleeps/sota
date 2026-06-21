@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec-Driven Development & the AI SDLC — a review of 14 papers (Apr–Jun 2026) · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Spec-Driven&nbsp;<span>Development</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav active" href="index.html">Overview</a>
+  <a class="nav" href="spec-first.html">Spec-First</a>
+  <a class="nav" href="lifecycle.html">Agentic&nbsp;SDLC</a>
+  <a class="nav" href="verification.html">Verification</a>
+  <a class="nav" href="intent.html">Intent-Centric</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">State of the Art · Spec-Driven Development &amp; the AI SDLC</p>
+  <h1>When code is cheap, the specification becomes the program</h1>
+  <p class="lede">Across these 14 papers — all arXiv preprints from <strong>April–June 2026</strong> — the recurring move is to push engineering's centre of gravity <em>upstream of code</em>. As coding agents make implementation abundant, the scarce, value-bearing artifact becomes the <strong>specification</strong>: the precise statement of intent, constraints, and acceptance evidence that an agent executes against. The papers converge less on "which model writes better code" and more on the process question — <em>which discipline turns natural-language intent into verifiable engineering output, at a throughput humans can no longer manually inspect.</em></p>
+
+  <div class="box inference"><p class="box-h">⟡ Scope — read this first</p>
+  <p>This is a review of <strong>14 sources</strong>, gathered in <strong>June 2026</strong> by an automated arXiv/OpenAlex relevance search for "spec-driven development" and "AI software development lifecycle," filtered to a <strong>1 January 2026</strong> date floor (in practice all 14 land April–June 2026) and curated to 14 by topical fit. It is a reading of <em>this corpus</em> — a search-shaped, three-month sample of mostly un-peer-reviewed preprints, several of them position or vision papers — <strong>not</strong> a complete survey and not a claim about where the field is heading. Where this site says "across these papers," it means exactly that. Provenance for every claim lives in the <a href="corpus.html">Corpus</a>.</p></div>
+
+  <div class="grid g3">
+    <div class="card stat">
+      <div class="big">44.4%</div>
+      <div class="lbl">Best agent's score at <em>specification-level reasoning</em> — finding deficiencies in design proposals before code; all evaluated agents scored below 45%. <a class="cite" href="corpus.html#p-2605-30314">Hamblin+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big green">50→36</div>
+      <div class="lbl">Modal security-test failures (of 221) on AI-generated backends as security moves from implicit, to a generic standard, to an explicit application-specific security spec. <a class="cite" href="corpus.html#p-2606-00167">Grynets+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big green">85%</div>
+      <div class="lbl">Functions given valid auto-synthesised formal contracts across million-line C++ repos, at ~10× lower token cost than a frontier coding agent. <a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a></div>
+    </div>
+  </div>
+
+  <div class="box finding"><p class="box-h">▦ How to read this site</p>
+  <p>Citation chips like <a class="cite" href="corpus.html#p-2605-30314">Hamblin+&nbsp;'26</a> follow every sourced claim and link to the <a href="corpus.html">Corpus</a> → arXiv. Claim-type tags show how strong a claim is in its source: <span class="tag emp">Empirical</span> measured, <span class="tag thy">Theory</span> analytical, <span class="tag prop">Proposal</span> proposed-but-unvalidated, <span class="tag def">Definition</span> a term/taxonomy. <strong>Amber blocks are my inference</strong>; blue blocks are paper findings; teal blockquotes are verbatim. This matters here because much of the corpus is proposals and position papers — the tags keep proposal separate from evidence.</p></div>
+
+  <h2>What recurs across these 14 papers</h2>
+  <p class="note">Claims with enough independent support <em>within this corpus</em> to count as a shared view <em>here</em> — not field-level verdicts.</p>
+
+  <div class="box finding"><p class="box-h">1 · The specification/intent is the primary artifact; code is the cheap output <span class="tag thy">Theory</span> <span class="tag def">Definition</span></p>
+  <p>Multiple papers independently argue the locus of engineering work moves from authoring code to authoring intent. Marron makes specs "the primary artifact… from which flows implementation, testing, deployment, and interaction with AI agents" <a class="cite" href="corpus.html#p-2606-15084">Marron&nbsp;'26</a>; De La Cruz names this the shift from "code-centric" to "intent-centric" engineering <a class="cite" href="corpus.html#p-2605-11027">De La Cruz&nbsp;'26</a>; Alenezi puts "intent specification" as the least AI-substitutable competency <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a>; Mandl observes "the amount of generated code is not a meaningful success measure" <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a>. <a class="cardlink" href="intent.html">→ The intent-centric turn</a></p></div>
+
+  <div class="box finding"><p class="box-h">2 · The bottleneck moves from generation to verification and review <span class="tag thy">Theory</span></p>
+  <p>If an agent emits patches faster than people can inspect them, human review is the rate-limiter. Bhati calls this "the economics of attention" <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>; Koch names the resulting "verification debt" <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>; Monperrus pushes it to the limit, arguing human code review should be superseded <a class="cite" href="corpus.html#p-2606-13175">Monperrus&nbsp;'26</a>; Alenezi: "the binding constraint is shifting from how fast code can be produced to how reliably it can be trusted" <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a>. <a class="cardlink" href="verification.html">→ Verification &amp; gates</a></p></div>
+
+  <div class="box finding"><p class="box-h">3 · Structure beats chat: implement from a reviewed brief, and ground intermediate artifacts <span class="tag prop">Proposal</span></p>
+  <p>A consistent design pattern: separate exploratory conversation from execution, and validate the spec/plan artifacts against reality before generating code. Koch's "conversation-to-contract" gate — "Do not let an agent implement from a long chat. Let it implement from a reviewed brief" <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>; Taghavi's pre/post-phase context-grounding hooks against "context blindness" <a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a>; de Macedo's "from prompt to contract" convergence <a class="cite" href="corpus.html#p-2606-04967">de Macedo&nbsp;'26</a>; Hasanli's phase-ordered validation gates <a class="cite" href="corpus.html#p-2604-26615">Hasanli+&nbsp;'26</a>. <a class="cardlink" href="spec-first.html">→ Spec-first</a></p></div>
+
+  <div class="box finding"><p class="box-h">4 · Acceptance by evidence, not plausibility — with risk-tiered gates <span class="tag prop">Proposal</span></p>
+  <p>Output should be accepted because it satisfies evidence appropriate to its risk, not because it "looks right." Koch's evidence bundles and R0–R3 risk gates <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>; Hasanli's deterministic engine that gates every mutation <a class="cite" href="corpus.html#p-2604-26615">Hasanli+&nbsp;'26</a>; Grynets' hidden-oracle security tests <a class="cite" href="corpus.html#p-2606-00167">Grynets+&nbsp;'26</a>; Suresh's fuzzing-as-pseudo-oracle with counterexample refinement <a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a>. <a class="cardlink" href="verification.html">→ Verification &amp; gates</a></p></div>
+
+  <div class="box finding"><p class="box-h">5 · The lifecycle is being re-mapped phase-by-phase around agents <span class="tag def">Definition</span> <span class="tag prop">Proposal</span></p>
+  <p>Several papers re-draw the SDLC explicitly. Bhati's "Agentic SDLC (A-SDLC)" maps each classical phase to an agent equivalent with humans at intent/review/approval gates <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>; Mandl's AI-assisted→integrated→driven staging around a "harness" <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a>; Li extends automation upstream from requirements into architecture <a class="cite" href="corpus.html#p-2606-01385">Li+&nbsp;'26</a>. <a class="cardlink" href="lifecycle.html">→ The agentic SDLC</a></p></div>
+
+  <div class="box finding"><p class="box-h">6 · Process maturity is uneven and largely unmeasured <span class="tag thy">Theory</span></p>
+  <p>The tooling has outrun the evidence. de Macedo finds no SDD framework strong across all six process dimensions, and that "specification" is the saturated common denominator while roles/validation/portability diverge <a class="cite" href="corpus.html#p-2606-04967">de Macedo&nbsp;'26</a>; many corpus contributions are explicitly "preliminary" <a class="cite" href="corpus.html#p-2604-26615">Hasanli+&nbsp;'26</a> or position syntheses <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-13175">Monperrus&nbsp;'26</a>, and the call for process-level benchmarks recurs. <a class="cardlink" href="evidence.html">→ Evidence</a></p></div>
+
+  <h2>Map of the territory</h2>
+  <div class="grid g2">
+    <a class="card cardlink" href="spec-first.html"><h3>Spec-First</h3><p>What a "specification" is becoming — primary artifact, executable contract, multi-modal intent — and the landscape of SDD frameworks (Spec Kit, BMAD, OpenSpec…) and context-grounding.</p></a>
+    <a class="card cardlink" href="lifecycle.html"><h3>The Agentic SDLC</h3><p>Re-drawing the lifecycle around agents: phase-by-phase maps, the "harness," and pushing spec-driven automation upstream from requirements into architecture.</p></a>
+    <a class="card cardlink" href="verification.html"><h3>Verification &amp; Gates</h3><p>Acceptance over inspection: evidence bundles and risk gates, TDD-as-governance, formal spec synthesis, security-as-spec, and the argument to retire human code review.</p></a>
+    <a class="card cardlink" href="intent.html"><h3>The Intent-Centric Turn</h3><p>The paradigm reframe and the human role: bounded autonomy, accountability and "governance debt," and the competencies that gain value as code becomes cheap.</p></a>
+    <a class="card cardlink" href="evidence.html"><h3>Evidence</h3><p>The measured-effect ledger — what was actually quantified across the corpus, with method, scale, and my confidence appraisal. Most of the corpus is proposal, not measurement.</p></a>
+    <a class="card cardlink" href="limitations.html"><h3>Limitations</h3><p>Open problems and failure families the papers themselves name: thin evidence, drift, security/permission gaps, and the missing process benchmarks.</p></a>
+    <a class="card cardlink" href="synthesis.html"><h3>Synthesis</h3><p>My corpus-scoped reasoning: a reference model that unifies these papers' mechanisms, and the bets I would and would not place on the strength of this corpus.</p></a>
+    <a class="card cardlink" href="corpus.html"><h3>Corpus</h3><p>The 14 papers with role, type, and a one-paragraph note each — the bibliography every chip resolves to, linking onward to arXiv.</p></a>
+  </div>
+
+  <h2>The corpus on a timeline</h2>
+  <div class="box inference"><p class="box-h">⟡ The grouping is just chronology</p>
+  <p>All 14 papers were posted across three months; the months below are publication order, not "eras." A three-month window is too short to read a trend into — treat this as a snapshot of what was being written, not a trajectory.</p></div>
+  <div class="timeline">
+    <div class="tl-item"><div class="when">Apr 2026</div><div class="what">Spec Kit Agents <a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a> · Agentic AI in the SDLC <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a> · TDD Governance <a class="cite" href="corpus.html#p-2604-26615">Hasanli+&nbsp;'26</a></div></div>
+    <div class="tl-item"><div class="when">May 2026</div><div class="what">Intent-Centric SE <a class="cite" href="corpus.html#p-2605-11027">De La Cruz&nbsp;'26</a> · Agentic Agile-V <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a> · Spec-Agent (separation logic) <a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a> · SpecBench <a class="cite" href="corpus.html#p-2605-30314">Hamblin+&nbsp;'26</a></div></div>
+    <div class="tl-item"><div class="when">Jun 2026</div><div class="what">SDD Security Benchmark <a class="cite" href="corpus.html#p-2606-00167">Grynets+&nbsp;'26</a> · MAAD (reqs→architecture) <a class="cite" href="corpus.html#p-2606-01385">Li+&nbsp;'26</a> · Human-AI Collaboration <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a> · From Prompt to Process <a class="cite" href="corpus.html#p-2606-04967">de Macedo&nbsp;'26</a> · The End of Code Review <a class="cite" href="corpus.html#p-2606-13175">Monperrus&nbsp;'26</a> · Specifications for Humans, Agents &amp; Tooling <a class="cite" href="corpus.html#p-2606-15084">Marron&nbsp;'26</a> · AI-driven Software Development <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a></div></div>
+  </div>
+
+  <div class="pager">
+    <a href="corpus.html">← Corpus</a>
+    <a href="spec-first.html">Spec-First →</a>
+  </div>
+</div>
+
+<footer class="site">Spec-Driven Development &amp; the AI SDLC · a provenance-cited review of 14 arXiv papers (Apr–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

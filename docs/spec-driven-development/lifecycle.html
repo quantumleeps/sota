@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Agentic SDLC — Spec-Driven Development & the AI SDLC · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Spec-Driven&nbsp;<span>Development</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="spec-first.html">Spec-First</a>
+  <a class="nav active" href="lifecycle.html">Agentic&nbsp;SDLC</a>
+  <a class="nav" href="verification.html">Verification</a>
+  <a class="nav" href="intent.html">Intent-Centric</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">02 · The Agentic SDLC</p>
+  <h1>Re-drawing the lifecycle around agents</h1>
+  <p class="lede">If specs are the new primary artifact, the lifecycle that consumes them has to change shape. Three papers in this corpus re-draw the SDLC explicitly: Bhati maps every classical phase to an agentic equivalent, Mandl frames a staged transformation organised around a "harness," and Li pushes spec-driven automation upstream from requirements into architecture. The common thread is that the human moves to intent, review, and approval gates while agents do the execution between them.</p>
+
+  <h2>From "code generation" to "delegated execution under human supervision"</h2>
+  <p>Bhati's survey reframes the object of study <span class="tag thy">Theory</span> <span class="tag def">Definition</span>:</p>
+  <blockquote class="q">the central object of inquiry has shifted from code generation to delegated execution under human supervision
+    <span class="src">— Agentic AI in the Software Development Lifecycle <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>, §Abstract</span></blockquote>
+  <p>The paper proposes a six-layer reference architecture — L0 Foundation Model, L1 Reasoning/Memory/Self-Reflection, L2 Agent–Computer Interface, L3 Tools &amp; Environment, L4 Orchestration, L5 Governance &amp; Safety — and an <strong>Agentic SDLC (A-SDLC)</strong> that maps each classical phase to an agent equivalent, where (for example) the Requirements phase becomes "intent specification; agent drafts spec" with the human supervising <span class="tag prop">Proposal</span> <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>. KPIs shift accordingly — from cycle time and defect rate toward acceptance rate and escalation quality.</p>
+
+  <div class="box finding"><p class="box-h">▦ Scaffolding, not raw model scale, drove the capability jump <span class="tag emp">Empirical</span> <span class="tag thy">Theory</span> (cited)</p>
+  <p>Bhati compiles a SWE-bench Verified trajectory rising from 1.96% (Oct 2023) to 78.4% (Apr 2026), and argues the agent–computer interface — not just bigger models — is responsible: SWE-agent's structured interface lifted resolution to 12.5% "even with the same underlying model," so "interface design for the agent matters as much as model capability" <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>. These figures are <em>compiled from other reports</em>, not Bhati's own measurement — treat them as a cited trend, not this paper's evidence.</p></div>
+
+  <p>Bhati also raises the corpus's recurring downstream worry — that high agent throughput makes human review the binding constraint:</p>
+  <blockquote class="q">If an agent can produce ten plausible patches per hour, the rate-limiting resource is human review.
+    <span class="src">— <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>, §The Economics of Attention</span></blockquote>
+
+  <h2>The "harness": embedding, not just a model</h2>
+  <p>Mandl's contribution is a pragmatic staging of adoption — <strong>AI-assisted → AI-integrated → AI-driven (agentic)</strong> — presented "not as a rigid maturity model" but as an organising logic, centred on the idea of a <em>harness</em> <span class="tag def">Definition</span> <span class="tag prop">Proposal</span>:</p>
+  <blockquote class="q">A harness translates model capabilities into usable development workflows.
+    <span class="src">— AI-driven Software Development <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a>, §Harness</span></blockquote>
+  <p>The harness is the technical/organisational embedding — context provisioning, tool access, verification, permissions, logging, human approval — spanning four cross-cutting functions: AI Context, AI Generation, AI Verification, and Governance &amp; Control. Concretely, Mandl's illustrative repository harness uses a <span class="mono">CLAUDE.md</span> primary instruction file, CI/CD gates, ADRs, a domain glossary, and explicit AI guardrails (the repo being "only one part" of a full harness) <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a>.</p>
+
+  <div class="box finding"><p class="box-h">▦ AI redistributes effort; it does not uniformly reduce it <span class="tag thy">Theory</span></p>
+  <p>Mandl argues routine creation accelerates while QA, verification, context provisioning and governance gain weight — "the amount of generated code is not a meaningful success measure" — and that gains "arise primarily where AI is embedded in stable, well-organized development processes." Where foundations are missing, "AI can amplify existing weaknesses rather than compensate for them" <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a>. The recommended measurement pairs DORA delivery metrics with AI-specific ones (test coverage, security findings, human-correction frequency, traceability, cost per agentic task).</p></div>
+
+  <p>Mandl is explicit that AI-generated requirements are a draft, not a deliverable spec: "AI-generated requirements should therefore not be treated as finished specifications, but as drafts that require systematic review and domain-specific approval" <a class="cite" href="corpus.html#p-2606-15283">Mandl+&nbsp;'26</a> — and treats "Zero-Touch Engineering" as a boundary case that shifts rather than removes human work.</p>
+
+  <h2>Pushing spec-driven automation upstream: requirements → architecture</h2>
+  <p>Most agentic SDLC tooling targets code; Li's MAAD targets the phase before it, turning a Software Requirements Specification into multi-view "4+1" architecture blueprints via four role-specialised agents (Analyst, Modeler, Designer, Evaluator) with RAG over architecture standards and a three-layer memory <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span> <a class="cite" href="corpus.html#p-2606-01385">Li+&nbsp;'26</a>. Against MetaGPT on 10 SRS cases (same base LLM), MAAD produced the full requirements→model→documentation→evaluation spectrum where the baseline produced only partial artifacts — and crucially, MetaGPT scored interface complexity 0.00 across all 10 projects (no explicit interface operations), while inventing requirements not grounded in the SRS.</p>
+
+  <div class="box finding"><p class="box-h">▦ Evaluation belongs inside generation, and the base model sets a ceiling <span class="tag thy">Theory</span></p>
+  <p>Two of Li's framing claims travel beyond MAAD. First, "evaluation is not a post-hoc activity but an integral part of architecture generation." Second, on why orchestration is not a cure-all: "multi-agent orchestration acts as a capability amplifier… while exposing the deficiencies of weaker LLMs more apparently," so the base LLM's competence "establish[es] a performance ceiling for the entire pipeline, rather than a mere bottleneck" <a class="cite" href="corpus.html#p-2606-01385">Li+&nbsp;'26</a>. Practitioners (n=6) judged MAAD an assistant requiring a human in the loop, not an autonomous replacement.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — the corpus agrees on the skeleton, not the flesh</p>
+  <p>Bhati, Mandl, and Li describe recognisably the same skeleton — intent/spec at the top, agentic execution in the middle, human gates at the boundaries, governance as a cross-cutting layer — but none validates a full end-to-end A-SDLC. Bhati's lifecycle map is a proposal with cited (not measured) capability data; Mandl's staging rests on one exploratory case; Li's empirical result is one phase (architecture) on 10 cases. The lifecycle re-drawing is, in this corpus, a well-argued blueprint with point evidence at individual phases — not a measured pipeline. Chips mark what I reason from.</p></div>
+
+  <div class="pager">
+    <a href="spec-first.html">← Spec-First</a>
+    <a href="verification.html">Verification &amp; Gates →</a>
+  </div>
+</div>
+
+<footer class="site">Spec-Driven Development &amp; the AI SDLC · a provenance-cited review of 14 arXiv papers (Apr–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

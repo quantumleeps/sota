@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verification & Gates — Spec-Driven Development & the AI SDLC · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Spec-Driven&nbsp;<span>Development</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="spec-first.html">Spec-First</a>
+  <a class="nav" href="lifecycle.html">Agentic&nbsp;SDLC</a>
+  <a class="nav active" href="verification.html">Verification</a>
+  <a class="nav" href="intent.html">Intent-Centric</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">03 · Verification &amp; Gates</p>
+  <h1>Acceptance over inspection</h1>
+  <p class="lede">The corpus's most developed theme is what happens <em>after</em> an agent produces something. If generation is cheap and abundant, the load-bearing question is how output earns its way into the codebase. The recurring answer: replace plausibility and manual line-by-line review with structured, evidence-based acceptance — risk-tiered gates, deterministic enforcement of process, machine-checkable contracts, and security promoted to an explicit spec.</p>
+
+  <h2>Conversation discovers intent; artifacts and evidence earn acceptance</h2>
+  <p>Koch states the principle the cluster shares <span class="tag thy">Theory</span> <span class="tag prop">Proposal</span>:</p>
+  <blockquote class="q">Conversation is useful for discovering intent; structured artifacts are required for implementation; evidence is required for acceptance.
+    <span class="src">— Agentic Agile-V <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>, §Introduction</span></blockquote>
+  <p>Agentic Agile-V proposes a two-layer process: a macro Agile-V lifecycle keeping each increment traceable to requirements/design/verification/approval, and a micro <strong>SCOPE-V</strong> task loop — Specify, Constrain, Orchestrate, Prove, Evolve, Verify <span class="tag def">Definition</span>. Two mechanisms do the work. A <em>conversation-to-contract gate</em>:</p>
+  <blockquote class="q">Do not let an agent implement from a long chat. Let it implement from a reviewed brief.
+    <span class="src">— <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>, §When Structure Is Mandatory</span></blockquote>
+  <p>And <em>risk-adaptive acceptance gates</em> R0–R3 (exploratory → high-assurance), each with required evidence and a defined human gate, backed by an "evidence bundle" (task brief + requirement IDs, agent plan + affected files, executed commands/test results, diff summary + residual risks, acceptance-criteria-to-tests trace, reviewer decision, rollback path) <span class="tag prop">Proposal</span>:</p>
+  <blockquote class="q">Agent output is not accepted because it is plausible; it is accepted because it satisfies evidence appropriate to its risk level.
+    <span class="src">— <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>, §Risk-Adaptive Acceptance Gates</span></blockquote>
+  <p>Koch names the cost of not doing this — <strong>verification debt</strong> <span class="tag def">Definition</span>: the accumulation of weak tests, hidden regressions, broad patches and reviewer burden "when output volume grows faster than verification capacity" <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>. (Agentic Agile-V is a bounded evidence synthesis; its quantitative figures, e.g. an AIDev count of 932,791 agent-authored PRs, are cited from other work.)</p>
+
+  <h2>TDD as runtime-enforced governance</h2>
+  <p>Hasanli operationalises the same instinct at the level of the orchestration engine, turning TDD from advice into an enforced protocol <span class="tag prop">Proposal</span>. The architecture separates non-authoritative model output from a deterministic engine that alone mutates state:</p>
+  <blockquote class="q">Language models never directly write to the file system. Instead, they return structured patch proposals that are subject to validation gates prior to application.
+    <span class="src">— TDD Governance for Multi-Agent Code Generation <a class="cite" href="corpus.html#p-2604-26615">Hasanli+&nbsp;'26</a>, §Governance-Centric Architecture</span></blockquote>
+  <p>Every proposal passes four gates before any mutation — structural/schema validation, policy enforcement (disallowed paths), phase-consistency checks, and optional human/rule-based approval — and a <em>bounded repair</em> loop caps GREEN-phase retries at N=3, terminating early when a "failure signature" (exception type + failing tests + normalized message) repeats <a class="cite" href="corpus.html#p-2604-26615">Hasanli+&nbsp;'26</a>. The motivation is LLM non-determinism: the paper cites a result that identical prompts yield "zero equal test outputs in up to 75.76% of cases" and that temperature 0 does not guarantee determinism (a <em>cited</em> figure, not its own).</p>
+  <div class="box gap"><p class="box-h">◇ This one is a design, not yet a result</p>
+  <p>Hasanli is explicit that evaluation is preliminary — "initial experimentation suggests that explicit phase separation and validation gating reduce unstable retry cycles compared to baseline prompting," with no controlled metrics of its own yet <a class="cite" href="corpus.html#p-2604-26615">Hasanli+&nbsp;'26</a>. Read it as an architecture proposal awaiting empirical test.</p></div>
+
+  <h2>Machine-checkable contracts: fuzzing as the oracle</h2>
+  <p>Suresh's Spec-Agent provides the corpus's strongest evidence that the "acceptance by evidence" loop can be automated for formal specs. It synthesises pre/post-conditions (up to first-order separation logic) across million-line C++ repos, selecting the target logic by static+dynamic analysis, then validating each candidate by fuzzing <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span>:</p>
+  <blockquote class="q">we repurpose [fuzz testing] as a strong pseudo-oracle for specification inference: any input that violates a candidate contract constitutes direct evidence that the contract is wrong.
+    <span class="src">— Agentic Separation Logic Specification Synthesis <a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a>, §Introduction</span></blockquote>
+  <p>The loop is deterministic (analysis selects the language; each attempt is one LLM call; the fuzzer runs after every attempt, refining on counterexamples). It produces valid specs for up to 85% of functions with no false positives observed under fuzzing and expert review, while outperforming Claude Code Opus 4.6 in validity at ~10× lower token cost <a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a>. Notably, fuzzing rejects contracts that already passed existing unit tests (8.0% of survivors on one repo) — evidence that the gate adds signal beyond the tests a project already ships. Full numbers on the <a href="evidence.html">Evidence</a> page.</p>
+
+  <h2>Security as an explicit spec, not a model prior</h2>
+  <p>Grynets applies "acceptance by evidence" to security, arguing that if functional behaviour is specified explicitly, security behaviour must be too <span class="tag thy">Theory</span> <span class="tag emp">Empirical</span>:</p>
+  <blockquote class="q">If functional correctness requires explicit specification, security behavior should not be left to model priors.
+    <span class="src">— Specification-Driven Development Benchmark <a class="cite" href="corpus.html#p-2606-00167">Grynets+&nbsp;'26</a>, §Introduction</span></blockquote>
+  <p>The paper makes security a traceable spec artifact (a Multilayer Specification Security Model) and tests AI-generated FastAPI backends against a hidden 221-test suite under three conditions. Modal failures fell monotonically: <strong>baseline 50 → generic standard (ASVS) 42 → application-specific security model 36</strong> (pass rates 77.4% → 81.0% → 83.7%), with the largest gains in application-specific categories (Business Logic 17→9, Admin Safety 2→0) <a class="cite" href="corpus.html#p-2606-00167">Grynets+&nbsp;'26</a>. The deliberately limited claim: "generic security standards help, but application-specific security modeling is needed." Importantly, the best condition still failed 36/221 tests, so the model is "a security-requirement operationalization layer, not… a guarantee of secure code."</p>
+
+  <h2>The provocation: retire human code review</h2>
+  <p>Monperrus takes the throughput argument to its conclusion — a position paper, explicitly "not a new empirical study," arguing every stated goal of code review can be met by agents <span class="tag prop">Proposal</span>:</p>
+  <blockquote class="q">The crossover point, at which the marginal benefit of human review no longer justifies its marginal cost, has already been reached.
+    <span class="src">— The End of Code Review <a class="cite" href="corpus.html#p-2606-13175">Monperrus&nbsp;'26</a>, §Claim 3</span></blockquote>
+  <p>His core structural argument is that mandatory human review of agent-written code collapses into rubber-stamping ("the human approves because the code looks correct, because the tests pass"), and should be replaced by an agent-in-the-loop verification pipeline, with humans reserved for high-risk/novel/regulated changes and developers becoming "specifiers and orchestrators" <a class="cite" href="corpus.html#p-2606-13175">Monperrus&nbsp;'26</a>. He raises his own counter-arguments as open risks rather than rebutting them away:</p>
+  <div class="box risk"><p class="box-h">⚠ The argument's own admitted holes</p>
+  <p>Monperrus flags hallucination / silent false-negative approvals; correlated blind spots when the same model family writes <em>and</em> reviews; and prompt injection as "a qualitatively new attack surface that does not exist for human reviewers" with "no fully solved defences" <a class="cite" href="corpus.html#p-2606-13175">Monperrus&nbsp;'26</a>. These are the same correlated-reviewer and adversarial risks that recur on the <a href="limitations.html">Limitations</a> page.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — the gate is the real unit of spec-driven development</p>
+  <p>Across Koch, Hasanli, Suresh, and Grynets, the spec only does work because something <em>mechanically checks against it</em>: a fuzzer, a hidden test suite, a deterministic engine, a risk-tiered evidence bundle. The spec-driven SDLC these papers describe is really a closed loop — spec → generation → automated check → counterexample/repair — where the human supervises the loop rather than inspecting each output. Monperrus is the limit case of that logic; Grynets is its cautionary counterweight (even an explicit security spec left 36/221 failures). My read: the corpus's center of gravity is not "write better specs" but "make acceptance automatic and evidence-bound." Chips mark what I reason from, not agreement.</p></div>
+
+  <div class="pager">
+    <a href="lifecycle.html">← The Agentic SDLC</a>
+    <a href="intent.html">The Intent-Centric Turn →</a>
+  </div>
+</div>
+
+<footer class="site">Spec-Driven Development &amp; the AI SDLC · a provenance-cited review of 14 arXiv papers (Apr–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

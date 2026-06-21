@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence — Spec-Driven Development & the AI SDLC · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Spec-Driven&nbsp;<span>Development</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="spec-first.html">Spec-First</a>
+  <a class="nav" href="lifecycle.html">Agentic&nbsp;SDLC</a>
+  <a class="nav" href="verification.html">Verification</a>
+  <a class="nav" href="intent.html">Intent-Centric</a>
+  <a class="nav active" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">05 · Evidence</p>
+  <h1>What was actually measured</h1>
+  <p class="lede">Most of this corpus is proposal, taxonomy, and position — only five of the 14 papers report original quantitative results. This ledger collects those measured effects, with method and scale, so a controlled number is never confused with a vision statement. The "my confidence" column is my appraisal, not the papers'.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My confidence scale — mine, not the papers'</p>
+  <p><strong>Strong</strong> = multiple settings, real artifacts, independent validation, sizeable effect. <strong>Moderate</strong> = a real measurement but single-model / single-domain / proxy-metric / LLM-judged. <strong>Indicative</strong> = small sample, small effect, mixed signal, or a metric that may not mean what it appears to. Every row below is a paper's <em>own</em> result; figures the papers merely <em>cite</em> from other work are listed separately at the bottom and kept out of this ledger.</p></div>
+
+  <h2>The strongest single result</h2>
+  <div class="grid g3">
+    <div class="card stat">
+      <div class="big green">85%</div>
+      <div class="lbl">of functions given <em>valid</em> auto-synthesised formal contracts across two million-line C++ repos (best config, BDE 85.87%). <a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big green">~10×</div>
+      <div class="lbl">lower token cost than Claude Code Opus 4.6 while beating it on validity (e.g. $4.0 vs $41.0 on BDE). <a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big amber">pseudo-oracle</div>
+      <div class="lbl">Caveat: validity is established by fuzzing, which can refute a wrong contract but cannot prove correctness or the "strongest" spec. <a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a></div>
+    </div>
+  </div>
+
+  <h2>Measured-effect ledger</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>What was measured</th><th>Result</th><th>Method &amp; scale</th><th>Source</th><th>My confidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Valid formal contracts synthesised (vs frontier agent)</td>
+        <td class="num pos">85.9% / 77.7%</td>
+        <td>BDE (651 fns) &amp; BMQ (508 fns), 4M+ LOC C++; vs Claude Opus 4.6 81.5% / 66.7%; validated by fuzzing + expert sample (100/repo)</td>
+        <td><a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a></td>
+        <td>Moderate–Strong</td>
+      </tr>
+      <tr>
+        <td>Fuzzer rejects contracts that <em>passed</em> existing unit tests</td>
+        <td class="num">0.4% / 8.0%</td>
+        <td>Survivors violated under fuzzing on BDE / BMQ — gate adds signal beyond shipped tests</td>
+        <td><a class="cite" href="corpus.html#p-2605-27531">Suresh+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>AI-generated backend security failures as security spec gets explicit</td>
+        <td class="num pos">50 → 42 → 36</td>
+        <td>Modal failures of 221 hidden tests: baseline → ASVS → application-specific model; 3 reps/condition; one domain (FastAPI booking API), GPT-5.3-Codex</td>
+        <td><a class="cite" href="corpus.html#p-2606-00167">Grynets+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Pass rate on the same hidden security suite</td>
+        <td class="num pos">77.4 → 81.0 → 83.7%</td>
+        <td>Same three conditions; best still failed 36/221 (not a guarantee of secure code)</td>
+        <td><a class="cite" href="corpus.html#p-2606-00167">Grynets+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Best agent at specification-level reasoning (find spec deficiencies pre-code)</td>
+        <td class="num neg">44.4%</td>
+        <td>5 RFC ecosystems (Kubernetes/React/Rust/TVM/vLLM); all agents &lt;45%; LLM judges; deficiency-identification only</td>
+        <td><a class="cite" href="corpus.html#p-2605-30314">Hamblin+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Context-grounding hooks → judged quality (Spec Kit workflow)</td>
+        <td class="num pos">3.51 → 3.66</td>
+        <td>+0.15 on 1–5 composite; Wilcoxon p&lt;0.05 on paired completed subset; 128 runs (32 tasks × 4 configs) × 5 repos; LLM-as-judge (Opus 4.6); generator MiniMax-M2.5</td>
+        <td><a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Context-grounding → SWE-bench Lite Pass@1</td>
+        <td class="num pos">56.5 → 58.2%</td>
+        <td>300 issues; +1.7 absolute with hooks</td>
+        <td><a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Repository test compatibility maintained under grounding</td>
+        <td class="num pos">99.7–100%</td>
+        <td>Gains did not break existing project behaviour</td>
+        <td><a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Blinded human preference, grounded vs ungrounded</td>
+        <td class="num neg">8 vs 19 (33 ties)</td>
+        <td>6 tasks, 60 votes — humans did <em>not</em> prefer the grounded variant despite the judge-scored gain</td>
+        <td><a class="cite" href="corpus.html#p-2604-05278">Taghavi+&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>SRS → architecture: interface complexity vs baseline (MetaGPT)</td>
+        <td class="num pos">2.08 vs 0.00</td>
+        <td>10 SRS cases, Qwen3.5 base; MetaGPT produced no explicit interface ops in any of the 10; also Coh 0.69 vs 0.36; no significance tests</td>
+        <td><a class="cite" href="corpus.html#p-2606-01385">Li+&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Effect directions are coloured by the papers' own framing (more valid specs / fewer security failures = good; a 44.4% ceiling is reported as a deficit). MAAD's structural metrics carry the authors' own "paradox of complexity metrics" caveat — low complexity from a weaker model can mean under-specification, not quality.</p>
+
+  <div class="box inference"><p class="box-h">⟡ Appraisal — where the evidence is consistent, and where it is thin</p>
+  <p><strong>Consistent:</strong> every paper that put a checkable artifact in front of an automated oracle showed the spec/gate adding signal — Suresh's fuzzer caught unit-test survivors, Grynets' explicit security spec lowered hidden-test failures monotonically, Taghavi's grounding held test compatibility while nudging quality. The direction "an explicit, machine-checkable spec helps" is the corpus's best-supported empirical claim.</p>
+  <p><strong>Thin:</strong> effects are often small (Spec Kit +0.15 quality, +1.7 SWE-bench), single-model and single-domain (Grynets one API + one model; Taghavi one generator), proxy- or LLM-judge-mediated, and rarely significance-tested. The clearest <em>human</em> signal in the corpus — Taghavi's blinded preference test — did not favour the more elaborate pipeline. And the upstream capability the whole paradigm leans on, specification-level reasoning, sits at 44.4%. Read the ledger as "promising and directionally consistent," not "settled."</p></div>
+
+  <div class="box gap"><p class="box-h">◇ What would raise confidence (from the papers' own future work)</p>
+  <p>Multi-model and multi-domain replication (Grynets, Taghavi, Li); human-validated gold labels and human baselines for SpecBench (Hamblin); process-level benchmarks for whole SDD frameworks rather than per-tool docs (de Macedo); controlled evaluation of TDD-governance vs baseline prompting (Hasanli, currently preliminary); and longitudinal team studies of agentic development's effect on technical debt and maintenance (Bhati, De La Cruz, Mandl).</p></div>
+
+  <h2>Cited figures (not these papers' own evidence)</h2>
+  <p class="note">Quoted across the corpus from other work; included for context but deliberately kept out of the ledger above. A survey citing another paper's number is not that survey's evidence.</p>
+  <ul class="clean">
+    <li>SWE-bench Verified resolution 1.96% (Oct 2023) → 78.4% (Apr 2026); productivity gains spanning ~13.6–55.8% across studies — compiled by <a class="cite" href="corpus.html#p-2604-26275">Bhati&nbsp;'26</a>.</li>
+    <li>AIDev datasets of 456,535 agent-authored PRs <a class="cite" href="corpus.html#p-2606-03394">Alenezi&nbsp;'26</a> and 932,791 agent PRs <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a>; Peng et al. ~56% faster task completion — cited, not measured here.</li>
+    <li>Google RCT ~21% time reduction vs METR's +19% completion time in mature repos — cited by <a class="cite" href="corpus.html#p-2605-20456">Koch&nbsp;'26</a> to show productivity is context-dependent.</li>
+    <li>Identical prompts yield "zero equal test outputs in up to 75.76% of cases" — cited by <a class="cite" href="corpus.html#p-2604-26615">Hasanli+&nbsp;'26</a>.</li>
+    <li>Tecton test generation: 70–90% line coverage, 2–4× more faults than white-box fuzzers, &lt;$0.10/suite — cited by <a class="cite" href="corpus.html#p-2606-15084">Marron&nbsp;'26</a>.</li>
+  </ul>
+
+  <div class="pager">
+    <a href="intent.html">← The Intent-Centric Turn</a>
+    <a href="limitations.html">Limitations →</a>
+  </div>
+</div>
+
+<footer class="site">Spec-Driven Development &amp; the AI SDLC · a provenance-cited review of 14 arXiv papers (Apr–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

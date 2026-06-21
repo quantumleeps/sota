@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpus — Spec-Driven Development & the AI SDLC · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Spec-Driven&nbsp;<span>Development</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="spec-first.html">Spec-First</a>
+  <a class="nav" href="lifecycle.html">Agentic&nbsp;SDLC</a>
+  <a class="nav" href="verification.html">Verification</a>
+  <a class="nav" href="intent.html">Intent-Centric</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav active" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">Corpus · the provenance backbone</p>
+  <h1>The 14 papers</h1>
+  <p class="lede">Every citation chip on this site resolves to an entry below, and each entry links onward to the paper on arXiv — the chain is always <em>claim → chip → bibliography → arXiv</em>. This is a review of these 14 papers and nothing else: all are 2026 arXiv preprints (April–June 2026), gathered in June 2026 by an automated relevance search and curated to 14. Many are position or synthesis papers, not controlled studies; the role badges and the per-entry notes say which.</p>
+
+  <div class="box inference"><p class="box-h">⟡ How this corpus was assembled — read this first</p>
+  <p>These papers were surfaced by an automated arXiv/OpenAlex relevance search for "spec-driven development" and "AI software development lifecycle", filtered to a <strong>1 January 2026</strong> date floor (all 14 land April–June 2026), ranked, and curated to 14 by topical fit. It is a <em>search-shaped sample of recent, mostly un-peer-reviewed preprints</em> — not a census of the field. Several entries are vision/position papers; weight them accordingly.</p></div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:var(--core,#2563eb)"></span> Core — central to the topic</span>
+    <span><span class="sw" style="background:var(--support,#64748b)"></span> Support — adjacent / contextual</span>
+  </div>
+
+  <h2>Spec-as-artifact & frameworks</h2>
+
+  <div class="bibentry" id="p-2604-05278">
+    <span class="role core">Core</span><span class="bt">Spec Kit Agents: Context-Grounded Agentic Workflows</span>
+    <div class="meta"><span class="idtag">arXiv:2604.05278</span> · Pardis Taghavi, Santosh Bhavani, 2026 · system/tool (empirical) · <strong>cite: Taghavi+ '26</strong></div>
+    <div class="rel">Augments GitHub Spec Kit's staged Specify→Plan→Tasks→Implement workflow with a multi-agent orchestrator and pre/post-phase "context-grounding" hooks that validate intermediate SDD artifacts against repository reality. Names the failure mode of "context blindness" and tests it across 128 runs and SWE-bench Lite.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2604.05278" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-15084">
+    <span class="role core">Core</span><span class="bt">Specifications for Humans, Agents, and Tooling</span>
+    <div class="meta"><span class="idtag">arXiv:2606.15084</span> · Mark Marron, 2026 · system/tool + position · <strong>cite: Marron '26</strong></div>
+    <div class="rel">A "spec-centered" manifesto plus the Bosque API (BAPI) ecosystem: treat the specification as the primary artifact from which implementation, tests, deployment and agent interaction flow. Adds executable pre/post-conditions, URI/glob permission sandboxing, a tamper-proof event log for temporal constraints, and multi-modal (NL + examples + logic) specs aimed at trustworthy agentic execution.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.15084" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-04967">
+    <span class="role core">Core</span><span class="bt">From Prompt to Process: a Process Taxonomy and Comparative Assessment of Frameworks Supporting AI Software Development Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2606.04967</span> · Sanderson Oliveira de Macedo, 2026 · survey / framework · <strong>cite: de Macedo '26</strong></div>
+    <div class="rel">A six-dimension process taxonomy (specification, context, roles, execution, validation, portability) and a 0–2 rubric applied to six high-traction SDD frameworks (GitHub Spec Kit, OpenSpec, BMAD, GSD, Spec Kitty, Reversa). Finds no framework strong on all six dimensions and that adoption (stars) and process completeness are orthogonal.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.04967" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>The agentic lifecycle</h2>
+
+  <div class="bibentry" id="p-2604-26275">
+    <span class="role core">Core</span><span class="bt">Agentic AI in the Software Development Lifecycle: Architecture, Empirical Evidence, and the Reshaping of Software Engineering</span>
+    <div class="meta"><span class="idtag">arXiv:2604.26275</span> · Happy Bhati (Northeastern University), 2026 · survey · <strong>cite: Bhati '26</strong></div>
+    <div class="rel">A synthesis that reframes the central object of inquiry from "code generation" to "delegated execution under human supervision," proposes a six-layer reference architecture (L0–L5) and an Agentic SDLC (A-SDLC) mapping each classical phase to agent equivalents, and compiles SWE-bench and productivity evidence from industry/academic reports. Conceptual contribution; no original measurement.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2604.26275" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-15283">
+    <span class="role core">Core</span><span class="bt">AI-driven Software Development: A Pragmatic Path to Agentic Development Processes</span>
+    <div class="meta"><span class="idtag">arXiv:2606.15283</span> · Peter Mandl (HM Munich), Paul Mandl (Findustrial), 2026 · framework / position · <strong>cite: Mandl+ '26</strong></div>
+    <div class="rel">A pragmatic transformation framework (AI-assisted → AI-integrated → AI-driven/agentic) organised around a "harness" — the technical and organisational embedding (context, tool access, verification, permissions, logging, human approval) that turns model capability into governed workflow. Grounded in one exploratory case study; recommends EARS-structured requirements and DORA-plus metrics.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.15283" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-01385">
+    <span class="role core">Core</span><span class="bt">Bridging Requirements and Architecture: Multi-Agent Orchestration with External Knowledge and Hierarchical Memory (MAAD)</span>
+    <div class="meta"><span class="idtag">arXiv:2606.01385</span> · Ruiyin Li, Xiyu Zhou, Yangxiao Cai, Peng Liang, Jifeng Xuan, Zhi Jin (Wuhan U.); Yiran Zhang, Weisong Sun, Yang Liu (NTU), 2026 · system/tool (empirical) · <strong>cite: Li+ '26</strong></div>
+    <div class="rel">MAAD orchestrates four role-specialised agents (Analyst, Modeler, Designer, Evaluator) with RAG and a three-layer memory to transform a Software Requirements Specification into multi-view "4+1" architecture blueprints with quality-attribute (ATAM) assessment — pushing spec-driven automation past code into the architecture phase. Evaluated on 10 SRS cases vs MetaGPT and with 6 practitioners.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.01385" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Verification, gates & governance</h2>
+
+  <div class="bibentry" id="p-2605-20456">
+    <span class="role core">Core</span><span class="bt">Agentic Agile-V: From Vibe Coding to Verified Engineering in Software and Hardware Development</span>
+    <div class="meta"><span class="idtag">arXiv:2605.20456</span> · Christopher Koch (independent), 2026 · position / framework · <strong>cite: Koch '26</strong></div>
+    <div class="rel">Argues the bottleneck has moved from prompting to process control, and proposes a two-layer framework: an Agile-V macro lifecycle plus a SCOPE-V task loop (Specify, Constrain, Orchestrate, Prove, Evolve, Verify), with a conversation-to-contract gate, a minimum-input-artifact model, and risk-adaptive acceptance gates (R0–R3) backed by "evidence bundles." A bounded evidence synthesis, not a new study.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.20456" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2604-26615">
+    <span class="role core">Core</span><span class="bt">TDD Governance for Multi-Agent Code Generation via Prompt Engineering</span>
+    <div class="meta"><span class="idtag">arXiv:2604.26615</span> · Tarlan Hasanli, Shahbaz Siddeeq, Bishwash Khanal, Pyry Kotilainen, Tommi Mikkonen, Pekka Abrahamsson (Jyväskylä / Tampere), 2026 · system/framework (preliminary) · <strong>cite: Hasanli+ '26</strong></div>
+    <div class="rel">Encodes classical TDD (Red-Green-Refactor) as runtime-enforced governance for multi-agent code generation: a machine-readable "manifesto" of TDD principles plus an architecture that separates non-authoritative LLM proposals from a deterministic engine holding sole authority over state mutation, phase ordering, validation gates, and bounded repair. Evaluation is explicitly preliminary. EASE 2026.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2604.26615" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-00167">
+    <span class="role core">Core</span><span class="bt">Specification-Driven Development Benchmark: Security Knowledge Transition</span>
+    <div class="meta"><span class="idtag">arXiv:2606.00167</span> · Oleg Grynets, Andrii Salyk, Vasyl Lyashkevych, Oleh Kaskun, Danyil Zhuravchak (EPAM Systems), 2026 · benchmark (empirical) · <strong>cite: Grynets+ '26</strong></div>
+    <div class="rel">Makes security an explicit, traceable specification artifact for AI code generation: a Multilayer Specification Security Model and a Security Knowledge Transition Method, with a hidden-oracle benchmark. Empirically, generic standards (ASVS) help and application-specific security modelling helps further — observable security failures fell baseline → ASVS → Multilayer on a hidden test suite.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.00167" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-27531">
+    <span class="role core">Core</span><span class="bt">Agentic Separation Logic Specification Synthesis (Spec-Agent)</span>
+    <div class="meta"><span class="idtag">arXiv:2605.27531</span> · Tarun Suresh, David Korczynski, Julien Vanegue (Bloomberg), 2026 · system/tool (empirical) · <strong>cite: Suresh+ '26</strong></div>
+    <div class="rel">Synthesises formal code contracts (pre/post-conditions, up to first-order separation logic) across million-line C++ codebases, using an adaptive spec-language selector and fuzz-testing as a pseudo-oracle with counterexample-guided refinement. Reports valid specs for up to 85% of functions at ~10× lower token cost than a frontier coding agent — the corpus's formal-methods leg of "spec-driven."</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.27531" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Evaluation</h2>
+
+  <div class="bibentry" id="p-2605-30314">
+    <span class="role core">Core</span><span class="bt">SpecBench: Evaluating Specification-Level Reasoning for Software Engineering LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2605.30314</span> · Grant Hamblin, Kevin Song, Zhanda Zhu, Anand Jayarajan, Sihang Liu, Nandita Vijaykumar, Gennady Pekhimenko (U. Toronto / Waterloo / Vector / NVIDIA), 2026 · benchmark · <strong>cite: Hamblin+ '26</strong></div>
+    <div class="rel">Argues existing SWE benchmarks assume the spec is correct and test only implementation; SpecBench instead measures "specification-level reasoning" — finding deficiencies in initial RFC design proposals before code, scored against expert maintainers' historical critiques across five ecosystems (Kubernetes, React, Rust, TVM, vLLM). Best agent reaches 44.4%.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.30314" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>The intent-centric turn & the human role</h2>
+
+  <div class="bibentry" id="p-2605-11027">
+    <span class="role core">Core</span><span class="bt">From Code-Centric to Intent-Centric Software Engineering: A Reflexive Thematic Analysis of Generative AI, Agentic Systems, and Engineering Accountability</span>
+    <div class="meta"><span class="idtag">arXiv:2605.11027</span> · Elyson De La Cruz (U. of the Cumberlands), 2026 · empirical (qualitative discourse analysis) · <strong>cite: De La Cruz '26</strong></div>
+    <div class="rel">A reflexive thematic analysis of public + scholarly discourse, deriving eight themes and a five-stage maturity pathway around the shift to "intent-centric" engineering — humans specify intent, constraints, and acceptance evidence while agents generate/test/repair. Names "bounded autonomy" and "governance and provenance debt"; central tension is acceleration vs accountability.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.11027" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-03394">
+    <span class="role support">Support</span><span class="bt">Human-AI Collaboration and the Transformation of Software Engineering Work</span>
+    <div class="meta"><span class="idtag">arXiv:2606.03394</span> · Mamdouh Alenezi (SDAIA), 2026 · framework / interpretive synthesis · <strong>cite: Alenezi '26</strong></div>
+    <div class="rel">A theory-building synthesis arguing the engineer's durable value moves from code volume to intent specification, critical judgment, and accountable oversight. Contributes a Future Software Engineering Competency Framework (FSE-CF) and three coexisting paradigms (Traditional / GenAI-enabled / Agentic), with intent specification ranked the least AI-substitutable, highest-criticality competency.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.03394" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-13175">
+    <span class="role support">Support</span><span class="bt">The End of Code Review: Coding Agents Supersede Human Inspection</span>
+    <div class="meta"><span class="idtag">arXiv:2606.13175</span> · Martin Monperrus (KTH), 2026 · position / vision · <strong>cite: Monperrus '26</strong></div>
+    <div class="rel">A deliberately provocative position paper arguing every stated goal of human code review can be met by coding agents at lower cost and higher throughput, so mandatory human review should be replaced by an agent-in-the-loop verification pipeline — and developers become "specifiers and orchestrators," relocating scrutiny upstream to requirements and downstream to monitoring. Synthesis, not a new study.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.13175" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="pager">
+    <a href="synthesis.html">← Synthesis</a>
+    <a href="index.html">Overview →</a>
+  </div>
+</div>
+
+<footer class="site">Spec-Driven Development &amp; the AI SDLC · a provenance-cited review of 14 arXiv papers (Apr–Jun 2026) · every chip → this bibliography → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

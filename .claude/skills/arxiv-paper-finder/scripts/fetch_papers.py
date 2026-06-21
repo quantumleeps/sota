@@ -11,14 +11,28 @@ star source anymore. Instead we detect an author-linked repo (github/gitlab URL 
 the abstract or arXiv comment) -> `has_code`/`code_url`. With --gh-stars, an authed
 `gh` resolves the real star count for that exact repo (local-only, opt-in).
 """
-import argparse, json, os, re, shutil, subprocess, sys, time, urllib.parse, urllib.request, urllib.error
+import argparse, json, os, random, re, shutil, subprocess, sys, time, urllib.parse, urllib.request, urllib.error
 from datetime import datetime, timezone
 from xml.etree import ElementTree as ET
 
 UA = "arxiv-paper-finder/1.0 (mailto:research@example.com)"
-ARXIV_ID_RE = re.compile(r"(\d{4}\.\d{4,5})(v\d+)?")
+# YYMM.NNNNN — require a valid month (01-12) so DOIs/years like ".../2025.24135"
+# (month "25") don't get mis-extracted as arXiv ids and poison dedup/handoff.
+ARXIV_ID_RE = re.compile(r"(\d{2}(?:0[1-9]|1[0-2])\.\d{4,5})(v\d+)?")
 CODE_URL_RE = re.compile(r"https?://(?:www\.)?(?:github\.com|gitlab\.com)/[A-Za-z0-9_.\-]+/[A-Za-z0-9_.\-]+", re.I)
 NS = {"a": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}
+
+# arXiv ToU (info.arxiv.org/help/api/tou.html): max 1 request / 3s, single connection
+# at a time, and the budget is shared across ALL machines on your egress IP. A 429/503
+# OR a silent read-timeout (connection accepted, no body) is a throttle signal — back
+# off, and STOP probing: continued probing into the penalty box prolongs it. We pace
+# arXiv calls and circuit-break the whole source for the run once it throttles.
+ARXIV_MIN_SPACING = 4.0   # seconds between arXiv requests (3s ToU floor + margin)
+_ARXIV_THROTTLED = False
+
+
+class Throttled(Exception):
+    """A source rate-limited us past our retries; the caller should stop hitting it."""
 
 
 def log(m):
@@ -26,7 +40,54 @@ def log(m):
     sys.stderr.write(m + "\n"); sys.stderr.flush()
 
 
-def _get(url, headers=None, timeout=30, retries=4, backoff=2.0):
+def load_dotenv():
+    """Load KEY=value pairs from the nearest .env into os.environ (stdlib-only).
+
+    Walks up from both the cwd and this script's directory so a .env at the
+    sota repo root is picked up no matter where the fetcher is invoked from.
+    Never overrides a variable already set in the real environment, and quietly
+    does nothing if no .env exists — so S2_API_KEY can live in .env OR be
+    exported, whichever the user prefers.
+    """
+    seen = set()
+    for start in (os.getcwd(), os.path.dirname(os.path.abspath(__file__))):
+        d = start
+        for _ in range(8):  # walk up a bounded number of levels to the repo root
+            path = os.path.join(d, ".env")
+            if path not in seen and os.path.isfile(path):
+                seen.add(path)
+                try:
+                    with open(path, encoding="utf-8") as f:
+                        for line in f:
+                            line = line.strip()
+                            if not line or line.startswith("#") or "=" not in line:
+                                continue
+                            if line.startswith("export "):
+                                line = line[len("export "):]
+                            key, _, val = line.partition("=")
+                            key, val = key.strip(), val.strip().strip('"').strip("'")
+                            if key and key not in os.environ:
+                                os.environ[key] = val
+                except OSError:
+                    pass
+            parent = os.path.dirname(d)
+            if parent == d:
+                break
+            d = parent
+
+
+def _get(url, headers=None, timeout=30, retries=5, base=5.0, cap=120.0):
+    """Polite GET with full-jitter exponential backoff, per arXiv's rate-limit ToU.
+
+    - 429 / 5xx: honor Retry-After when present (capped at 300s); otherwise sleep
+      random.uniform(0, min(cap, base * 2**attempt)). Full jitter avoids synchronized
+      retries — important on a shared egress IP where the budget is contended.
+    - Read-timeouts / connection errors are treated as throttle signals too: a hung
+      arXiv read IS the limiter, not a transient blip, so we back off rather than hammer.
+    - After `retries` are exhausted on a retryable failure we raise Throttled so the
+      caller can circuit-break the whole source instead of probing into the penalty box.
+      A non-retryable HTTP error (e.g. 400/404) raises immediately.
+    """
     headers = headers or {}
     headers.setdefault("User-Agent", UA)
     last = None
@@ -38,15 +99,17 @@ def _get(url, headers=None, timeout=30, retries=4, backoff=2.0):
         except urllib.error.HTTPError as e:
             last = e
             if e.code == 429 or 500 <= e.code < 600:
-                # EXPONENTIAL backoff, honoring Retry-After when the server sends it
                 ra = e.headers.get("Retry-After") if e.headers else None
-                delay = float(ra) if (ra and str(ra).isdigit()) else backoff * (2 ** attempt)
-                time.sleep(min(delay, 60)); continue
-            raise
-        except Exception as e:  # noqa
+                if ra and str(ra).strip().isdigit():
+                    delay = min(float(ra), 300.0)            # honor server's ask
+                else:
+                    delay = random.uniform(0, min(cap, base * (2 ** attempt)))
+                time.sleep(delay); continue
+            raise                                            # 4xx (not 429): not retryable
+        except Exception as e:  # timeout, URLError, conn reset -> throttle signal
             last = e
-            time.sleep(backoff * (2 ** attempt))
-    raise last
+            time.sleep(random.uniform(0, min(cap, base * (2 ** attempt))))
+    raise Throttled(repr(last) if last else "rate limited")
 
 
 def norm_title(t):
@@ -90,21 +153,34 @@ def _set_code(rec, *texts):
 
 # ---------------- arXiv (date- and relevance-sorted) ----------------
 def fetch_arxiv(queries, max_per_source):
+    global _ARXIV_THROTTLED
     out = {}
     total = len(queries) * 2
     i = 0
-    log(f"[arxiv] {total} calls ({len(queries)} queries × date+relevance, ~3s each)")
+    consec = 0
+    log(f"[arxiv] {total} calls ({len(queries)} queries × date+relevance, {ARXIV_MIN_SPACING:.0f}s spacing)")
     for q in queries:
         for sort_by in ("submittedDate", "relevance"):   # recency AND relevance recall
             i += 1
-            url = ("http://export.arxiv.org/api/query?"
+            url = ("https://export.arxiv.org/api/query?"   # https direct: skip the http->https 301 hop
                    + urllib.parse.urlencode({
                        "search_query": f"all:{q}", "start": 0, "max_results": max_per_source,
                        "sortBy": sort_by, "sortOrder": "descending"}))
             try:
                 root = ET.fromstring(_get(url))
+            except Throttled as e:
+                log(f"  [arxiv {i}/{total}] THROTTLED ({e}) — stopping arXiv for this run")
+                _ARXIV_THROTTLED = True
+                return out
             except Exception:
-                log(f"  [arxiv {i}/{total}] '{q[:36]}' [{sort_by[:4]}] FAILED"); time.sleep(3); continue
+                consec += 1
+                log(f"  [arxiv {i}/{total}] '{q[:36]}' [{sort_by[:4]}] FAILED ({consec} in a row)")
+                if consec >= 3:                            # repeated non-throttle failures ~ throttle too
+                    log("  [arxiv] 3 consecutive failures — treating as throttle, stopping arXiv")
+                    _ARXIV_THROTTLED = True
+                    return out
+                time.sleep(ARXIV_MIN_SPACING); continue
+            consec = 0
             n0 = len(out)
             for e in root.findall("a:entry", NS):
                 aid = extract_arxiv_id(e.findtext("a:id", "", NS) or "")
@@ -122,7 +198,7 @@ def fetch_arxiv(queries, max_per_source):
                     rec["sources"].append("arxiv")
                 out[aid] = rec
             log(f"  [arxiv {i}/{total}] '{q[:36]}' [{sort_by[:4]}] +{len(out)-n0} new (pool {len(out)})")
-            time.sleep(3)
+            time.sleep(ARXIV_MIN_SPACING)
     return out
 
 
@@ -166,6 +242,19 @@ def fetch_s2(queries, max_per_source):
     return out
 
 
+def _oa_abstract(inv):
+    """Rebuild plain text from OpenAlex's abstract_inverted_index ({word: [positions]}).
+
+    OpenAlex returns abstracts only in this inverted form. Reconstructing it means the
+    pool has real abstract text for relevance ranking even when arXiv (the usual abstract
+    source) is throttled — the difference between a strong semantic rank and a title-only one.
+    """
+    if not inv:
+        return None
+    pos = sorted((i, w) for w, idxs in inv.items() for i in idxs)
+    return " ".join(w for _, w in pos) or None
+
+
 # ---------------- OpenAlex (citation fallback) ----------------
 def fetch_openalex(queries, max_per_source):
     out = {}
@@ -184,8 +273,13 @@ def fetch_openalex(queries, max_per_source):
             key = aid or ("oa:" + norm_title(title))
             rec = out.get(key) or blank(arxiv_id=aid, title=title)
             rec["title"] = rec["title"] or title
+            rec["abstract"] = rec["abstract"] or _oa_abstract(w.get("abstract_inverted_index"))
             rec["citations"] = rec["citations"] if rec["citations"] is not None else w.get("cited_by_count")
             rec["published"] = rec["published"] or w.get("publication_date")
+            if not rec["authors"]:
+                rec["authors"] = [a.get("author", {}).get("display_name")
+                                  for a in (w.get("authorships") or [])] or rec["authors"]
+            _set_code(rec, rec["abstract"])
             if aid and not rec["url"]:
                 rec["url"] = f"https://arxiv.org/abs/{aid}"
             if "openalex" not in rec["sources"]:
@@ -253,22 +347,30 @@ def enrich_arxiv(records):
     """RECALL FIX: many records (esp. HF-only) arrive title-only — no abstract/date.
     Backfill them in batch via the arXiv id_list endpoint so relevance and recency
     have something to work with, and detect code links from the fetched abstract."""
+    global _ARXIV_THROTTLED
+    if _ARXIV_THROTTLED:
+        log("[enrich] arXiv was throttled earlier this run — skipping id_list backfill "
+            "(OpenAlex abstracts already cover most records)")
+        return 0
     need = [r for r in records if r.get("arxiv_id") and (not r.get("abstract") or not r.get("published"))]
     if not need:
         return 0
     by_id = {r["arxiv_id"]: r for r in need}
     ids = list(by_id)
     nb = (len(ids) + 99) // 100
-    log(f"[enrich] arXiv backfill: {len(ids)} thin records in {nb} batch(es) (~3s each)")
+    log(f"[enrich] arXiv backfill: {len(ids)} thin records in {nb} batch(es) ({ARXIV_MIN_SPACING:.0f}s spacing)")
     filled = 0
     for bi, i in enumerate(range(0, len(ids), 100), 1):
         chunk = ids[i:i + 100]
-        url = ("http://export.arxiv.org/api/query?"
+        url = ("https://export.arxiv.org/api/query?"
                + urllib.parse.urlencode({"id_list": ",".join(chunk), "max_results": len(chunk)}))
         try:
             root = ET.fromstring(_get(url))
+        except Throttled as e:
+            log(f"  [enrich {bi}/{nb}] THROTTLED ({e}) — stopping backfill")
+            _ARXIV_THROTTLED = True; break
         except Exception:
-            log(f"  [enrich {bi}/{nb}] batch failed"); time.sleep(3); continue
+            log(f"  [enrich {bi}/{nb}] batch failed"); time.sleep(ARXIV_MIN_SPACING); continue
         for e in root.findall("a:entry", NS):
             aid = extract_arxiv_id(e.findtext("a:id", "", NS) or "")
             r = by_id.get(aid)
@@ -285,7 +387,7 @@ def enrich_arxiv(records):
             _set_code(r, r["abstract"], r["comment"])
             filled += 1
         log(f"  [enrich {bi}/{nb}] filled {filled}/{len(ids)}")
-        time.sleep(3)
+        time.sleep(ARXIV_MIN_SPACING)
     return filled
 
 
@@ -360,6 +462,7 @@ def main():
     ap.add_argument("--gh-stars", action="store_true",
                     help="resolve real star counts for linked repos via authed `gh` (local-only)")
     args = ap.parse_args()
+    load_dotenv()  # pick up S2_API_KEY (etc.) from a .env if present
 
     fns = {"arxiv": fetch_arxiv, "s2": fetch_s2, "openalex": fetch_openalex, "hf": fetch_hf}
     pools, errors, counts = [], {}, {}

@@ -3,6 +3,11 @@
 *.log
 Thumbs.db
 
+# Secrets — real keys live in .env (never committed); .env.example is the template
+.env
+.env.*
+!.env.example
+
 # Working research material — corpora + digests are not published
 /topics-corpora/
 __pycache__/

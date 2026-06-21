@@ -12,7 +12,7 @@ Find the top-N arXiv papers matching a natural-language query by gathering a lar
 The candidate **superset is intentionally larger than N**. Multiple sources each return papers; we dedupe them into one pool, score every paper on several independent signals, combine those scores with weights the user controls, then return the top N. Because the pool is larger than N, the *weights actually change the answer* — that is the point of the tool.
 
 ## Setup (first use)
-Install the one optional dependency: `pip install -r requirements.txt` (fastembed — local ONNX relevance embeddings, keyless, no torch). Without it the ranker still runs but falls back to BM25 (weaker, title-mostly) and prints a NOTE saying so. First rank downloads a ~30 MB model. Everything else is Python stdlib; no API keys required (set `S2_API_KEY` only if you have one).
+Install the one optional dependency: `pip install -r requirements.txt` (fastembed — local ONNX relevance embeddings, keyless, no torch). Without it the ranker still runs but falls back to BM25 (weaker, title-mostly) and prints a NOTE saying so. First rank downloads a ~30 MB model. Everything else is Python stdlib; no API keys required (set `S2_API_KEY` only if you have one — put it in a `.env` at the sota repo root, which the fetcher auto-loads, or export it; see `.env.example`).
 
 ## When to clarify vs. proceed
 

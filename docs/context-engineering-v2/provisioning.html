@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finding &amp; Provisioning Context — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav active" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">02 · Finding &amp; Provisioning Context</p>
+  <h1>Getting the right code in front of the agent</h1>
+  <p class="lede">Before a coding agent can edit, it has to find the code that matters. Three papers in this corpus treat that search as a first-class, measurable, separable problem — and converge on the same answer: pull exploration out of the solving loop and hand the solver a compact, structured artifact instead of a trail of <span class="mono">grep</span> output.</p>
+
+  <h2>Exploration is the dominant, separable bottleneck</h2>
+  <p>Repository search is not a rounding error in an agent's trajectory — it is the bulk of it. <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a> measures, over 300 GPT-5.4 trajectories on SWE-bench Multilingual, that reading and searching account for <strong>46.5% of the main agent's tokens and 56.2% of its tool-use turns</strong>, and that editing only begins at turn 8.47 on average — a median of six sequential exploration turns and 15.5 tool calls precede the first edit <span class="tag emp">Empirical</span>. The cost is not just tokens; it is that the solver carries all that navigation noise in its window.</p>
+  <p>That localization is also shallow. <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a> finds that among GPT-5's resolved SWE-bench cases, 53.8% inspect only one file and 88.0% no more than three <span class="tag emp">Empirical</span> — strong scores often come from narrow, localized cues rather than genuine cross-file reasoning:</p>
+  <blockquote class="q">successfully resolving an instance in the original benchmark does not imply the ability to understand and reason across the context in the repository.
+    <span class="src">— RepoMirage <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a>, Introduction</span></blockquote>
+
+  <h2>Context quality is measurable — and it predicts success</h2>
+  <p><a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a> isolates exploration as a standalone, ranked, line-level context-selection task (848 instances, 10 languages, 203 repos), with ground truth derived from the intersection of ≥2 solution-verified agent trajectories <span class="tag def">Definition</span>. Its headline results sharpen exactly where the lever is:</p>
+  <div class="grid g3">
+    <div class="card stat"><div class="big green">r = 0.950</div><div class="lbl">Pearson correlation between an explorer's <em>context efficiency</em> and the downstream task resolve rate — context selection is causally tied to solving. <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">0.14–0.19</div><div class="lbl">Line-level recall of strong general agents, despite file-level HitFile of 0.64–0.68 — agents find the right <em>files</em> but miss the decisive <em>lines</em>. <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">7–9 pp</div><div class="lbl">Drop in resolve rate from random non-core context when evidence is scarce — yet <em>missing</em> core context hurts more than redundant context. <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a></div></div>
+  </div>
+  <p>Two consequences for context engineering. First, classical retrieval (BM25/TF-IDF) sits near random while agentic explorers form a clear tier above it — but the open frontier is <strong>line-level recall</strong>, not file finding <span class="tag emp">Empirical</span>. Second, the precision-vs-recall trade tilts toward recall once coverage is decent:</p>
+  <blockquote class="q">missing core evidence hurts more than moderate redundant context.
+    <span class="src">— SWE-Explore <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a>, Conclusion</span></blockquote>
+  <p class="note">A notable secondary finding: five general agents with very different harnesses (Claude Code, Codex, OpenHands, Mini-SWE-Agent, AweAgent) converge to nearly the same exploration operating point — suggesting exploration capability is more model/mechanism-bound than harness-bound <span class="tag emp">Empirical</span> <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a>.</p>
+
+  <h2>"Exploration drift": access is not understanding</h2>
+  <p>Why doesn't more searching help? <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a> applies semantics-preserving perturbations (rerouting imports through proxy chains, masking runtime targets, externalizing constants) and watches agents fall apart: average resolved rate drops from 66.8% to 49.8% under perturbation, and to 25.3% on explicitly perturbation-derived tasks <span class="tag emp">Empirical</span>. Crucially, agents respond by accessing <em>more</em> files — 4.77 → 13.24 on average — without solving more, a failure the paper names <strong>exploration drift</strong> <span class="tag def">Definition</span>:</p>
+  <blockquote class="q">…agents access broader repository context but fail to turn it into effective structure information.
+    <span class="src">— RepoMirage <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a>, Abstract</span></blockquote>
+
+  <h2>The convergent fix: decouple exploration, emit a structured artifact</h2>
+  <p>All three papers land on the same architecture — separate the search from the solve, and pass forward a compact, machine-consumable context object rather than raw history.</p>
+  <div class="box finding"><p class="box-h">▦ Two instantiations of one pattern</p>
+  <p><strong>A trained explorer subagent.</strong> FastContext delegates exploration to a dedicated 4B–30B model with three read-only tools that issues parallel searches and returns only a <span class="mono">&lt;final_answer&gt;</span> block of file paths and line ranges; the explorer's noisy observations never reach the solver. This improves end-to-end resolution up to +5.5% (GPT-5.4 SWE-bench Pro 46.0→51.5) while cutting main-agent tokens up to 60%, for ~2.1% overhead — and a compact 4B-RL explorer can beat a 30B-SFT one <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a> <span class="tag emp">Empirical</span>.</p>
+  <p><strong>A structure-first writing phase.</strong> RepoMirage's RepoAnchor runs an exploration stage that writes an intermediate <span class="mono">INSTRUCTION.md</span> (files inspected, their roles, key relations) before a separate solving stage consumes it. Supplying such compact structural hints lifts GPT-5 from 27.6→62.6 on the hardest tasks <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a> <span class="tag emp">Empirical</span> — the gain is from <em>provisioning the right structure</em>, not merely granting access.</p></div>
+  <blockquote class="q">By moving broad exploration into a separate subagent, the main agent can receive cleaner repository evidence rather than carrying the irrelevant code accumulated during navigation.
+    <span class="src">— FastContext <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a>, Introduction</span></blockquote>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>The agent-authored <span class="mono">INSTRUCTION.md</span> in RepoAnchor and the <span class="mono">&lt;final_answer&gt;</span> evidence block in FastContext are the same idea as the hand-written instruction files on the <a href="instruction-files.html">previous page</a> — codified, machine-targeted repository context — except <em>generated just-in-time and scoped to one task</em> rather than authored once and loaded always. My reading of the corpus is that "context engineering" is splitting into two registers: a durable, human-curated spine (the repo file) and a transient, machine-generated context object minted per task. The provisioning papers are quietly arguing the transient register is where the measurable wins are. <strong>One caveat I'd flag</strong>: FastContext and SWE-Explore share authors and infrastructure (overlapping SJTU/Microsoft groups), so their agreement is less independent than it looks — see <a href="limitations.html">Limitations</a>.</p></div>
+
+  <div class="pager">
+    <a href="instruction-files.html">← Instruction Files</a>
+    <a href="context-limits.html">Context Limits →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

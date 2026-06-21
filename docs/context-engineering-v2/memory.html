@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Persistent Project Memory — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav active" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">05 · Persistent Project Memory</p>
+  <h1>What survives across sessions</h1>
+  <p class="lede">A coding agent is stateless between sessions: it re-derives the same project context and re-attempts fixes that already failed. Three papers build persistence — an event-sourced project log, a memory-guided documentation generator, and a versioned skill base — and they share a striking choice: <strong>legible, provenance-linked structure over opaque vector recall.</strong></p>
+
+  <h2>The statelessness tax</h2>
+  <p><a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a> estimates that re-establishing context in a stateless agent costs 5,000–20,000 tokens per session, and argues the bottleneck is "missing project memory," not model capability <span class="tag emp">Empirical</span>. Its fix is an append-only plain-text event log (five typed events: <span class="mono">issue</span>, <span class="mono">attempt</span>, <span class="mono">fix</span>, <span class="mono">decision</span>, <span class="mono">note</span>) deterministically projected into AI-readable summaries served over MCP — cutting per-session context to ~800–1,500 tokens, an estimated &gt;50% reduction <span class="tag emp">Empirical</span>. The defining property is determinism:</p>
+  <blockquote class="q">the summary can be rebuilt from scratch at any time and can never silently diverge from history — the property that makes the plain-text substrate trustworthy as an audit trail.
+    <span class="src">— PROJECTMEM <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a>, Implementation</span></blockquote>
+
+  <h2>Memory that acts, not just answers</h2>
+  <p>PROJECTMEM's distinctive contribution is a deterministic <em>pre-action judgment gate</em> keyed to the project's own logged failures — <span class="mono">precheck_file()</span> returns "you tried this 2 days ago — it failed" <em>before</em> the agent repeats it. The authors coin <strong>Memory-as-Governance</strong> for this <span class="tag def">Definition</span> <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a>:</p>
+  <blockquote class="q">memory that does not merely answer the agent but acts on its next action.
+    <span class="src">— PROJECTMEM <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a>, Abstract</span></blockquote>
+  <p>It explicitly contrasts itself with passive codified context — <em>"Codified Context prevents repetition passively… not from the project's logged failures and not per action"</em> — positioning the gate as a more active intervention than a read-only instruction file <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>. (Evidence is a 207-event, 10-project, two-month self-study with no causal claim — a mechanism demonstration, not an effect size.)</p>
+
+  <h2>Persistence as a generator of context for the next agent</h2>
+  <p><a class="cite" href="corpus.html#p-2605-14563">MemDocAgent&nbsp;'26</a> applies persistent memory to producing the context artifact itself. It reframes repository documentation as a long-horizon agentic task: a single agent traverses the whole repo in one trajectory with a shared, typed, key-indexed store (RepoMemory), dependency-aware traversal, and NLI-based cross-document conflict verification <span class="tag prop">Proposal</span>. Versus memoryless per-component pipelines that re-fetch the same files (~50% overlap) and contradict themselves (13% inconsistency), it reduces inconsistency 75.5% and read-time 41% (23.44s → 13.76s) <span class="tag emp">Empirical</span>. Its <em>information sufficiency</em> metric — can the docs alone regenerate the code? — even beats human-written docstrings, framing documentation as <em>"the contextual grounding that both human developers and coding agents rely on."</em> Persistent memory here is the means by which a high-quality, consistent codified-context artifact gets produced.</p>
+
+  <h2>Knowledge as versioned, governed assets</h2>
+  <p><a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a> scales persistence to an ecosystem, treating agent skills as long-lived "capability assets" rather than ad-hoc prompts <span class="tag def">Definition</span>:</p>
+  <blockquote class="q">While knowledge is managed through Wikipedia and software through GitHub, agent skills still lack an infrastructure for large-scale production, governance, and evolution.
+    <span class="src">— SkillWiki <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a>, Abstract</span></blockquote>
+  <p>A <strong>Skill Provenance Graph</strong> links knowledge sources → skills → executions → validations → versions; an 8-state lifecycle plus Git-style snapshots, diffs, reviews, and releases make evolution <em>"traceable, reviewable, and reversible, preventing uncontrolled drift"</em> <span class="tag prop">Proposal</span>. Maintenance is feedback-driven — "reflection memories" from repeated failures generate maintenance proposals — but always subordinate to humans: <em>"User decisions always take precedence over autonomous governance actions."</em> The one quantitative result is a production run converting 99 of 125 heterogeneous artifacts into governed skill candidates; there is no baseline <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a> <span class="tag emp">Empirical</span>.</p>
+
+  <div class="box finding"><p class="box-h">▦ The shared design choice: legibility over vector recall</p>
+  <p>All three reject opaque embedding stores in favor of structured, auditable persistence. PROJECTMEM is "no semantic/vector retrieval by design," choosing determinism and grep/diff-ability <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a>; SkillWiki keeps explicit knowledge↔skill provenance links and reversible Git-style history <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a>; MemDocAgent uses a typed, key-indexed store with O(1) hits and consistency verification <a class="cite" href="corpus.html#p-2605-14563">MemDocAgent&nbsp;'26</a>. Each prefers a recall mechanism a human can inspect over one that is merely similar.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>Across this corpus, persistent memory for <em>coding</em> agents looks deliberately different from the vector-database memory common in the general agent-memory literature (this hub's separate <em>LLM Agent Memory</em> review, on the <a href="../index.html">hub</a>). My read of why: the <a href="context-limits.html">Context Limits</a> page showed coding agents are brittle exact-match machines, and the same logic applies to memory — a fuzzy semantic recall that returns an <em>approximately</em> right file path or a stale decision is worse than useless when a tool will match it exactly. So these papers converge on append-only logs, provenance graphs, and deterministic projections: persistence you can audit, diff, and trust. The natural endpoint, which PROJECTMEM names outright, is that memory stops being a store you query and becomes a gate that governs — which is the bridge to the next page. This is my synthesis; the evidence here (one self-study, one demo, one doc-gen study) is thin and I would not over-read it.</p></div>
+
+  <div class="pager">
+    <a href="harness.html">← The Harness</a>
+    <a href="governance.html">Governance →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

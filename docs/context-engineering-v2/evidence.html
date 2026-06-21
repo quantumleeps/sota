@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence Ledger — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav active" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">07 · Evidence Ledger</p>
+  <h1>The measured effects, with my confidence</h1>
+  <p class="lede">Every primary, measured result across the corpus in one table — token savings, success deltas, prevalence and correlation figures — each chip-sourced, each with my own confidence appraisal. Numbers a paper merely <em>cites</em> from other work are kept out of this ledger.</p>
+
+  <div class="box inference"><p class="box-h">⟡ The confidence column is mine — here is the scale</p>
+  <p>The right-hand column is <strong>my</strong> appraisal, not the papers'. All 17 sources are 2026 preprints; none is replicated or peer-reviewed here, so nothing earns "Strong." I use: <strong>Moderate</strong> — a controlled benchmark with a clear method but limited replication, single samples, or one architecture; <strong>Indicative</strong> — observational, self-study, demo, single-developer, or a result transferred from another domain. Treat the whole table as directional.</p></div>
+
+  <div class="grid g3">
+    <div class="card stat"><div class="big green">r = 0.950</div><div class="lbl">The strongest single result: how well an agent selects context predicts whether it resolves the task. A correlation across explorers, not a controlled intervention. <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big green">59% → 78%</div><div class="lbl">SWE-Bench Pro pass rate from one label-free round of harness self-optimization — large, but one round, one backbone, self-graded. <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">7 vs 19</div><div class="lbl">The sharpest negative result: implicit compression solved fewer SWE-bench issues than no compression (p=0.013). <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a></div></div>
+  </div>
+
+  <h2>Ledger</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Measured effect</th><th>Result</th><th>Method &amp; scale</th><th>Source</th><th>My confidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Auto-generated context files vs none</td>
+        <td class="neg">−0.5% / −2% success; +20–23% cost</td>
+        <td>4 agent/model pairs, SWE-bench Lite + AGENTbench (138 inst.); single sample</td>
+        <td><a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Developer-written context files vs none</td>
+        <td class="pos">~+4% success (avg)</td>
+        <td>Same harnesses; AGENTbench human files; single sample, no variance</td>
+        <td><a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Instruction-file hygiene in the wild</td>
+        <td class="neg">91/100 files ≥1 smell (Lint 62%, Bloat 42%, Skill 35%)</td>
+        <td>Top-100 starred repos; threshold + LLM detection, manual verification</td>
+        <td><a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Share of agent tokens spent reading</td>
+        <td class="num">76.1% (Claude) / 67.5% (GLM)</td>
+        <td>Trajectory accounting, SWE-bench Verified, Mini-SWE-Agent</td>
+        <td><a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Share of tokens / turns in exploration</td>
+        <td class="num">46.5% tokens · 56.2% tool-turns</td>
+        <td>300 GPT-5.4 trajectories, SWE-bench Multilingual</td>
+        <td><a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Context efficiency ↔ resolve rate</td>
+        <td class="pos">Pearson r = 0.950</td>
+        <td>14 explorers, 848 instances; restricted-context downstream validation</td>
+        <td><a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Explorer subagent vs monolithic solving</td>
+        <td class="pos">up to +5.5% resolution · −60% main-agent tokens</td>
+        <td>3 main agents × 3 benchmarks; ~2.1% explorer overhead</td>
+        <td><a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Line-level observation pruning</td>
+        <td class="pos">−23.1% tokens · +1.4 pp success</td>
+        <td>SWE-bench Verified, Claude Sonnet 4.5; AST correctness 87.3% vs 0.29%</td>
+        <td><a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Implicit (embedding) compression for SE agents</td>
+        <td class="neg">7 vs 19 issues solved (p=0.013)</td>
+        <td>ICAE on Qwen3-8B; SWE-bench Verified; works on QA, fails multi-step</td>
+        <td><a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Context map vs base agent (incl. Codex)</td>
+        <td class="pos">+6.3–34.0% quality; full-history persistence −2 pp</td>
+        <td>OOLONG + CL-bench; RLM/Codex/Qwen3-Coder backbones</td>
+        <td><a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Label-free harness self-optimization</td>
+        <td class="pos">SWE-Bench Pro 59% → 78%</td>
+        <td>One offline round, GPT-5.5 Codex, self-preference; also TB2 +5, GAIA-2 +8</td>
+        <td><a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Benchmark score vs true context reasoning</td>
+        <td class="neg">66.8% → 25.3% under perturbation; hints recover 27.6 → 62.6</td>
+        <td>8 frontier models, perturbed SWE-bench Verified; Python only</td>
+        <td><a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Memory-guided vs memoryless documentation</td>
+        <td class="pos">inconsistency −75.5% · read-time −41%</td>
+        <td>20 Python repos; Qwen3-Coder + GPT-5-mini; LLM-judge metrics</td>
+        <td><a class="cite" href="corpus.html#p-2605-14563">MemDocAgent&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Execution-boundary governance layer</td>
+        <td class="pos">valid success 12% → 96%; unsafe 88% → 0%</td>
+        <td>50 adversarial episodes — buyer–seller negotiation, <em>not coding</em></td>
+        <td><a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Event-sourced project memory: context cost</td>
+        <td class="pos">~5–20k → ~0.8–1.5k tokens/session (&gt;50%)</td>
+        <td>Usage estimates; 207-event, 10-project, 2-month self-study; no causal claim</td>
+        <td><a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Codified context as share of codebase</td>
+        <td class="num">24.2% (machine-targeted docs); ~1–2 hr/wk upkeep</td>
+        <td>Single developer, single 108K-line C# project, 283 sessions; observational</td>
+        <td><a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Knowledge-to-skill production</td>
+        <td class="num">99 / 125 artifacts → governed skills</td>
+        <td>Demonstration run, 5 source types; no baseline, no significance test</td>
+        <td><a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Harness vs decision-logic in a real agent</td>
+        <td class="num">~1.6% loop · ~98.4% harness</td>
+        <td>Reverse-engineering of Claude Code v2.1.88; community estimate</td>
+        <td><a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="box inference"><p class="box-h">⟡ Appraisal — where the evidence is consistent vs thin</p>
+  <p><strong>Most consistent.</strong> Three independent measurements agree that repository reading dominates an agent's token budget and that context <em>quality</em> tracks success <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a> — this is the corpus's firmest ground. The skeptical instruction-file results also reinforce each other across two independent groups <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a>.</p>
+  <p><strong>Thinnest.</strong> The persistent-memory, codified-infrastructure, and governance claims rest on single-developer self-studies, demos without baselines, or a non-coding domain <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>. They are good mechanism demonstrations, not effect sizes. And several headline benchmark wins carry an unquantified contamination risk, since 2026 frontier models may have seen the test repos <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a>.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ What would raise confidence (drawn from the papers' own future work)</p>
+  <p>Controlled, ablated benchmarking of each context tier with vs without it <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>; multi-language evaluation beyond Python <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a> <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a>; a "failures-prevented-per-N-commits" benchmark for memory gates <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a>; deployment of governance layers in actual coding (not negotiation) settings <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>; and variance/significance reporting for the instruction-file effects <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>.</p></div>
+
+  <div class="pager">
+    <a href="governance.html">← Governance</a>
+    <a href="limitations.html">Limitations →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

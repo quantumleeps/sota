@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations &amp; Open Problems — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav active" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">08 · Limitations &amp; Open Problems</p>
+  <h1>What the corpus flags about itself</h1>
+  <p class="lede">The papers are, to their credit, candid about their own weaknesses. Grouped into families below, those caveats matter as much as the headline results — and the review itself is a search-shaped sample, which is the first limitation to state.</p>
+
+  <h2>1 · Evaluation is Python-centric and benchmark-bound</h2>
+  <div class="box gap"><p class="box-h">◇ The same caveat, repeated across the corpus</p>
+  <p>Most empirical work is Python-only and tied to the SWE-bench family: the instruction-file benchmark <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>, line-level pruning <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a>, perturbation probing <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a>, and memory-guided documentation <a class="cite" href="corpus.html#p-2605-14563">MemDocAgent&nbsp;'26</a> all flag Python-only scope. Python is heavily represented in pretraining, so a model's parametric knowledge may mask (or inflate) the value of supplied context — niche languages and toolchains are untested.</p></div>
+  <p>Two further benchmark limits: SWE-Explore only contains instances some agent could already solve, so it "does not represent the full distribution of unsolved repo issues" <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a>; and FastContext notes its benchmarks may overlap frontier-model pretraining, making results "controlled benchmark evidence rather than deployment guarantees" <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a> <span class="tag emp">Empirical</span>.</p>
+
+  <h2>2 · Many results rest on weak evidence designs</h2>
+  <p>Several of the most architecturally interesting papers are explicitly not effect-size studies:</p>
+  <ul class="clean">
+    <li><strong>Observational, no causal claim.</strong> The codified-context infrastructure is one developer, one project: "No causal relationships are claimed; confounding factors including developer experience growth cannot be isolated" <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>.</li>
+    <li><strong>Self-study with usage estimates.</strong> "We do not claim a causal productivity improvement from this self-study"; token figures are ranges, not benchmarks <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a>.</li>
+    <li><strong>Demo without baselines.</strong> One quantitative number (99/125) and no comparison against existing skill repositories <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a>.</li>
+    <li><strong>Single sample, no variance.</strong> One run per agent and no significance tests on the instruction-file deltas <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>; one ICAE architecture for the compression result <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a>.</li>
+  </ul>
+
+  <h2>3 · Domain transfer and label-free signals</h2>
+  <div class="box risk"><p class="box-h">⚠ The governance numbers are not from coding</p>
+  <p>The corpus's most dramatic governance result (valid success 12%→96%) is from adversarial buyer–seller negotiation, not software engineering <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>; the other governance source is policy analysis of a public record through 7 May 2026, not a deployed system <a class="cite" href="corpus.html#p-2606-14594">Manita & Amari&nbsp;'26</a>. Both also rely on LLM-synthesized adversaries / a small incident set. Treat the execution-boundary pattern as promising and the coding-specific effect as unmeasured.</p></div>
+  <p>Two label-free methods also depend on the agent judging itself: harness self-optimization trusts past trajectories that "can carry adversarial content injected mid-task," risking entrenchment of bad behavior <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a>; and the context map's value "depends on how the agent interacts with the context" — if interaction reveals little reusable knowledge, the map is worthless <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a> <span class="tag emp">Empirical</span>.</p>
+
+  <h2>4 · The artifacts can fail or undermine themselves</h2>
+  <p>A recurring theme is that the very mechanisms the papers propose carry failure modes:</p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Mechanism</th><th>Its own failure mode</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>Codified context files</td><td>Silent staleness — agents trust docs absolutely, stale specs cause silent failures</td><td><a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a></td></tr>
+      <tr><td>Auto-generated instruction files</td><td>Bloat, leakage, fossilization — 91/100 carry smells</td><td><a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a></td></tr>
+      <tr><td>Broad repository exploration</td><td>Exploration drift — more access, no more understanding</td><td><a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a></td></tr>
+      <tr><td>Implicit context compression</td><td>Reconstruction errors break exact-match edit tools</td><td><a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a></td></tr>
+      <tr><td>Bounded context + subagent isolation</td><td>Predicted duplication &amp; convention drift from missing global view</td><td><a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a></td></tr>
+      <tr><td>Self-evolving harness</td><td>Regression / safety erosion without change contracts &amp; rollback</td><td><a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>5 · Limits of this review</h2>
+  <div class="box inference"><p class="box-h">⟡ The honest scope of this site</p>
+  <p>This is a reading of <strong>17 preprints</strong>, surfaced by an automated arXiv-relevance search for "context engineering for LLM coding agents" and gathered in June 2026. It is a <em>sample shaped by the query</em>, not a census: different search terms would surface a different 17. Two themes the request named are under-represented here and I said so up front — <strong>MCP</strong> appears in the wider pool mainly as security studies rather than context-provisioning work, and <strong>spec-driven / single-source-of-truth</strong> is covered by this hub's separate <em>Spec-Driven Development</em> review (see the <a href="../index.html">hub</a>) rather than duplicated here. Every paper dates to Jan–Jun 2026, so there is no longitudinal view and any "trend" reading would be my inference, not the corpus's. And these are mostly un-peer-reviewed preprints; the <a href="evidence.html">Evidence</a> appraisal is deliberately conservative.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ The cross-cutting open problem</p>
+  <p>The corpus argues, in one breath, to <em>codify more context as durable infrastructure</em> and that <em>context files, compression, and accumulation frequently make agents worse</em>. What reconciles the two is maintenance — and no paper here solves it. Staleness is the named failure of codified context <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>; fossilization is a measured smell <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a>; maintainer review-capacity is the universally ungoverned governance dimension <a class="cite" href="corpus.html#p-2606-14594">Manita & Amari&nbsp;'26</a>; and self-maintaining harnesses risk silent regression <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a>. <strong>Who keeps all this codified context correct, and how, at machine speed</strong> is the question the corpus circles but does not answer.</p></div>
+
+  <div class="pager">
+    <a href="evidence.html">← Evidence</a>
+    <a href="synthesis.html">Synthesis →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

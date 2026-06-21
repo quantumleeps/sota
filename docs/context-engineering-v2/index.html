@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context Engineering for Coding Agents — a review of 17 papers (Jan–Jun 2026) · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav active" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">State of the Art · Context Engineering for LLM Coding Agents</p>
+  <h1>Steering a coding agent becomes an infrastructure problem, not a prompt</h1>
+  <p class="lede">Across these 17 papers — all posted between <strong>January and June 2026</strong> — the thing that decides whether a coding agent succeeds is less the model and more the <strong>context system</strong> built around it: what repository knowledge is codified for it, how the right code is found and fed in, how the working context is kept inside its budget, what persists across sessions, and what governs the actions it emits. The recurring move is to treat context as <em>engineered, version-controlled, machine-targeted infrastructure</em> — and several papers warn that doing it carelessly makes the agent worse.</p>
+
+  <div class="box inference"><p class="box-h">⟡ Scope — read this first</p>
+  <p>This is a review of <strong>17 sources</strong>, gathered in <strong>June 2026</strong> by an automated arXiv-relevance search for "context engineering for LLM coding agents" (repository instruction files, harness scaffolding, context provisioning, long-horizon context, project memory, governance) and read as a sealed corpus. Every paper lands in <strong>January–June 2026</strong> — a recent, search-shaped sample of mostly un-peer-reviewed preprints. It is a reading of <em>this corpus</em>, <strong>not</strong> a complete survey of the field and not a claim about where the field is heading. Where this page says "across these papers," it means exactly that. It is a deliberate <em>v2</em> companion to this hub's earlier <em>Context Engineering</em> deep dive (Topic 01 on the <a href="../index.html">hub</a>), read independently; the two corpora are not merged. Provenance for every claim lives in the <a href="corpus.html">Corpus</a>.</p></div>
+
+  <div class="grid g3">
+    <div class="card stat">
+      <div class="big">76.1%</div>
+      <div class="lbl">Share of a coding agent's tokens spent on <em>read</em> operations — reading and searching the repository — in one measured setting, making context retrieval the dominant cost. <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big">91 / 100</div>
+      <div class="lbl">Most-starred repositories whose <span class="mono">AGENTS.md</span>/<span class="mono">CLAUDE.md</span> file carries at least one detectable "configuration smell." <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big">+20%</div>
+      <div class="lbl">Extra inference cost from <em>auto-generated</em> repository context files — while slightly <em>reducing</em> task success, not improving it. <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a></div>
+    </div>
+  </div>
+
+  <div class="box finding"><p class="box-h">▦ How to read this site</p>
+  <p>Citation chips like <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a> follow every sourced claim and link to the <a href="corpus.html">Corpus</a>, which links onward to arXiv. Claim-type tags show how strong a claim is in its source: <span class="tag emp">Empirical</span> measured, <span class="tag thy">Theory</span> argued, <span class="tag prop">Proposal</span> proposed-but-unvalidated, <span class="tag def">Definition</span> a term or benchmark. <strong>Amber blocks are my inference</strong>, not a paper's claim; blue blocks are paper findings; teal blockquotes are verbatim.</p></div>
+
+  <h2>What recurs across these 17 papers</h2>
+  <p>Six observations have enough independent support <em>within this corpus</em> to count as consensus <em>here</em>. Each links to the page that develops it.</p>
+
+  <h3>1 · Reading the repository is the dominant cost — and the main lever <span class="tag emp">Empirical</span></h3>
+  <p>Multiple papers independently measure that gathering code context dwarfs editing and execution: read operations consume 76.1% of agent tokens <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a>; reading and searching are 46.5% of tokens and 56.2% of tool-use turns <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a>; and how well an agent selects context predicts whether it resolves the task at Pearson r=0.950 <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a>. → <a href="provisioning.html">Provisioning</a> · <a href="context-limits.html">Context Limits</a></p>
+
+  <h3>2 · Codified context is moving from one hand-written file to a tiered, machine-maintained substrate <span class="tag prop">Proposal</span></h3>
+  <p>The single <span class="mono">CLAUDE.md</span> gives way to structured, layered, often self-maintaining context: a three-tier constitution + specialist agents + knowledge base <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>, a budgeted prompt-resident "context map" discovered from execution <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a>, a harness of instructions/skills/tools the agent rewrites from its own runs <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a>, versioned skill assets with a provenance graph <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a>, and an append-only project event log <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a>. → <a href="instruction-files.html">Instruction Files</a> · <a href="memory.html">Memory</a></p>
+
+  <h3>3 · Auto-generated instruction files are not a free win — hygiene beats presence <span class="tag emp">Empirical</span></h3>
+  <p>The corpus is openly skeptical of "just run <span class="mono">/init</span>." Auto-generated context files slightly reduce success and add &gt;20% cost <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>; 91 of 100 popular repos' files carry quality smells like bloat and leakage <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a>; and stale specs that silently contradict the code are named the primary failure mode of codified context <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>. → <a href="instruction-files.html">Instruction Files</a></p>
+
+  <h3>4 · Decoupling exploration from solving — a clean context interface — recurs as a winning pattern <span class="tag emp">Empirical</span></h3>
+  <p>A separate component finds the context and hands the solver a compact, structured artifact, keeping search noise out of the solver's window: a trained explorer subagent returning file-line citations <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a>, a structure-first phase that writes an <span class="mono">INSTRUCTION.md</span> before editing <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a>, exploration scored as its own line-level task <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a>, and summary-only subagent isolation in a production harness <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>. → <a href="provisioning.html">Provisioning</a> · <a href="harness.html">The Harness</a></p>
+
+  <h3>5 · Lossy compression that works for QA fails for multi-step coding; missing context hurts more than redundant context <span class="tag emp">Empirical</span></h3>
+  <p>Coding agents are unusually sensitive to fidelity loss. Implicit (embedding) compression that helps single-shot QA solves <em>fewer</em> SWE-bench issues than no compression at all <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a>; missing core context lowers resolve rate more than redundant context does <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a>; line-level pruning preserves syntax where token-level shreds it <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a>; and naively persisting full history <em>hurts</em> <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a>. → <a href="context-limits.html">Context Limits</a></p>
+
+  <h3>6 · Governance and provenance move to the execution and contribution boundaries <span class="tag prop">Proposal</span></h3>
+  <p>Several papers shift control from inside the model to the boundary where the agent acts or contributes: a model-agnostic layer that approves/revises/blocks/escalates emitted actions <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>, a deterministic pre-action gate keyed to logged failures <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a>, open-source policies and provenance trailers for machine contributors <a class="cite" href="corpus.html#p-2606-14594">Manita & Amari&nbsp;'26</a>, and "governed" named as a target property of the harness itself <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a>. → <a href="governance.html">Governance</a></p>
+
+  <h2>Map of the territory</h2>
+  <div class="grid g2">
+    <a class="card cardlink" href="instruction-files.html">
+      <p class="ct">Page 01</p><h3>Instruction files &amp; codified context</h3>
+      <p>The <span class="mono">AGENTS.md</span>/<span class="mono">CLAUDE.md</span> artifact and what scales past it — the tiered "codified context infrastructure," and the corpus's hard evidence that careless context files backfire.</p>
+    </a>
+    <a class="card cardlink" href="provisioning.html">
+      <p class="ct">Page 02</p><h3>Finding &amp; provisioning context</h3>
+      <p>Repository exploration as a measured, separable bottleneck: trained explorer subagents, line-level localization benchmarks, perturbation probes, and the decouple-exploration-from-solving pattern.</p>
+    </a>
+    <a class="card cardlink" href="context-limits.html">
+      <p class="ct">Page 03</p><h3>Keeping context inside the budget</h3>
+      <p>Long-horizon context management: pruning observations, orientation-cache "context maps," and a sharp negative result on implicit compression for multi-step agents.</p>
+    </a>
+    <a class="card cardlink" href="harness.html">
+      <p class="ct">Page 04</p><h3>The harness as the substrate</h3>
+      <p>Code as the executable, inspectable, stateful layer around the model — a framing survey, a real harness dissected from source, and an agent that rewrites its own harness from experience.</p>
+    </a>
+    <a class="card cardlink" href="memory.html">
+      <p class="ct">Page 05</p><h3>Persistent project memory</h3>
+      <p>What survives across sessions: event-sourced project logs with a judgment gate, memory-guided documentation, and versioned, governed skill knowledge bases.</p>
+    </a>
+    <a class="card cardlink" href="governance.html">
+      <p class="ct">Page 06</p><h3>Governance &amp; provenance</h3>
+      <p>Control at the boundary where agents act and contribute: execution-boundary gating, audit trails, and open-source policy for machine contributors.</p>
+    </a>
+    <a class="card cardlink" href="evidence.html">
+      <p class="ct">Page 07</p><h3>Evidence ledger</h3>
+      <p>The measured effects across the corpus — token savings, success deltas, prevalence and correlation figures — each with a source chip and my confidence appraisal.</p>
+    </a>
+    <a class="card cardlink" href="limitations.html">
+      <p class="ct">Page 08</p><h3>Limitations &amp; open problems</h3>
+      <p>What the corpus flags about itself: Python-centric evaluation, single-sample and observational designs, domain transfer, and how thin the evidence base really is.</p>
+    </a>
+    <a class="card cardlink" href="synthesis.html">
+      <p class="ct">Page 09 · inference</p><h3>Synthesis</h3>
+      <p>My reading across the corpus: a reference model of the agent context stack, the design bets it suggests, and the bets I would not place. Entirely inference — chips mark what I reason from.</p>
+    </a>
+  </div>
+
+  <h2>The corpus at a glance</h2>
+  <p class="note">All 17 papers fall inside a single six-month window (Jan–Jun 2026), so this is a snapshot, not a trajectory. Months are taken from each arXiv id; the grouping is descriptive, not a claim about sequence or causation.</p>
+  <div class="timeline">
+    <div class="tl-item"><div class="when">Jan 2026</div><div class="what"><strong>SWE-Pruner</strong> — line-level context pruning at the agent–environment boundary <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a>.</div></div>
+    <div class="tl-item"><div class="when">Feb 2026</div><div class="what"><strong>Codified Context</strong> — three-tier context infrastructure <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a> · <strong>Evaluating AGENTS.md</strong> — the skeptic's benchmark <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>.</div></div>
+    <div class="tl-item"><div class="when">Apr 2026</div><div class="what"><strong>Dive into Claude Code</strong> — a production harness reverse-engineered from source <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>.</div></div>
+    <div class="tl-item"><div class="when">May 2026</div><div class="what"><strong>Code as Agent Harness</strong> (framing survey) <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a> · <strong>Implicit Context Compression</strong> (negative result) <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a> · <strong>Peek</strong> (context map) <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a> · <strong>MemDocAgent</strong> (memory-guided docs) <a class="cite" href="corpus.html#p-2605-14563">MemDocAgent&nbsp;'26</a> · <strong>RepoMirage</strong> (perturbation probe) <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a>.</div></div>
+    <div class="tl-item"><div class="when">Jun 2026</div><div class="what"><strong>FastContext</strong> (trained explorer) <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a> · <strong>SWE-Explore</strong> (exploration benchmark) <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a> · <strong>Evolving in the Dark</strong> (harness self-optimization) <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a> · <strong>PROJECTMEM</strong> (event-sourced memory) <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a> · <strong>SkillWiki</strong> (skill infrastructure) <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a> · <strong>Organizational Control Layer</strong> (execution-boundary governance) <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a> · <strong>Configuration Smells</strong> (instruction-file hygiene) <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a> · <strong>Regulating the Machine Contributor</strong> (governance policy) <a class="cite" href="corpus.html#p-2606-14594">Manita & Amari&nbsp;'26</a>.</div></div>
+  </div>
+
+  <div class="pager">
+    <a href="../index.html">← All SotA</a>
+    <a href="instruction-files.html">Instruction Files →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

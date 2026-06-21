@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Harness as Substrate — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav active" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">04 · The Harness as Substrate</p>
+  <h1>Context engineering grows into harness engineering</h1>
+  <p class="lede">Three papers zoom out from individual artifacts to the whole software layer around the model — the <em>harness</em>. One frames it as a discipline, one dissects a production harness from its source code, and one shows an agent rewriting its own harness from experience. Across them, context engineering is recast as one mechanism inside a larger engineered, stateful substrate.</p>
+
+  <h2>The thesis: reliability lives in the harness, not only the model</h2>
+  <p>The framing survey defines the object precisely <span class="tag def">Definition</span> <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a>:</p>
+  <blockquote class="q">…the software layer that surrounds an LLM with tools, APIs, sandboxes, memory, validators, permission boundaries, execution loops, and feedback channels, thereby turning a stateless model into a functional agent.
+    <span class="src">— Code as Agent Harness <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a>, §2</span></blockquote>
+  <p>Its central claim is that code in agent systems is not just generated output but the operational medium — <em>executable, inspectable, stateful</em> — and that autonomy is gated by this layer <span class="tag thy">Theory</span>: <em>"the bottleneck of autonomy is not only the reasoning ability of the base model, but also the reliability of the system that connects model outputs to long-horizon actions and persistent states."</em> The survey explicitly names <strong>Agentic Harness Engineering</strong> as a discipline beyond prompt and context engineering, with a target property set for future systems: <em>executable, inspectable, stateful, governed</em> <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a>.</p>
+  <p>It also reframes the artifacts from earlier pages as harness state: <span class="mono">AGENTS.md</span>/<span class="mono">CLAUDE.md</span> are "persistent, inspectable, version-controlled artifacts the agent can consult before acting," planning is lifted from an ephemeral prompt into a <em>filesystem-backed control object</em> (a <span class="mono">PLAN.md</span> that "can be reviewed by humans, versioned with Git, consumed by subagents"), and memory is "not simply a larger context window or a vector database — it is a state-management layer" <span class="tag prop">Proposal</span> <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a>.</p>
+
+  <h2>Anatomy of a real harness: what the 98.4% does</h2>
+  <p>The abstraction gets concrete in a source-grounded reading of Claude Code (TypeScript v2.1.88, ~512K lines) <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>:</p>
+  <blockquote class="q">The core of the system is a simple while-loop that calls the model, runs tools, and repeats. Most of the code, however, lives in the systems around this loop.
+    <span class="src">— Dive into Claude Code <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>, Abstract</span></blockquote>
+  <div class="grid g3">
+    <div class="card stat"><div class="big">~1.6%</div><div class="lbl">Estimated share of the codebase that is AI decision logic; the other <strong>98.4%</strong> is operational harness. <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">5</div><div class="lbl">Sequential compaction layers run before <em>every</em> model call — "no single compaction strategy addresses all types of context pressure." <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">4</div><div class="lbl">Extension mechanisms ordered by context cost: hooks (zero) → skills (low) → plugins (medium) → MCP (high). <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a></div></div>
+  </div>
+  <p>The harness is where context engineering actually happens: a documented context-assembly order (system prompt → env/git → <span class="mono">CLAUDE.md</span> → path-scoped rules → memory → tool schemas → history → compaction), a four-level <span class="mono">CLAUDE.md</span> hierarchy with lazy path-scoped rule loading, deny-first permissions, and summary-only subagent isolation (agent teams cost ~7× the tokens of a plan-mode session) <span class="tag emp">Empirical</span> <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>. The paper's position is that as frontier models converge, this surrounding harness — not the decision scaffolding — becomes the principal differentiator.</p>
+  <div class="box risk"><p class="box-h">⚠ A predicted cost of the harness's own design</p>
+  <p>The same analysis warns (as an architectural prediction, not a measurement) that bounded context plus subagent isolation should produce more pattern duplication and convention drift, because <em>"good local decisions can produce poor global outcomes when the model lacks global context"</em> <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a> <span class="tag prop">Proposal</span>. The very mechanisms that keep context bounded can fragment the agent's view of the codebase.</p></div>
+
+  <h2>The harness as an optimization target — even self-optimizing</h2>
+  <p>If the harness is the differentiator, it becomes something to engineer and improve. <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a> defines the harness as "a persistent collection of tools, prompts, and skills" materialized as a directory of Markdown instruction/skill files plus executable tool scripts — and then optimizes it from the agent's own past trajectories, with no ground-truth labels, in a single offline pass (Retrospective Harness Optimization) <span class="tag prop">Proposal</span>:</p>
+  <blockquote class="q">an agent's own trajectories already contain the signal needed to improve it, since re-solving past tasks and comparing the outcomes exposes where the harness fails and what would fix it.
+    <span class="src">— Evolving Agents in the Dark <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a>, Conclusion</span></blockquote>
+  <p>Using self-preference (within-trajectory self-validation + cross-trajectory self-consistency), one round raised SWE-Bench Pro pass rate from <strong>59% to 78%</strong> without any external grading — beating memory-only methods (Dynamic Cheatsheet, ReasoningBank, Sleep-time Compute) and matching a validation-feedback optimizer at ~3× less compute <span class="tag emp">Empirical</span> <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a>. The improvements are concrete context artifacts the agent wrote for itself — e.g. a <span class="mono">repair-verify</span> tool that locates Go's non-standard toolchain path and strips cache dirs from the final diff. Distinguishing this from memory-only approaches is the paper's core positioning: it edits the <em>full</em> harness (tools and instructions), not stored memory alone.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>Stacking these three, the corpus is quietly relabeling its own subject. The instruction files, provisioning artifacts, and context-budget machinery of the previous pages are, in this framing, all <em>harness state</em> — and the survey says so outright by listing context engineering as one mechanism under Agentic Harness Engineering <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a>. My read is that the unit of engineering is shifting from "the prompt/context" to "the on-disk substrate the agent reads, writes, and now rewrites," and that Pan+'s self-optimizing harness <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a> is the same idea as the self-maintaining context map and skill base elsewhere in the corpus. The catch is that a substrate the agent edits itself needs exactly the governance the next pages describe — Ning+ lists "self-evolving harnesses without regression" as an open problem, and Pan+ itself warns that harness updates distilled from compromised trajectories could entrench bad behavior. Self-improvement and governance are the same frontier. This is my synthesis, not a claim any paper makes whole.</p></div>
+
+  <div class="pager">
+    <a href="context-limits.html">← Context Limits</a>
+    <a href="memory.html">Memory →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

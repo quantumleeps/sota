@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keeping Context Inside the Budget — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav active" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">03 · Keeping Context Inside the Budget</p>
+  <h1>The context wall: managing what accumulates</h1>
+  <p class="lede">A long-horizon coding task floods the window with file contents, logs, and command output. Three papers attack the resulting "context wall" from different angles — pruning observations, caching orientation, compressing into latent tokens — and together they deliver the corpus's clearest design rule: <strong>preserve the decision-relevant tokens exactly; the compression ratio is the wrong objective.</strong></p>
+
+  <h2>Reading accumulates faster than anything else</h2>
+  <p>The pressure comes overwhelmingly from one source. <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a> measures that <em>read</em>-type operations consume <strong>76.1%</strong> of a coding agent's total tokens (Claude Sonnet 4.5 on SWE-bench Verified), versus 12.1% for execution and 11.8% for editing — a pattern that holds for GLM-4.6 at 67.5% <span class="tag emp">Empirical</span>. The raw retrieved context, "often thousands of lines," is what walls the agent in.</p>
+
+  <h2>Negative result: implicit compression breaks multi-step coding</h2>
+  <p>The tempting fix is to compress past context into a denser representation. <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a> tests exactly this — an In-Context Autoencoder that encodes context into continuous "memory tokens" — and reports a clean negative result <span class="tag emp">Empirical</span>:</p>
+  <blockquote class="q">While the method performs well on single-shot common-knowledge and code-understanding tasks, our experiments demonstrate that it fails on multi-step agentic coding tasks.
+    <span class="src">— Implicit Context Compression <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a>, Abstract</span></blockquote>
+  <div class="grid g3">
+    <div class="card stat"><div class="big">0.73</div><div class="lbl">BLEU on single-shot SQuAD QA — where compression <em>works</em>, beating the uncompressed base (0.67). <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">7 vs 19</div><div class="lbl">SWE-bench Verified issues solved by the compressed agent vs the uncompressed baseline (p=0.013) — compression solved <em>fewer</em>. <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">40%</div><div class="lbl">Longer trajectories the compression <em>did</em> enable before hitting the limit — more room, worse outcomes. <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a></div></div>
+  </div>
+  <p>The diagnosis is mechanistic and directly relevant to coding: small reconstruction errors (a hallucinated file path, <span class="mono">swe-agent.com/latest/</span> → <span class="mono">swe-agent.com/agent/latest/</span>) are harmless in one-shot QA but compound across steps, and the exact-match <span class="mono">str_replace_editor</span> tool then fails on the corrupted observation <span class="tag thy">Theory</span>. Tellingly, the <em>effective compression rate did not correlate with downstream performance</em> at all — squeezing harder neither helped nor explained the failure <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a>.</p>
+
+  <h2>And so does naive history persistence</h2>
+  <p>The opposite reflex — just keep everything — fares no better. <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a> shows that persisting full interaction history ("Shared Chat") inflates input tokens roughly 9–10× (e.g. 2.85M → 28.76M on one task) for negligible or negative quality, and on a coding-style context-learning benchmark the solve rate actually <em>drops</em> 14.0% → 12.0% <span class="tag emp">Empirical</span>. More raw context is not more usable context.</p>
+
+  <h2>What works: selective, structure-preserving reduction at the right boundary</h2>
+  <p>The two positive systems both reduce context, but they reduce it <em>selectively</em> and keep what survives intact.</p>
+
+  <h3>Prune the observation, not the trajectory <span class="tag emp">Empirical</span></h3>
+  <p>SWE-Pruner inserts a 0.6B "neural skimmer" as middleware at the agent–environment boundary: the agent emits a natural-language <em>Goal Hint</em> ("How is authentication handled?"), and the pruner filters each file-read to the relevant lines before it reaches the agent <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a>. Because it prunes at <strong>line</strong> rather than <strong>token</strong> granularity, it preserves syntax — AST correctness 87.3% vs 0.29% for a token-level compressor (LLMLingua-2):</p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Setting (Claude Sonnet 4.5)</th><th class="num">Tokens</th><th class="num">Success</th><th class="num">Rounds</th></tr></thead>
+    <tbody>
+      <tr><td>SWE-bench Verified — baseline</td><td class="num">0.911M</td><td class="num">70.6%</td><td class="num">51.0</td></tr>
+      <tr><td>SWE-bench Verified — + SWE-Pruner</td><td class="num pos">0.701M (−23.1%)</td><td class="num pos">72.0% (+1.4)</td><td class="num pos">41.7</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>In one case the pruner converted a resource-exhaustion failure into a success: a Django task that the baseline abandoned after 164 steps / 7.0M tokens was solved in 56 steps / 1.17M tokens — an 83.3% token reduction <span class="tag emp">Empirical</span>. The authors frame pruning as <em>"not merely an engineering optimization but a cognitive strategy that enables more efficient problem-solving behaviors."</em></p>
+
+  <h3>Cache orientation, not history <span class="tag emp">Empirical</span></h3>
+  <p>Peek maintains a small, constant-sized <strong>context map</strong> inside the prompt that caches reusable <em>orientation knowledge</em> about a recurring context — what it contains, how it is organized, which schemas and constants recur — built and maintained by a Distiller→Cartographer→Evictor policy with per-item IDs and a hard token budget <span class="tag def">Definition</span> <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a>. Evaluated on OpenAI Codex among other agents, it improves quality 6–34% over the base agent and beats the prompt-learning method ACE by 7.8–15% while using 93–145 fewer iterations and costing up to 5.8× less:</p>
+  <blockquote class="q">a context map is an agent-level artifact whose value comes from curated meaning.
+    <span class="src">— Peek <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a>, Introduction</span></blockquote>
+  <p>An ablation is the key result for this page: across a 4× budget range, <em>the presence of a map mattered more than its size</em> — and separating extraction (Distiller) from editing (Cartographer) was essential, because without it "non-contextual facts leak into the map and updates become noisy" <span class="tag emp">Empirical</span> <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a>.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — the unifying rule across these three papers</p>
+  <p>Read together, the three results point away from "compress the context" and toward "<strong>protect the load-bearing tokens, discard the rest, and never lossily re-encode what a tool will match exactly.</strong>" The evidence: compression ratio doesn't correlate with performance <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a>; map <em>presence</em> beats map <em>size</em> <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a>; line-level pruning preserves syntax where token-level shreds it <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a>; and on the <a href="provisioning.html">previous page</a>, missing core context hurt more than redundant context <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a>. The shared objective is <em>fidelity of the relevant subset</em>, not bytes saved. A coding agent is a brittle exact-match machine downstream of its context; this corpus keeps rediscovering that. This synthesis is mine, not any single paper's.</p></div>
+
+  <div class="pager">
+    <a href="provisioning.html">← Provisioning</a>
+    <a href="harness.html">The Harness →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

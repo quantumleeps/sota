@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpus — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav active" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">Bibliography · the provenance backbone</p>
+  <h1>Corpus</h1>
+  <p class="lede">The 17 papers this review reads — every citation chip elsewhere on the site resolves to an entry here, and each entry links onward to the paper on arXiv. The chain is always <em>claim → chip → this page → arXiv</em>. This is a sealed corpus, read in isolation: a sample surfaced by an arXiv-relevance search for "context engineering for LLM coding agents" (repository instruction files, harness scaffolding, provisioning, long-horizon context, project memory, governance) and gathered in <strong>June 2026</strong>. Every paper here dates to <strong>January–June 2026</strong>. It is a sample, not a census of the field.</p>
+
+  <div class="box finding"><p class="box-h">▦ How to read an entry</p>
+  <p>Each entry carries a <strong>role</strong> badge (how central it is to this corpus), its arXiv id, first authors and affiliations, a type, the short <strong>cite label</strong> used in chips across the site, and a one-paragraph note on what it contributes. Papers are known here by their system/benchmark name where they have one (e.g. <span class="mono">FastContext</span>, <span class="mono">Peek</span>, <span class="mono">SWE-Pruner</span>), which is also the chip label; the rest are cited by author.</p></div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:#eef1fb;border-color:#d4ddf6"></span> Core — central to the corpus</span>
+    <span><span class="sw" style="background:#f4f1e8;border-color:#e3e0d8"></span> Support — adjacent / domain-specific</span>
+    <span><span class="tag emp">Empirical</span> measured result</span>
+    <span><span class="tag prop">Proposal</span> proposed design</span>
+    <span><span class="tag def">Definition</span> taxonomy / benchmark</span>
+  </div>
+
+  <h2>Core sources</h2>
+
+  <div class="bibentry" id="p-2602-20478">
+    <span class="role core">Core</span><span class="bt">Codified Context: Infrastructure for AI Agents in a Complex Codebase</span>
+    <div class="meta"><span class="idtag">arXiv:2602.20478</span> · Aristidis Vasilopoulos (Independent Researcher), 2026 · system/tool + experience report · <strong>cite: Vasilopoulos&nbsp;'26</strong></div>
+    <div class="rel">An experience report from building a 108K-line C# codebase using Claude Code as the sole code generator over 283 sessions. Argues single-file manifests (<span class="mono">CLAUDE.md</span>/<span class="mono">AGENTS.md</span>) do not scale, and proposes a three-tier "codified context infrastructure" — an always-loaded constitution (hot memory), 19 invoked domain-specialist agents, and an on-demand knowledge base (cold memory) — totalling 24.2% of the codebase as machine-targeted documentation. Names <em>specification staleness</em> as the primary failure mode. Observational; explicitly claims no causal effect.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2602.20478" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2602-11988">
+    <span class="role core">Core</span><span class="bt">Evaluating AGENTS.md: Are Repository-Level Context Files Helpful for Coding Agents?</span>
+    <div class="meta"><span class="idtag">arXiv:2602.11988</span> · Thibaud Gloaguen, Niels Mündler, Mark Müller, Veselin Raychev, Martin Vechev (ETH Zurich · LogicStar.ai), 2026 · empirical + benchmark · <strong>cite: Gloaguen+&nbsp;'26</strong></div>
+    <div class="rel">The corpus's strongest skeptic. Controlled evaluation across four agent/model pairs on SWE-bench Lite and a new 138-instance benchmark (AGENTbench) of repos that ship developer-written context files. Finds <em>LLM-generated</em> context files slightly reduce success while adding &gt;20% inference cost; developer files give only marginal gains; instructions are followed (so it is not a compliance failure) but the files largely duplicate existing docs. Recommends omitting auto-generated files and writing only minimal repo-specific requirements.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2602.11988" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-15828">
+    <span class="role core">Core</span><span class="bt">Configuration Smells in AGENTS.md Files: Common Mistakes in Configuring Coding Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2606.15828</span> · Hélio V. F. dos Santos, Vitor Costa, João E. Montandon, Marco Tulio Valente, Luciana L. Silva (UFMG · IFMG), 2026 · empirical · <strong>cite: dos Santos+&nbsp;'26</strong></div>
+    <div class="rel">Mines the top-100 most-starred repos with <span class="mono">AGENTS.md</span>/<span class="mono">CLAUDE.md</span> files and derives a catalog of six "configuration smells" — Context Bloat, Skill Leakage, Lint Leakage, Blind References, Init Fossilization, Conflicting Instructions — with detection heuristics. Finds ≥1 smell in 91 of 100 files; Lint Leakage (62%), Context Bloat (42%), and Skill Leakage (35%) are the most common. A hygiene/quality model for the instruction-file artifact.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.15828" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-18747">
+    <span class="role core">Core</span><span class="bt">Code as Agent Harness: Toward Executable, Verifiable, and Stateful Agent Systems</span>
+    <div class="meta"><span class="idtag">arXiv:2605.18747</span> · Xuying Ning, Katherine Tieu, Dongqi Fu et al. (UIUC · Meta · Stanford), 2026 · survey · <strong>cite: Ning+&nbsp;'26</strong></div>
+    <div class="rel">The framing survey. Recasts code in agent systems as the <em>harness</em> substrate — executable, inspectable, stateful — and organizes the literature into harness interface, harness mechanisms (planning, memory/context engineering, tool use, plan-execute-verify, harness engineering), and scaling to multi-agent. Names <strong>Agentic Harness Engineering</strong> as a discipline beyond prompt/context engineering, and argues reliability is bottlenecked by the software layer around the model, with a target property set of <em>executable, inspectable, stateful, governed</em>.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.18747" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-14066">
+    <span class="role core">Core</span><span class="bt">FastContext: Training Efficient Repository Explorer for Coding Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2606.14066</span> · Shaoqiu Zhang, Maoquan Wang, Yuling Shi et al. (Microsoft · Shanghai Jiao Tong University), 2026 · system/tool · <strong>cite: FastContext&nbsp;'26</strong></div>
+    <div class="rel">Measures that reading and searching consume 46.5% of a coding agent's tokens and 56.2% of its tool-use turns, then delegates exploration to a dedicated trained subagent (4B–30B) that returns a compact <span class="mono">&lt;final_answer&gt;</span> block of file-line citations. The solver never sees the explorer's noisy search history. Improves end-to-end resolution up to +5.5% while cutting main-agent tokens up to 60%; a 4B-RL explorer can beat a 30B-SFT one. Argues exploration should be a first-class, trainable interface.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.14066" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-07297">
+    <span class="role core">Core</span><span class="bt">SWE-Explore: Benchmarking How Coding Agents Explore Repositories</span>
+    <div class="meta"><span class="idtag">arXiv:2606.07297</span> · Shaoqiu Zhang, Yuhang Wang, Jialiang Liang et al. (SJTU · Xinjiang U · UIUC · CUHK), 2026 · benchmark · <strong>cite: SWE-Explore&nbsp;'26</strong></div>
+    <div class="rel">Isolates repository exploration as a standalone, ranked, line-level context-selection task (848 instances, 10 languages, 203 repos), with ground truth derived from ≥2 solution-verified agent trajectories. Finds agentic explorers form a clear tier above classical retrieval; file-level localization is solved but line-level recall is the bottleneck; and <strong>context efficiency predicts downstream resolve rate at Pearson r=0.950</strong>, with missing core context hurting more than redundant context.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.07297" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2601-16746">
+    <span class="role core">Core</span><span class="bt">SWE-Pruner: Self-Adaptive Context Pruning for Coding Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2601.16746</span> · Yuhang Wang, Yuling Shi, Mo Yang et al. (SJTU LLMSE Lab · SYSU · Douyin), 2026 · system/tool · <strong>cite: SWE-Pruner&nbsp;'26</strong></div>
+    <div class="rel">A 0.6B "neural skimmer" inserted as middleware at the agent–environment boundary, pruning file-read observations at line-level granularity given an agent-emitted natural-language "Goal Hint." Reports read operations consume 76.1% of agent tokens, and cuts tokens 23–54% while preserving or improving success and code syntax (AST correctness 87.3% vs 0.29% for token-level pruning). Positioned as orthogonal to history-compression methods — it prunes the environment's observations, not the trajectory.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2601.16746" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-19932">
+    <span class="role core">Core</span><span class="bt">Peek: Context Map as an Orientation Cache for Long-Context LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2605.19932</span> · Zhuohan Gu, Qizheng Zhang, Omar Khattab, Samuel Madden (MIT CSAIL · Stanford), 2026 · system/tool · <strong>cite: Peek&nbsp;'26</strong></div>
+    <div class="rel">Maintains a small, constant-sized "context map" inside the prompt that caches reusable <em>orientation knowledge</em> about a recurring external context (corpus or repo), built and maintained by a Distiller→Cartographer→Evictor cache policy with per-item IDs and a hard token budget. Evaluated on a production coding agent (OpenAI Codex) among others: improves quality 6–34% over the base agent while persisting full history <em>hurts</em> (inflating tokens ~9–10× for negative gains). Deliberately discovered, not hand-crafted.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.19932" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-11051">
+    <span class="role core">Core</span><span class="bt">On Problems of Implicit Context Compression for Software Engineering Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2605.11051</span> · Kirill Gelvan, Igor Slinko, Felix Steinbauer et al. (JetBrains Research · TU Munich), 2026 · empirical (negative result) · <strong>cite: Gelvan+&nbsp;'26</strong></div>
+    <div class="rel">A cautionary negative result. Tests an In-Context Autoencoder that compresses agent context into continuous "memory tokens." It works for single-shot QA and code-understanding but <em>fails</em> on multi-step SWE-bench Verified — solving 7 issues vs the uncompressed baseline's 19 (p=0.013) — despite extending the effective window and enabling 40% longer trajectories. Diagnoses two causes: reconstruction errors that compound over steps (hallucinated paths break exact-match edit tools), and a training objective with no incentive to preserve information for future steps.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.11051" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-12329">
+    <span class="role core">Core</span><span class="bt">PROJECTMEM: A Local-First, Event-Sourced Memory and Judgment Layer for AI Coding Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2606.12329</span> · Ripon Chandra Malo, Tong Qiu (University of Utah), June 2026 · system/tool · <strong>cite: PROJECTMEM&nbsp;'26</strong></div>
+    <div class="rel">Records development as an append-only plain-text event log, deterministically projects it into AI-readable summaries served over MCP, and adds a deterministic <em>pre-action judgment gate</em> ("you tried this 2 days ago — it failed") keyed to the project's own logged failures. Coins <strong>Memory-as-Governance</strong>: memory that acts on the next action rather than only answering. Ships secret-redaction-by-default and treats the immutable log as an audit/provenance trail. Evaluated via a 207-event, 10-project self-study; no causal claim.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.12329" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-16523">
+    <span class="role core">Core</span><span class="bt">SkillWiki: A Living Knowledge Infrastructure for Agent Skills</span>
+    <div class="meta"><span class="idtag">arXiv:2606.16523</span> · Dingcheng Huang, Yuda Ding, Bingshuo Liu et al. (Harbin Institute of Technology · Tencent · NTU), 2026 · system/tool (demo) · <strong>cite: SkillWiki&nbsp;'26</strong></div>
+    <div class="rel">Treats agent skills as versioned, governed "capability assets" rather than ad-hoc prompts — "Wikipedia for knowledge, GitHub for code, and this for skills." A Skill Provenance Graph links knowledge sources → skills → executions → validations → versions; an 8-state lifecycle and Git-style diffs/reviews/releases make evolution traceable, reviewable, and reversible. A demo with one quantitative result (99/125 heterogeneous artifacts converted into governed skill candidates) and no baseline.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.16523" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2604-14228">
+    <span class="role core">Core</span><span class="bt">Dive into Claude Code: The Design Space of Today's and Future AI Agent Systems</span>
+    <div class="meta"><span class="idtag">arXiv:2604.14228</span> · Jiacheng Liu, Xiaohan Zhao, Xinyi Shang, Zhiqiang Shen (MBZUAI · UCL), 2026 · system analysis · <strong>cite: Liu+&nbsp;'26</strong></div>
+    <div class="rel">A source-grounded reverse-engineering of Claude Code (TypeScript v2.1.88, ~512K lines). Maps a thin reactive agent loop (≈1.6% of the code) wrapped in a dense deterministic harness (≈98.4%), traced through a four-level <span class="mono">CLAUDE.md</span> hierarchy, a five-layer context-compaction pipeline, context-cost-ordered extensions (hooks/skills/plugins/MCP), deny-first permissions, and summary-only subagent isolation. Argues the surrounding harness — not decision scaffolding — is the differentiator as models converge, and stresses the guidance (probabilistic) vs enforcement (deterministic) split.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2604.14228" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Support sources</h2>
+
+  <div class="bibentry" id="p-2605-26177">
+    <span class="role support">Support</span><span class="bt">RepoMirage: Probing Repository Context Reasoning in Code Agents with Perturbations</span>
+    <div class="meta"><span class="idtag">arXiv:2605.26177</span> · Hanyu Li, Yichi Zhang, Speed Zhu et al. (BUPT · Tsinghua · Tencent), 2026 · benchmark + empirical · <strong>cite: RepoMirage&nbsp;'26</strong></div>
+    <div class="rel">Uses semantics-preserving perturbations (dependency-path indirection, runtime-target masking, value externalization) as a diagnostic on SWE-bench Verified. Shows strong benchmark scores do not reflect true cross-file context reasoning: resolved rate drops 66.8%→25.3% on perturbation-derived tasks, with agents exhibiting "exploration drift" — accessing more files without turning them into structure. A structure-first scaffold (RepoAnchor) that writes an intermediate <span class="mono">INSTRUCTION.md</span> recovers much of the loss.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.26177" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-05922">
+    <span class="role support">Support</span><span class="bt">Evolving Agents in the Dark: Retrospective Harness Optimization via Self-Preference</span>
+    <div class="meta"><span class="idtag">arXiv:2606.05922</span> · Wenbo Pan, Shujie Liu, Chin-Yew Lin et al. (City University of Hong Kong · Microsoft Research Asia), 2026 · system/tool + empirical · <strong>cite: Pan+&nbsp;'26</strong></div>
+    <div class="rel">Optimizes an agent's full harness — instructions, skills, and executable tools on disk — from its own past unlabeled trajectories in a single offline pass, using self-preference (self-validation + self-consistency) instead of ground-truth grading. Raises SWE-Bench Pro pass rate 59%→78% with no external grading, beating memory-only baselines and matching a validation-feedback optimizer at ~3× less compute. Shows an agent can author its own context artifacts (READMEs, checklists, verification tools) from experience.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.05922" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-14563">
+    <span class="role support">Support</span><span class="bt">MemDocAgent: Memory-Guided Long-Horizon Agent for Repository-Level Code Documentation</span>
+    <div class="meta"><span class="idtag">arXiv:2605.14563</span> · Suyoung Bae, Jaehoon Lee, Changkyu Choi et al. (Sungkyunkwan University · University of Oslo), 2026 · system/tool · <strong>cite: MemDocAgent&nbsp;'26</strong></div>
+    <div class="rel">Reframes repository documentation as a long-horizon agentic task: a single agent traverses the whole repo in one trajectory with a persistent shared store (RepoMemory) plus dependency-aware traversal and NLI cross-document conflict verification. Eliminates the ~50% repeated-retrieval overlap and 13% cross-document inconsistency of memoryless pipelines (inconsistency −75.5%, read-time −41%). Relevant as a project-memory + codified-context-generation mechanism — documentation as a provisioning artifact for downstream agents.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.14563" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-04306">
+    <span class="role support">Support</span><span class="bt">Organizational Control Layer: Governance Infrastructure at the Execution Boundary of LLM Agent Systems</span>
+    <div class="meta"><span class="idtag">arXiv:2606.04306</span> · Tianyu Shi, Yang Mo, Yiou Liu et al. (McGill · Purdue · UNSW · UCLA · NYU · Aimaikj Research), 2026 · system/tool + empirical · <strong>cite: Shi+&nbsp;'26</strong></div>
+    <div class="rel">A model-agnostic governance layer that intercepts agent-generated actions before execution and either approves, revises, blocks, or escalates them against policy, emitting an audit trace. Demonstrated on adversarial buyer–seller negotiation (not coding): cuts unsafe executions 88%→0% and raises valid (compliant) success 12%→96%. Included for its execution-boundary pattern and audit/escalation vocabulary, which transfer to tool-using coding agents; the domain transfer is the caveat.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.04306" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-14594">
+    <span class="role support">Support</span><span class="bt">Regulating the Machine Contributor: Governance and Policy Alignment in Open Source</span>
+    <div class="meta"><span class="idtag">arXiv:2606.14594</span> · Jassem Manita, Aziz Amari (University of Tunis El Manar · University of Carthage), 2026 · empirical policy analysis · <strong>cite: Manita & Amari&nbsp;'26</strong></div>
+    <div class="rel">Compares six open-source projects' AI-contribution policies across a six-dimensional taxonomy (disclosure, responsibility, oversight, licensing, enforcement, maintainer workload) and maps them to formal frameworks (EU AI Act, NIST AI RMF, ISO 42001). Its signal claim: "AI lowers the cost of producing contributions but not the cost of trustworthy human review." Surfaces provenance trailers (<span class="mono">Generated-By:</span>/<span class="mono">Assisted-By:</span>) as codified-context artifacts and names maintainer review-capacity as the universally ungoverned gap.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.14594" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="pager">
+    <a href="synthesis.html">← Synthesis</a>
+    <a href="index.html">Overview →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → this Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

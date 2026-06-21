@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthesis — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav active" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">09 · Synthesis · author inference</p>
+  <h1>A reference model, and the bets this corpus suggests</h1>
+
+  <div class="box inference"><p class="box-h">⟡ This entire page is my inference</p>
+  <p>Everything below is my reasoning <em>across this corpus of 17 papers</em>, not a claim any single paper makes and not a forecast of where the field is going. Citation chips mark what I reason <em>from</em>, not sources that endorse the conclusion. The corpus is a June-2026, search-shaped sample of preprints; a different sample could support different bets. Read this as a structured opinion, scoped to these papers.</p></div>
+
+  <h2>A reference model: the coding agent's context stack</h2>
+  <p>The 17 papers don't share a vocabulary, but they slot cleanly into five layers wrapped by a sixth. I find this stack the most useful way to hold the corpus in one frame — each layer is where one cluster of papers does its work.</p>
+  <div class="grid g2">
+    <div class="card"><p class="ct">Layer 1 · durable spine</p><h3>The curated instruction file</h3><p>A minimal, human-authored, version-controlled <span class="mono">AGENTS.md</span>/<span class="mono">CLAUDE.md</span> — kept lean, with depth pushed to on-demand reference. <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Layer 2 · provisioning</p><h3>Just-in-time context objects</h3><p>Machine-generated, task-scoped artifacts — explorer evidence blocks, an <span class="mono">INSTRUCTION.md</span>, pruned observations — minted per task and discarded. <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Layer 3 · working-context manager</p><h3>Fidelity-preserving reduction</h3><p>Selective pruning and orientation caching that keeps the decision-relevant subset exact — never lossy re-encoding of what a tool will match. <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Layer 4 · persistent memory</p><h3>Legible cross-session state</h3><p>Append-only, provenance-linked project memory and knowledge bases — auditable, not vector-fuzzy. <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-14563">MemDocAgent&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Layer 5 · governance boundary</p><h3>Deterministic enforcement, outside the model</h3><p>Approve/revise/block/escalate at the execution and contribution boundaries, with an audit trace. <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-14594">Manita & Amari&nbsp;'26</a></p></div>
+    <div class="card"><p class="ct">Wrapper · the substrate</p><h3>The harness, increasingly self-modifying</h3><p>All five layers are harness state — executable, inspectable, stateful, and now rewritten by the agent itself. <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a></p></div>
+  </div>
+
+  <h2>The bets this corpus suggests</h2>
+
+  <h3>Bet 1 · Keep the always-loaded spine minimal; earn every loaded token</h3>
+  <p>The strongest skeptical evidence says presence is not value: auto-generated files add cost and reduce success <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>, popular files are bloated and leaky <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a>, and the working systems push the bulk of context to on-demand tiers <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a> <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>. The bet: a small, human-curated spine plus deep on-demand reference beats a fat always-loaded file.</p>
+
+  <h3>Bet 2 · Decouple finding context from using it</h3>
+  <p>Independent results converge on separating exploration from solving and passing a structured artifact across the seam <a class="cite" href="corpus.html#p-2606-14066">FastContext&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-26177">RepoMirage&nbsp;'26</a>, with context quality predicting success <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a>. The bet: a clean context interface between a finder and a solver is worth more than a bigger single agent.</p>
+
+  <h3>Bet 3 · Optimize for fidelity of the relevant subset, not compression ratio</h3>
+  <p>Compression ratio doesn't track performance <a class="cite" href="corpus.html#p-2605-11051">Gelvan+&nbsp;'26</a>; map presence beats map size <a class="cite" href="corpus.html#p-2605-19932">Peek&nbsp;'26</a>; line-level beats token-level <a class="cite" href="corpus.html#p-2601-16746">SWE-Pruner&nbsp;'26</a>; missing context beats redundant context as a danger <a class="cite" href="corpus.html#p-2606-07297">SWE-Explore&nbsp;'26</a>. The bet: keep the load-bearing tokens exact and drop the rest — a coding agent is a brittle exact-match machine downstream of its context.</p>
+
+  <h3>Bet 4 · Prefer legible, auditable persistence over vector recall</h3>
+  <p>For coding specifically, the corpus chooses append-only logs, provenance graphs, and deterministic projections over embedding stores <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a>. The bet: memory you can diff, review, and trust outperforms memory that is merely similar — and naturally doubles as provenance.</p>
+
+  <h3>Bet 5 · Put enforcement at the boundary, deterministic and outside the model</h3>
+  <p>The same instinct recurs as a control layer <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>, a deny-first permission system <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>, and a named harness property <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a>. The bet: guidance can be probabilistic, but enforcement should be deterministic and live where the agent acts — not inside the weights.</p>
+
+  <h3>Bet 6 · Treat context and harness as versioned artifacts you can roll back</h3>
+  <p>As context becomes self-maintaining <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a>, the determinism and provenance of the persistence layer <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a> become the safety mechanism. The bet: change contracts, audit trails, and rollback for the context spine matter more the more the agent edits it.</p>
+
+  <div class="box gap"><p class="box-h">◇ Where I'd hold back — bets I would not place on this corpus</p>
+  <ul class="clean">
+    <li><strong>"Auto-generated context files are useless."</strong> Too strong. The evidence is single-sample and Python-only, and the files <em>do</em> help in sparsely-documented repos <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>. The defensible claim is about curation, not abolition.</li>
+    <li><strong>"Self-optimizing harnesses are production-ready."</strong> One round, one backbone, self-graded, with an acknowledged entrenchment risk <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a>. I would not run autonomous harness edits without regression gates.</li>
+    <li><strong>"An execution-boundary layer solves governance."</strong> The strong numbers are from e-commerce, not coding <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>; the coding-adjacent study says trustworthy review at machine speed is unsolved <a class="cite" href="corpus.html#p-2606-14594">Manita & Amari&nbsp;'26</a>.</li>
+    <li><strong>Any single architecture winning.</strong> The corpus supports the <em>principles</em> above, not a verdict between a subagent, a context map, or an event log. I would bet on the pattern, not the implementation.</li>
+  </ul></div>
+
+  <p class="note">This is the end of the review. For the full provenance of every chip on this site, see the <a href="corpus.html">Corpus</a>; to return to the other reviews, use <a href="../index.html">↑ All SotA</a>.</p>
+
+  <div class="pager">
+    <a href="limitations.html">← Limitations</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

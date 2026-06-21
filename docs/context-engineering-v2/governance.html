@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Governance &amp; Provenance — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav active" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">06 · Governance &amp; Provenance</p>
+  <h1>Control at the boundary where agents act and contribute</h1>
+  <p class="lede">As agents move from suggesting code to executing actions and opening pull requests, control shifts to two boundaries: where a proposed action becomes a real one, and where a machine's contribution enters a human project. This corpus puts deterministic governance and machine-readable provenance at both — though its hardest numbers come from outside the coding domain.</p>
+
+  <h2>The execution boundary: govern the action before it runs</h2>
+  <p><a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a> names the <em>execution-boundary problem</em> — proposed actions must be governed before they are executed — and proposes a model-agnostic Organizational Control Layer that intercepts each agent-generated action and either approves, revises, blocks, or escalates it against policy, emitting an audit trace <span class="tag def">Definition</span>:</p>
+  <blockquote class="q">deployment-grade agent systems should separate proposal generation from environment-facing execution.
+    <span class="src">— Organizational Control Layer <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>, Abstract</span></blockquote>
+  <div class="grid g3">
+    <div class="card stat"><div class="big green">12% → 96%</div><div class="lbl">Valid (policy-compliant) success rate without vs with the control layer — baseline "success" was largely non-compliant. <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big green">88% → 0%</div><div class="lbl">Unsafe-execution rate; executed policy violations fell from 205 to 0 across 50 episodes. <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big amber">e-commerce</div><div class="lbl">The domain is adversarial buyer–seller negotiation, <em>not</em> coding — read these as transferable mechanism, not a coding result. <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a></div></div>
+  </div>
+  <p>The transferable parts for coding agents are the four-outcome vocabulary <span class="mono">{Approve, Revise, Block, Escalate}</span>, the observable-vs-hidden constraint split (an agent acts with incomplete repo/policy context, so escalation handles what it cannot see), and the audit trace recording <em>why</em> each action was approved or blocked <span class="tag prop">Proposal</span> <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>. The paper's own caveat: the layer over-constrains the agent in cooperative thin-margin cases, a genuine safety–utility trade.</p>
+
+  <div class="box finding"><p class="box-h">▦ The execution boundary is already in production harnesses</p>
+  <p>This is not only a proposal. The Claude Code analysis documents a <em>deny-first</em> permission system with seven modes as the deterministic enforcement layer, deliberately split from the probabilistic guidance of <span class="mono">CLAUDE.md</span> — "a compromised or adversarially manipulated model cannot override the sandboxing, permission checks, or deny-first rules" <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a> <span class="tag def">Definition</span>. And the harness survey lists multi-tier permissions and human-in-the-loop gates as durable harness state, naming <em>"governed"</em> a target property and "executable accountability" the goal <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a> <span class="tag prop">Proposal</span>.</p></div>
+
+  <h2>The contribution boundary: machine contributors meet human projects</h2>
+  <p>The second boundary is social. <a class="cite" href="corpus.html#p-2606-14594">Manita & Amari&nbsp;'26</a> compare six open-source projects' AI-contribution policies and identify the asymmetry that breaks existing governance <span class="tag emp">Empirical</span>:</p>
+  <blockquote class="q">AI lowers the cost of producing contributions but does not lower the cost of trustworthy human review.
+    <span class="src">— Regulating the Machine Contributor <a class="cite" href="corpus.html#p-2606-14594">Manita & Amari&nbsp;'26</a>, §1</span></blockquote>
+  <p>Their six-dimensional taxonomy (disclosure, responsibility, oversight, licensing, enforcement, maintainer workload) yields Policy Maturity Scores from LLVM 20 down to the Linux Foundation 7, and surfaces three findings relevant to context engineering <span class="tag emp">Empirical</span>:</p>
+  <ul class="clean">
+    <li><strong>Provenance trailers are codified-context artifacts.</strong> The <span class="mono">Generated-By:</span> / <span class="mono">Assisted-By:</span> commit-message labels are machine-parsable provenance — the same class of durable, version-controlled artifact as repo instruction files, here used for accountability.</li>
+    <li><strong>Autonomous agents fall through policy gaps.</strong> Only 2 of 6 projects explicitly address the autonomous-agent case; the rest assign responsibility to "the contributor" without addressing the case where no human contributor exists.</li>
+    <li><strong>Maintainer review capacity is the universally ungoverned dimension.</strong> No policy and no reviewed regulatory framework provides rate limits, cooldowns, or triage to protect reviewers — documented against real incidents (a bot's PRs closed under matplotlib's policy; an adversarial agent on SymPy).</li>
+  </ul>
+
+  <h2>Provenance as both context and control</h2>
+  <p>Several artifacts from earlier pages are, in this light, governance instruments. PROJECTMEM's immutable plain-text log "doubles as an automatic provenance/reproducibility trail," with its pre-action judgment gate enforcing the project's own history — <em>Memory-as-Governance</em> <a class="cite" href="corpus.html#p-2606-12329">PROJECTMEM&nbsp;'26</a>. SkillWiki's Provenance Graph and reversible Git-style reviews keep skill evolution auditable, with users overriding autonomous governance <a class="cite" href="corpus.html#p-2606-16523">SkillWiki&nbsp;'26</a>. And the self-optimizing harness keeps full audit logs and requires human approval for sensitive edits, precisely because "harness updates distilled from compromised trajectories could entrench bad behavior" <a class="cite" href="corpus.html#p-2606-05922">Pan+&nbsp;'26</a> <span class="tag prop">Proposal</span>.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>Governance is the property the rest of this corpus <em>implies</em> but rarely <em>measures</em>. The recurring instinct — keep enforcement deterministic and <em>outside</em> the model, at the boundary — is the same one Liu+ found already shipping in Claude Code (probabilistic guidance vs deterministic permissions) <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a>, that Shi+ formalize as a control layer <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>, and that Ning+ name a target property <a class="cite" href="corpus.html#p-2605-18747">Ning+&nbsp;'26</a>. My reading is that provenance and governance are converging on the same artifacts: a log/trace/graph that is simultaneously the agent's context, its audit trail, and its policy. But I'd hold the claim loosely — the only large governance effect sizes in this corpus come from a non-coding domain <a class="cite" href="corpus.html#p-2606-04306">Shi+&nbsp;'26</a>, and the one coding-adjacent governance study concludes the core problem (trustworthy review at machine speed) is unsolved <a class="cite" href="corpus.html#p-2606-14594">Manita & Amari&nbsp;'26</a>. This is the corpus's most-asserted, least-measured dimension for coding specifically.</p></div>
+
+  <div class="pager">
+    <a href="memory.html">← Memory</a>
+    <a href="evidence.html">Evidence →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

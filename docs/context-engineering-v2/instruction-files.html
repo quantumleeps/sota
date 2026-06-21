@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instruction Files &amp; Codified Context — Context Engineering for Coding Agents · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav active" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">01 · Instruction Files &amp; Codified Context</p>
+  <h1>The repository instruction file, and what scales past it</h1>
+  <p class="lede">The <span class="mono">AGENTS.md</span>/<span class="mono">CLAUDE.md</span> file is the canonical artifact of context engineering: durable, version-controlled, machine-targeted repository knowledge an agent reads before acting. Three papers in this corpus interrogate it directly — one builds a tiered infrastructure around it, two stress-test it — and they do not entirely agree. That disagreement is the most useful thing on this page.</p>
+
+  <h2>The artifact: documents written for a machine reader</h2>
+  <p>In <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>, codified context is defined as <em>"structured artifacts written explicitly for machine consumption — documents whose primary audience is an AI agent, not a developer"</em> <span class="tag def">Definition</span>. Configuration files like <span class="mono">AGENTS.md</span> and <span class="mono">CLAUDE.md</span> are described elsewhere in the corpus as having <em>"emerge[d] as a standard for context injection and for providing a persistent memory for coding agents"</em> <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a>. But how that knowledge is delivered matters: a source-level reading of Claude Code finds <span class="mono">CLAUDE.md</span> is injected as a <em>user-context message, not a system prompt</em>, so <em>"model compliance with these instructions is probabilistic rather than guaranteed"</em> — a deliberate split between guidance (the file, probabilistic) and enforcement (permission rules, deterministic) <a class="cite" href="corpus.html#p-2604-14228">Liu+&nbsp;'26</a> <span class="tag def">Definition</span>.</p>
+
+  <h2>Scaling past a single file: codified context as infrastructure</h2>
+  <p>Vasilopoulos argues the single manifest does not survive a large codebase, and reports building a three-tier <em>codified context infrastructure</em> for a 108,256-line C# project written with Claude Code as the sole code generator over 283 sessions <span class="tag emp">Empirical</span> <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>:</p>
+  <div class="grid g3">
+    <div class="card stat"><div class="big">0.6%</div><div class="lbl"><strong>Tier 1 — constitution</strong>: one always-loaded ~660-line file of conventions, retrieval hooks, and routing. <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">8.6%</div><div class="lbl"><strong>Tier 2 — 19 specialist agents</strong>, ~9,300 lines; over half of each spec is project-domain knowledge, not behavior. <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">15.0%</div><div class="lbl"><strong>Tier 3 — knowledge base</strong>, 34 docs ~16,250 lines, retrieved on demand (1,478 MCP retrievals across 218 sessions). <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a></div></div>
+  </div>
+  <p>In total, machine-targeted documentation reached <strong>24.2% of the codebase</strong> (~26,200 lines across 54 files), maintained at roughly 1–2 hours/week, with meta-infrastructure prompts (building the architecture itself) accounting for 4.3% of substantive prompts <span class="tag emp">Empirical</span> <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>. The work is a single-developer, single-project experience report that explicitly disclaims any causal effect — useful as a mechanism narrative, not as evidence of impact.</p>
+
+  <div class="box risk"><p class="box-h">⚠ Staleness is named the primary failure mode</p>
+  <p>The same report flags the central danger of codified context: <em>"agents trust documentation absolutely and out-of-date specs cause silent failures."</em> On at least two occasions, stale specs caused the agent to generate code conflicting with recent refactors (e.g. wiring a value through a deprecated path) <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a> <span class="tag emp">Empirical</span>. Codified context is a liability the moment it diverges from the code it describes.</p></div>
+
+  <h2>The skeptic's evidence: more context files can make agents worse</h2>
+  <p>The strongest counterweight in the corpus is a controlled evaluation across four agent/model pairs on SWE-bench Lite and a purpose-built 138-instance benchmark (AGENTbench) of Python repos that ship developer-written context files <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>:</p>
+  <blockquote class="q">…we find that AGENTS.md tend to reduce task success rates compared to providing no repository context, while also increasing inference cost by over 20%.
+    <span class="src">— Evaluating AGENTS.md <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>, Abstract</span></blockquote>
+  <ul class="clean">
+    <li><strong>Auto-generated files are net-negative:</strong> LLM-generated context files reduced average resolution by 0.5% (SWE-bench Lite) and 2% (AGENTbench), causing drops in 5 of 8 model×benchmark settings, while adding 20–23% inference cost <span class="tag emp">Empirical</span>.</li>
+    <li><strong>Developer files barely help:</strong> human-written files improved success ~4% on average vs −3% for LLM files — a marginal gain, not the headline win vendors imply <span class="tag emp">Empirical</span>.</li>
+    <li><strong>It is not a compliance failure:</strong> instructions <em>are</em> followed — a tool named in the file (<span class="mono">uv</span>) was used 1.6×/instance vs &lt;0.01× when unmentioned; repo-specific tooling 2.5× vs &lt;0.05× <span class="tag emp">Empirical</span>. The files are obeyed; they just don't help.</li>
+    <li><strong>They are largely redundant docs:</strong> only when all <em>other</em> documentation is removed do generated files help (+2.7%) — explaining why they seem useful in sparsely-documented repos <span class="tag emp">Empirical</span>.</li>
+  </ul>
+  <p>The authors' recommendation is blunt: <em>"human-written context files should describe only minimal requirements"</em>, and auto-generated ones should be omitted "for the time being" <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a> <span class="tag emp">Empirical</span>. (Caveat from their own limitations: Python-only, single sample per agent, no variance reported.)</p>
+
+  <h2>Hygiene: what is actually wrong with these files in the wild</h2>
+  <p>If quality matters more than presence, what does poor quality look like? Mining the 100 most-starred repos with an <span class="mono">AGENTS.md</span>/<span class="mono">CLAUDE.md</span> file, <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a> derive six <em>configuration smells</em> and find at least one in 91 of 100 files (207 instances total; only 9 files clean) <span class="tag emp">Empirical</span>:</p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Smell</th><th>What it is</th><th class="num">Prevalence</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Lint Leakage</strong></td><td>Rules already enforced by a linter/formatter, wasting context</td><td class="num">62%</td></tr>
+      <tr><td><strong>Context Bloat</strong></td><td>File overloaded with rules/examples (flagged ≥200 lines; largest 1,477)</td><td class="num">42%</td></tr>
+      <tr><td><strong>Skill Leakage</strong></td><td>Rarely-used specialized instructions kept in the always-loaded file instead of on-demand skills</td><td class="num">35%</td></tr>
+      <tr><td><strong>Init Fossilization</strong></td><td>Generated by <span class="mono">/init</span> and never reviewed/updated (24 single-commit files)</td><td class="num">—</td></tr>
+      <tr><td><strong>Blind References</strong></td><td>Pointers to external files without explaining their purpose</td><td class="num">—</td></tr>
+      <tr><td><strong>Conflicting Instructions</strong></td><td>Internally contradictory directives (lowest detection precision, 57%)</td><td class="num">—</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The smells co-occur: Conflicting Instructions together with Skill Leakage raise the likelihood of Context Bloat to 83% (association-rule confidence) <span class="tag emp">Empirical</span>. <em>Init Fossilization</em> is the provenance smell — the file is a frozen <span class="mono">/init</span> artifact carrying stale instructions, the same staleness danger Vasilopoulos names, now measured across real repos.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — reconciling the tension, not from any one paper</p>
+  <p>This corpus contains a real disagreement: one paper builds context until it is 24.2% of the codebase <a class="cite" href="corpus.html#p-2602-20478">Vasilopoulos&nbsp;'26</a>, another shows that adding context files <em>reduces</em> success <a class="cite" href="corpus.html#p-2602-11988">Gloaguen+&nbsp;'26</a>. My reading is that they are measuring different variables, and the reconciliation is consistent with the third: the harmful files are <em>auto-generated, always-loaded, redundant, and unmaintained</em> — exactly the smell profile dos Santos+ measure <a class="cite" href="corpus.html#p-2606-15828">dos Santos+&nbsp;'26</a>. Vasilopoulos's volume sits mostly in Tier 3, loaded <em>on demand</em>, and is human-curated and actively maintained. So the corpus is not really split on "does codified context help" — it is split on <em>presence vs curation</em>, and curation (minimal always-loaded spine, on-demand depth, kept in sync with the code) is where the signal points. This is my synthesis; chips mark what I reason from, not papers that assert it.</p></div>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="provisioning.html">Provisioning →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

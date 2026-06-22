@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Listen — Context Engineering for Coding Agents</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Context&nbsp;Engineering · <span>Coding&nbsp;Agents</span></a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="instruction-files.html">Instruction&nbsp;Files</a>
+  <a class="nav" href="provisioning.html">Provisioning</a>
+  <a class="nav" href="context-limits.html">Context&nbsp;Limits</a>
+  <a class="nav" href="harness.html">The&nbsp;Harness</a>
+  <a class="nav" href="memory.html">Memory</a>
+  <a class="nav" href="governance.html">Governance</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav active" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">🎧 Audio narration</p>
+  <h1>Listen — Context Engineering for Coding Agents</h1>
+  <p class="lede">A single continuous, audio-native narration of this review — the same corpus-scoped reading as the site, rewritten for the ear. About 14 minutes. The full transcript follows the player.</p>
+
+  <div class="box gap"><p class="box-h">◇ Audio not yet generated</p><p>The ~14-minute narration script is published below as a transcript. Run the synthesizer (scripts/tts_synthesize.py) to add the spoken MP3.</p></div>
+
+  <h2>Transcript</h2>
+  <p>Steering a coding agent is becoming an infrastructure problem, not a prompt. That&#x27;s the thread running through this review.</p>
+  <p>This is a review of seventeen papers, all posted between January and June of twenty twenty-six, and gathered in June by an automated search for work on context engineering for coding agents. So everything you&#x27;re about to hear is a reading of this particular set of papers — a recent, search-shaped sample of mostly un-peer-reviewed preprints. It is not a complete survey of the field, and nothing here is a claim about where the field as a whole is heading.</p>
+  <p>Here&#x27;s how this narration goes. I&#x27;ll start with the handful of ideas that recur across the corpus. Then I&#x27;ll walk six themes in order — instruction files, finding context, managing context, the harness, memory, and governance. Then the evidence, spoken honestly. And at the end, clearly marked, my own reading across the papers.</p>
+  <h2>What recurs across the corpus</h2>
+  <p>A few positions show up again and again, with enough independent support across these papers to count as consensus — at least here.</p>
+  <p>The first, and the firmest: reading the repository is the dominant cost, and the main lever. One system, called SWE-Pruner, measured that read operations consume about seventy-six percent of a coding agent&#x27;s tokens — far more than editing or running code combined. Another, FastContext, found that reading and searching take up almost half the agent&#x27;s tokens and more than half of its tool calls. And a benchmark called SWE-Explore found that how well an agent selects context predicts whether it solves the task, with a correlation of zero point nine five. Three independent measurements, the same conclusion: context is where the budget goes, and where the wins are.</p>
+  <p>Second: codified context is shifting away from a single hand-written file toward something tiered, structured, and increasingly machine-maintained.</p>
+  <p>Third — and this is the corpus arguing with itself — auto-generated instruction files are not a free win. Quality and upkeep matter more than mere presence.</p>
+  <p>Fourth: a pattern keeps recurring of decoupling the search for context from the act of using it, and passing a clean, structured artifact between the two.</p>
+  <p>Fifth: lossy compression that works for question answering fails for multi-step coding. And missing context turns out to hurt more than redundant context.</p>
+  <p>And sixth: governance and provenance are moving to the boundary — where the agent acts, and where it contributes.</p>
+  <h2>Instruction files and codified context</h2>
+  <p>First, the instruction files themselves — the AGENTS-dot-M-D and CLAUDE-dot-M-D files that have become the canonical artifact of context engineering.</p>
+  <p>This is where the corpus disagrees most usefully. On one side, an experience report from Aristidis Vasilopoulos describes building a hundred-thousand-line codebase with a coding agent as the only code generator, and growing a three-tier codified-context infrastructure — an always-loaded constitution, nineteen specialist agents, and an on-demand knowledge base — until machine-targeted documentation was about a quarter of the entire codebase. He names the central danger plainly: stale specifications. Agents trust documentation absolutely, and out-of-date specs cause silent failures.</p>
+  <p>On the other side is the sharpest skeptic in the corpus. Gloaguen and colleagues, at E-T-H Zurich, ran a controlled evaluation and found that auto-generated context files actually reduced task success slightly, while adding over twenty percent to inference cost. Developer-written files helped only marginally. And crucially, it was not a compliance failure — the agents did follow the instructions; the files just didn&#x27;t help, mostly because they duplicated documentation the agent already had. Their recommendation was blunt: skip the auto-generated files, and keep the human ones minimal.</p>
+  <p>A third paper, from dos Santos and colleagues, explains part of why. Mining the hundred most-starred repositories that ship these files, they found at least one quality problem — they call them configuration smells — in ninety-one of a hundred files. The most common was including rules a linter already enforces, then sheer bloat, then stuffing rarely-used instructions into the always-loaded file.</p>
+  <p>Here I&#x27;m going slightly beyond what any single paper claims. My reading is that these results don&#x27;t actually conflict. The harmful files are the auto-generated, always-loaded, redundant, unmaintained ones. The useful context is curated, loaded on demand, and kept in sync with the code. The corpus isn&#x27;t really split on whether to codify context. It&#x27;s split on presence versus curation.</p>
+  <h2>Finding and provisioning context</h2>
+  <p>Next, finding the context in the first place.</p>
+  <p>Before a coding agent can edit, it has to locate the code that matters — and three papers treat that search as a first-class, measurable problem. FastContext found that editing only begins around turn eight of a trajectory; the median agent runs six rounds of exploration before its first edit. A benchmark called RepoMirage showed that strong scores can be shallow: more than half of one model&#x27;s solved cases touched only a single file. And when they perturbed the repositories in ways that preserved behavior but broke the shortcuts, average success fell from about sixty-seven percent down to twenty-five on their hardest tasks. The agents responded by opening more files — but understanding didn&#x27;t follow. They named it exploration drift: access without comprehension.</p>
+  <p>The fix all three converge on is the same. Pull exploration out of the solving loop, and hand the solver a compact, structured artifact instead of a trail of search output. FastContext trains a separate explorer that returns only a block of file paths and line ranges — improving success by up to five and a half points while cutting the main agent&#x27;s tokens by up to sixty percent. RepoMirage&#x27;s version writes an intermediate instructions file before solving. Same idea, two forms.</p>
+  <h2>Keeping context inside the budget</h2>
+  <p>Now, keeping that context inside the budget.</p>
+  <p>A long coding task floods the window with file contents and logs, and the tempting fix is to compress. But the corpus&#x27;s sharpest negative result, from Gelvan and colleagues at JetBrains, shows the danger. They compressed agent context into dense embeddings. On single-shot question answering, it worked. On multi-step coding, it solved seven SWE-bench issues — versus nineteen for no compression at all — and it had more room to work, not less. The reason is mechanical. Small reconstruction errors, like a slightly wrong file path, are harmless once, but they compound across steps, and a coding agent&#x27;s exact-match edit tools then fail.</p>
+  <p>The opposite reflex — just keep everything — fares no better. A system from M-I-T called Peek showed that persisting the full history inflated tokens roughly ten times, for no gain, and sometimes a loss.</p>
+  <p>What worked instead was selective, structure-preserving reduction. SWE-Pruner trims a file read down to the relevant lines, preserving syntax where token-level compression shreds it. Peek keeps a small, curated map of orientation knowledge — and found that the presence of the map mattered more than its size.</p>
+  <p>Here&#x27;s my own reading of these three together. The lesson isn&#x27;t &quot;compress the context.&quot; It&#x27;s: protect the load-bearing tokens, drop the rest, and never lossily re-encode what a tool will match exactly. A coding agent is a brittle, exact-match machine downstream of its context, and this corpus keeps rediscovering that.</p>
+  <h2>The harness as substrate</h2>
+  <p>Next, the harness — the whole software layer around the model.</p>
+  <p>A framing survey from Ning and colleagues argues that code in agent systems is no longer just output; it is the operational substrate — executable, inspectable, and stateful — and that reliability is bottlenecked there, not only in the model&#x27;s reasoning. They name a discipline beyond prompt and context engineering, and call it agentic harness engineering.</p>
+  <p>That abstraction gets concrete in a source-level reading of Claude Code, by Liu and colleagues. They estimate that only about one and a half percent of the codebase is the actual decision loop — a simple while-loop that calls the model and runs tools. The other ninety-eight percent is harness: context assembly, a five-layer compaction pipeline, a deny-first permission system, summary-only subagents. Their position is that as frontier models converge, that surrounding harness becomes the real differentiator.</p>
+  <p>And if the harness is the differentiator, it becomes something to optimize. Pan and colleagues showed an agent rewriting its own harness — its instructions, skills, and tools — from its own past trajectories, with no ground-truth grading, raising one benchmark&#x27;s pass rate from fifty-nine to seventy-eight percent in a single offline pass. Striking — though it&#x27;s one round, one model, judged by the agent itself.</p>
+  <h2>Persistent project memory</h2>
+  <p>Next, what survives across sessions.</p>
+  <p>A coding agent is stateless between sessions; it re-derives the same project context every time. A system called PROJECTMEM, from the University of Utah, estimates that costs five to twenty thousand tokens per session, and answers it with an append-only, plain-text event log — plus a deterministic gate that warns the agent before it repeats a fix that already failed. They call it memory-as-governance: memory that acts on the next action, rather than only answering.</p>
+  <p>Two other papers persist differently — one a memory-guided documentation generator, the other, SkillWiki, treating agent skills as versioned, governed assets with a provenance graph. And here&#x27;s the striking thing they share. All three reject opaque vector databases in favor of legible, auditable, append-only structure.</p>
+  <p>That choice, I think, is not an accident. It&#x27;s the same logic as the compression result. A coding agent needs recall it can trust exactly, not recall that is merely similar. Memory you can read, diff, and review beats memory that is fuzzy.</p>
+  <h2>Governance and provenance</h2>
+  <p>And finally, governance — control at the boundary where agents act and contribute.</p>
+  <p>A system called the Organizational Control Layer, from Shi and colleagues, intercepts an agent&#x27;s actions before they execute, and either approves, revises, blocks, or escalates them, with an audit trail. In their setting, it lifted compliant success from twelve percent to ninety-six. But — and this matters — their setting was adversarial buyer-and-seller negotiation, not coding. So read that as a transferable mechanism, not a coding result.</p>
+  <p>On the social side, Manita and Amari studied how open-source projects govern AI contributors, and put their finger on the core asymmetry. AI lowers the cost of producing contributions, but it does not lower the cost of trustworthy human review. The dimension nobody governs, in any policy they examined, is maintainer review capacity.</p>
+  <p>Governance is the property the rest of the corpus implies but rarely measures — and I&#x27;d hold it loosely, because the strongest numbers come from outside coding entirely.</p>
+  <h2>The evidence, spoken honestly</h2>
+  <p>So what was actually measured, and how well?</p>
+  <p>The firmest ground is that context cost-and-quality finding. Three independent measurements agree that reading dominates the token budget, and that context quality tracks success. The skeptical instruction-file results also reinforce each other, across two separate groups.</p>
+  <p>The thinnest ground is almost everything about persistent memory, codified infrastructure, and governance. Those rest on single-developer self-studies, on demos without baselines, or on that non-coding domain. They&#x27;re good demonstrations of a mechanism — they are not effect sizes. And one caution runs under several of the benchmark wins: these are twenty twenty-six frontier models, being tested on public repositories they may well have seen in training.</p>
+  <h2>My own reading</h2>
+  <p>Everything up to here was the papers. This last part is my own reading across them — inference, not findings, and scoped to these seventeen sources.</p>
+  <p>I&#x27;d organize the whole corpus as a stack. A durable spine — a minimal, human-curated instruction file. A provisioning layer that mints task-scoped context objects just in time. A working-context manager that reduces without destroying fidelity. A persistent memory that is legible and auditable. And a governance boundary that enforces deterministically, outside the model. All of it wrapped by a harness that, increasingly, edits itself.</p>
+  <p>If I had to name the bets this corpus supports: keep the always-loaded context minimal, and earn every token. Decouple finding context from using it. Optimize for the fidelity of the relevant subset, not the compression ratio. Prefer legible persistence over vector recall. And put enforcement at the boundary — deterministic, outside the weights.</p>
+  <p>And the bets I would not place, on this evidence: that auto-generated context files are useless — too strong; the studies are small and Python-only. That self-optimizing harnesses are production-ready — not on one self-graded round. Or that any single architecture has won. The corpus supports the principles. It does not yet crown an implementation.</p>
+  <h2>Close</h2>
+  <p>So that&#x27;s the review. Seventeen papers, the first half of twenty twenty-six, read as one sealed corpus — not the field, just this set. The clearest signal across them is that steering a coding agent has become a question of the context system you build around it: what you codify, how you provision it, how you keep it inside the budget, and what governs what the agent does with the result. For the exact numbers and every source, the written version and its corpus page hold the full provenance. Thanks for listening.</p>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">Context Engineering for Coding Agents · a provenance-cited review of 17 papers (Jan–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

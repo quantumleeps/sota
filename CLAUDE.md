@@ -1,6 +1,6 @@
 # SotA — state-of-the-art review hub
 
-A self-contained, **topic-agnostic** working repo that turns a research topic into a hyperlinked, provenance-cited review and publishes it as one topic in a shared hub on GitHub Pages. `cd` here and run Claude Code. Two bundled skills compose into one pipeline: **`/arxiv-paper-finder`** discovers and ranks candidate papers, and **`/sota-site`** turns a chosen set into a published topic.
+A self-contained, **topic-agnostic** working repo that turns a research topic into a hyperlinked, provenance-cited review and publishes it as one topic in a shared hub on GitHub Pages. `cd` here and run Claude Code. Three bundled skills compose into one pipeline: **`/arxiv-paper-finder`** discovers and ranks candidate papers, **`/sota-site`** turns a chosen set into a published topic, and **`/sota-audio`** (optional follow-on) gives that topic an audio-native "Listen" page narrated for the ear.
 
 **Live:** https://quantumleeps.github.io/sota/
 
@@ -10,6 +10,7 @@ A self-contained, **topic-agnostic** working repo that turns a research topic in
 2. **Review.** Read the ranked list with the user and curate it; re-rank with different weights (cheap — no re-fetch) until the set is right.
 3. **Hand off.** Re-run the ranker with `--emit-list <slug>.papers.txt` to write a sota-site-ready list (`<arxiv-id>  # <title>` per line).
 4. **Publish — `/sota-site`.** Feed that list as the corpus for a new topic: fetch full sources → read via parallel agents → digest → synthesize `docs/<slug>/` → regenerate the hub → verify → publish.
+5. **Narrate (optional) — `/sota-audio`.** Run right after `/sota-site` in the **same session** (while the digests/synthesis are still in context): it authors one continuous, audio-native narration of the topic, publishes a `docs/<slug>/listen.html` page (player + transcript), and synthesizes the spoken MP3 on demand via Fish Audio / ElevenLabs. Authoring the script needs no API key; audio is opt-in. First synth use: `pip install -r .claude/skills/sota-audio/requirements.txt`.
 
 **Slug / versioning:** if the topic already exists (see *Current topics*), use a `-v2` slug — e.g. exploring agent memory again → **`agent-memory-v2`**. Each version is a fresh corpus read in isolation and added alongside the existing topic on the hub (the skills never merge corpora unless told to).
 

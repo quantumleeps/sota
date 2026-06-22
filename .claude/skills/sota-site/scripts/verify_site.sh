@@ -97,6 +97,9 @@ for t in topics:
             elif re.fullmatch(r'[A-Za-z0-9._-]+\.html(#[A-Za-z0-9-]+)?', h):
                 if not os.path.isfile(os.path.join(tdir, h.split('#')[0])):
                     err(f"{t}/{b}: internal link missing -> {h}")
+            elif re.fullmatch(r'[A-Za-z0-9._/-]+\.(mp3|m4a|ogg|oga|wav|png|jpe?g|gif|svg|webp|vtt)', h):
+                if not os.path.isfile(os.path.join(tdir, h)):                 # e.g. audio/<slug>.mp3
+                    err(f"{t}/{b}: media file missing -> {h}")
             else:
                 err(f"{t}/{b}: unexpected link (absolute/parent?) -> {h}")
     print(f"[ok]   {t}: {len(pages)} page(s), {len(anchors)} bib anchors, {len(chips)} chip targets resolve")

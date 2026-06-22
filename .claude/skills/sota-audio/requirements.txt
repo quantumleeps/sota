@@ -1,0 +1,15 @@
+# sota-audio dependencies.
+#
+#   pip install -r requirements.txt
+#
+# Only needed when you actually SYNTHESIZE audio (scripts/tts_synthesize.py).
+# Authoring the narration script and building the listen page need nothing here
+# (make_listen_page.py is pure stdlib).
+#
+# requests  — the HTTP client for the Fish Audio / ElevenLabs REST calls.
+# pydub     — OPTIONAL: clean MP3 seams + real inter-chunk silence when stitching
+#             a multi-chunk narration. Needs ffmpeg on PATH (`brew install ffmpeg`).
+#             Without it the synthesizer falls back to raw MP3 byte concatenation,
+#             which still produces a valid file, just without gap control.
+requests>=2.28
+pydub>=0.25  # optional; remove if you don't want the ffmpeg dependency

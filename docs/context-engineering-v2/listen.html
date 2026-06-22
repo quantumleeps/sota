@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Listen — Context Engineering for Coding Agents</title>
 <link rel="stylesheet" href="../styles.css">
+<style>
+  #sa-audio { width:100%; margin:1.2em 0 .2em; }
+  .sa-speed { display:flex; align-items:center; gap:.55em; flex-wrap:wrap; margin:.4em 0 .2em; font-family:var(--sans); }
+  .sa-speed > .lbl { font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .sa-rates { display:flex; gap:.35em; flex-wrap:wrap; }
+  .sa-rates button { font-family:var(--sans); font-size:.85rem; padding:.18em .65em; border:1px solid var(--line);
+    border-radius:6px; background:var(--card); color:var(--ink-soft); cursor:pointer; line-height:1.4; }
+  .sa-rates button:hover { border-color:var(--accent); color:var(--accent); }
+  .sa-rates button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+</style>
 </head>
 <body>
 <nav class="topnav"><div class="topnav-inner">
@@ -29,7 +39,34 @@
   <h1>Listen — Context Engineering for Coding Agents</h1>
   <p class="lede">A single continuous, audio-native narration of this review — the same corpus-scoped reading as the site, rewritten for the ear. About 14 minutes. The full transcript follows the player.</p>
 
-  <div class="box gap"><p class="box-h">◇ Audio not yet generated</p><p>The ~14-minute narration script is published below as a transcript. Run the synthesizer (scripts/tts_synthesize.py) to add the spoken MP3.</p></div>
+  <audio id="sa-audio" data-rate="1" controls preload="none" src="audio/context-engineering-v2.mp3">Your browser does not support audio playback.</audio>
+  <div class="sa-speed" role="group" aria-label="Playback speed">
+    <span class="lbl">Speed</span>
+    <div class="sa-rates">
+      <button type="button" data-rate="1" aria-pressed="true">1×</button>
+      <button type="button" data-rate="1.25" aria-pressed="false">1.25×</button>
+      <button type="button" data-rate="1.5" aria-pressed="false">1.5×</button>
+      <button type="button" data-rate="1.75" aria-pressed="false">1.75×</button>
+      <button type="button" data-rate="2" aria-pressed="false">2×</button>
+    </div>
+  </div>
+  <p class="note">~14 min listen · <a href="audio/context-engineering-v2.mp3" download>download the MP3</a>. Single continuous narration; the full transcript is below.</p>
+  <script>
+  (function () {
+    var a = document.getElementById('sa-audio');
+    var btns = document.querySelectorAll('.sa-rates button');
+    function set(rate, el) {
+      a.playbackRate = parseFloat(rate);
+      Array.prototype.forEach.call(btns, function (b) {
+        b.setAttribute('aria-pressed', b === el ? 'true' : 'false');
+      });
+    }
+    Array.prototype.forEach.call(btns, function (b) {
+      b.addEventListener('click', function () { set(b.dataset.rate, b); });
+    });
+    a.addEventListener('loadedmetadata', function () { a.playbackRate = parseFloat(a.dataset.rate || '1'); });
+  })();
+  </script>
 
   <h2>Transcript</h2>
   <p>Steering a coding agent is becoming an infrastructure problem, not a prompt. That&#x27;s the thread running through this review.</p>

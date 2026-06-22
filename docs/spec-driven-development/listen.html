@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Listen — Spec-Driven Development &amp; the AI SDLC</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  #sa-audio { width:100%; margin:1.2em 0 .2em; }
+  .sa-speed { display:flex; align-items:center; gap:.55em; flex-wrap:wrap; margin:.4em 0 .2em; font-family:var(--sans); }
+  .sa-speed > .lbl { font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .sa-rates { display:flex; gap:.35em; flex-wrap:wrap; }
+  .sa-rates button { font-family:var(--sans); font-size:.85rem; padding:.18em .65em; border:1px solid var(--line);
+    border-radius:6px; background:var(--card); color:var(--ink-soft); cursor:pointer; line-height:1.4; }
+  .sa-rates button:hover { border-color:var(--accent); color:var(--accent); }
+  .sa-rates button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+</style>
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Spec-Driven&nbsp;<span>Development</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="spec-first.html">Spec-First</a>
+  <a class="nav" href="lifecycle.html">Agentic&nbsp;SDLC</a>
+  <a class="nav" href="verification.html">Verification</a>
+  <a class="nav" href="intent.html">Intent-Centric</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav active" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">🎧 Audio narration</p>
+  <h1>Listen — Spec-Driven Development &amp; the AI SDLC</h1>
+  <p class="lede">A single continuous, audio-native narration of this review — the same corpus-scoped reading as the site, rewritten for the ear. About 14 minutes. The full transcript follows the player.</p>
+
+  <audio id="sa-audio" data-rate="1" controls preload="none" src="audio/spec-driven-development.mp3">Your browser does not support audio playback.</audio>
+  <div class="sa-speed" role="group" aria-label="Playback speed">
+    <span class="lbl">Speed</span>
+    <div class="sa-rates">
+      <button type="button" data-rate="1" aria-pressed="true">1×</button>
+      <button type="button" data-rate="1.25" aria-pressed="false">1.25×</button>
+      <button type="button" data-rate="1.5" aria-pressed="false">1.5×</button>
+      <button type="button" data-rate="1.75" aria-pressed="false">1.75×</button>
+      <button type="button" data-rate="2" aria-pressed="false">2×</button>
+    </div>
+  </div>
+  <p class="note">~14 min listen · <a href="audio/spec-driven-development.mp3" download>download the MP3</a>. Single continuous narration; the full transcript is below.</p>
+  <script>
+  (function () {
+    var a = document.getElementById('sa-audio');
+    var btns = document.querySelectorAll('.sa-rates button');
+    function set(rate, el) {
+      a.playbackRate = parseFloat(rate);
+      Array.prototype.forEach.call(btns, function (b) {
+        b.setAttribute('aria-pressed', b === el ? 'true' : 'false');
+      });
+    }
+    Array.prototype.forEach.call(btns, function (b) {
+      b.addEventListener('click', function () { set(b.dataset.rate, b); });
+    });
+    a.addEventListener('loadedmetadata', function () { a.playbackRate = parseFloat(a.dataset.rate || '1'); });
+  })();
+  </script>
+
+  <h2>Transcript</h2>
+  <h2>Opening</h2>
+  <p>When writing code becomes cheap, the specification becomes the program. That is the single idea that runs through this set of papers on spec-driven development and the AI software development lifecycle.</p>
+  <p>This is a review of fourteen papers, all preprints posted to arXiv between April and June of twenty twenty-six, gathered by an automated search and read together as one sealed set. So everything you&#x27;re about to hear is a reading of this particular collection — a three-month, search-shaped snapshot of mostly un-reviewed preprints, several of them position papers — not a complete survey of the field, and not a claim about where the field is heading. Where I say &quot;across these papers,&quot; I mean exactly that.</p>
+  <p>Here&#x27;s how this narration goes. First, the few positions that recur often enough to count as a shared view across this set. Then four themes, in order: what a specification is becoming, how the lifecycle gets redrawn around agents, how output earns its way into the codebase, and what all of this does to the human role. Then the evidence — what was actually measured, which is less than you might expect. And finally, clearly marked as my own, how I&#x27;d put it together.</p>
+  <h2>What recurs across these papers</h2>
+  <p>The first recurring claim: the specification, or the intent behind it, is becoming the primary artifact, and code is the cheap output. Mark Marron&#x27;s paper, titled &quot;Specifications for Humans, Agents, and Tooling,&quot; puts it most directly — specifications are the primary artifact of development, and from them flows the implementation, the testing, the deployment, and the interaction with AI agents. Elyson De La Cruz names the same shift from code-centric to intent-centric engineering. And Mamdouh Alenezi argues that as code becomes abundant, the engineer&#x27;s durable value moves to intent specification, judgment, and accountable oversight.</p>
+  <p>The second: the bottleneck moves from generating code to verifying and reviewing it. If an agent can produce ten plausible patches an hour, the rate-limiting resource is human review. Happy Bhati calls this the economics of attention. Christopher Koch calls the thing it produces verification debt — weak tests and hidden regressions piling up when output grows faster than the capacity to check it.</p>
+  <p>The third, offered as a proposal rather than a measured result: structure beats chat. Don&#x27;t let an agent implement from a long conversation — let it implement from a reviewed brief. And validate the spec and the plan against reality before any code is written, not after.</p>
+  <p>The fourth, also a proposal: accept output on evidence, not on plausibility, with the bar set by risk. Agent output isn&#x27;t accepted because it looks right; it&#x27;s accepted because it satisfies evidence appropriate to how risky the change is.</p>
+  <p>And underneath all of it, an honest caveat the papers themselves raise: the tooling has outrun the evidence. Most of this set is proposal, taxonomy, and position. Only five of the fourteen papers report original measurements.</p>
+  <h2>Spec-first: the specification as the primary artifact</h2>
+  <p>First, what a specification is becoming.</p>
+  <p>Marron&#x27;s argument is that an API spec should look more like a programming language than a description of a data format. In his BAPI system the spec carries executable preconditions and postconditions, validated string types, a permissions sandbox built from web addresses and glob patterns, and a tamper-proof event log for rules about ordering. The motivating question is pointed: would you trust your AI agent to use this interface to make payments from your bank account? He also argues a spec for agents has to be multi-modal — natural language, plus examples, plus logic — because a single example can carry intent that the formal constraints miss.</p>
+  <p>The clearest map of the tooling comes from Sanderson de Macedo, who scores six popular spec-driven frameworks — including GitHub&#x27;s Spec Kit and the BMAD method — on six dimensions: specification, context, roles, execution, validation, and portability. His headline finding is that no framework scores strongly on all six. Specification is the saturated common denominator; it&#x27;s roles, validation, and portability where they diverge. And adoption doesn&#x27;t track maturity — the most complete framework he examined had under a hundred stars, while the most popular had over a hundred thousand. His warning: without context, validation, and traceability, these frameworks risk just institutionalizing vibe coding with extra terminology.</p>
+  <p>But a spec only helps if it matches the codebase it targets. Pardis Taghavi and Santosh Bhavani name the failure mode context blindness — the agent&#x27;s intermediate artifacts can be perfectly self-consistent while being incompatible with the repository as it actually exists. Their fix adds read-only discovery before each phase and validation after it, catching hallucinated functions and invalid file paths early. So my read is that the real unit here isn&#x27;t the spec alone — it&#x27;s the spec bound to a check against reality. A spec an agent can&#x27;t mechanically verify against the world behaves more like a prompt.</p>
+  <h2>The lifecycle, reorganized</h2>
+  <p>Now, how the lifecycle gets redrawn around agents.</p>
+  <p>Bhati&#x27;s survey reframes the whole object of study — from code generation to, in his words, delegated execution under human supervision. He proposes a six-layer architecture and an agentic version of the lifecycle, where the requirements phase becomes the agent drafting a spec while the human supervises. He also makes a point worth keeping: the big capability jumps came from scaffolding, not just bigger models — the interface to the agent matters as much as the model. Those capability numbers, by the way, he compiles from other reports — they&#x27;re cited, not his own measurement.</p>
+  <p>Peter and Paul Mandl center their account on what they call the harness — the technical and organizational embedding that turns a model into a governed workflow: context, tool access, verification, permissions, logging, and human approval. Their blunt line is that the amount of generated code is not a meaningful success measure, and that where good foundations are missing, AI amplifies the existing weaknesses rather than fixing them.</p>
+  <p>And Ruiyin Li and colleagues push spec-driven automation upstream, past code into architecture — turning a requirements document into multi-view architecture blueprints. Their cautionary finding generalizes: multi-agent orchestration is a capability amplifier, not a corrective. The base model&#x27;s competence sets a ceiling for the whole pipeline; coordination can&#x27;t lift it past that.</p>
+  <h2>Verification: acceptance over inspection</h2>
+  <p>Next, how output earns its way in. This is the most developed theme in the set.</p>
+  <p>Koch states the principle the cluster shares: conversation is for discovering intent; structured artifacts are for implementing; and evidence is for acceptance. His framework adds risk-tiered gates — four levels from exploratory to high-assurance — each backed by an evidence bundle: the brief, the plan, the test results, the diff, the trace from acceptance criteria to tests, and a rollback path.</p>
+  <p>Tarlan Hasanli and colleagues take the same instinct down to the engine. They turn test-driven development into enforced governance — the language model never writes to the file system directly; it returns proposals that pass validation gates before a deterministic engine applies them. It&#x27;s a clean design, but they&#x27;re explicit that the evaluation is still preliminary.</p>
+  <p>The strongest evidence in this cluster is from Tarun Suresh and colleagues at Bloomberg. Their system synthesizes formal contracts across million-line C++ codebases and validates each one by fuzzing — using the fuzzer as a pseudo-oracle, since a failing input is direct proof the contract is wrong. They report valid contracts for up to eighty-five percent of functions, beating a frontier coding agent at about ten times lower cost. Tellingly, the fuzzer rejects some contracts that had already passed the project&#x27;s own unit tests — so the gate adds signal the existing tests missed.</p>
+  <p>On security, Oleg Grynets and colleagues at EPAM make the case that if functional behavior is specified explicitly, security behavior shouldn&#x27;t be left to the model&#x27;s guesswork. With an explicit, application-specific security spec, failures on a hidden test suite fell from fifty, to forty-two with a generic standard, to thirty-six — out of two hundred twenty-one. Real, monotonic improvement. But note the best case still failed thirty-six tests; an explicit security spec is a layer, not a guarantee.</p>
+  <p>And at the far end, Martin Monperrus argues — in an explicit position paper, not a study — that coding agents have made mandatory human code review redundant, and it should be replaced by agent-driven verification. He&#x27;s candid about the holes in his own argument: when the same model family writes and reviews the code, the blind spots correlate; and prompt injection is a genuinely new attack surface with no settled defense.</p>
+  <h2>The intent-centric turn</h2>
+  <p>Now, what this does to the human role — and here the corpus is heavier on theory than measurement.</p>
+  <p>De La Cruz frames the destination not as autonomy without humans, but as bounded autonomy inside engineered control loops. He names a new liability that comes with it — governance and provenance debt — the deficit that builds up when agents get access to tools and repositories without identities, logging, and rollback.</p>
+  <p>Alenezi reaches a compatible conclusion about the workforce: the competencies that gain value are the ones least substitutable by AI — critical judgment, systems thinking, trust calibration, and intent specification, the skill of turning ambiguity into testable acceptance criteria. His memorable line is that trust is produced by the loop, not assumed of the generator. And when autonomy is delegated, accountability doesn&#x27;t disappear — it concentrates.</p>
+  <p>Across the set, the picture of where the human goes is consistent: humans own intent at the top of the loop and accountability at the gates — not the keystrokes in between.</p>
+  <h2>Evidence: what was actually measured</h2>
+  <p>Now, the evidence, spoken honestly.</p>
+  <p>The consistent signal is this: every paper that put a checkable artifact in front of an automated oracle found the spec, or the gate, adding value. Suresh&#x27;s fuzzer caught contracts the unit tests had missed. Grynets&#x27;s explicit security spec lowered hidden-test failures step by step. Taghavi&#x27;s grounding nudged a quality score from three point five one to three point six six while keeping repository tests essentially fully passing, and lifted a SWE-bench Lite score from fifty-six and a half to fifty-eight point two percent.</p>
+  <p>But notice how small and narrow those effects are. Plus point one five on a quality score. Under two points on a benchmark. Most results come from a single model, on a single domain, often judged by another language model, and rarely tested for statistical significance. The clearest human signal in the whole set — Taghavi&#x27;s own blinded preference test — did not favor the more elaborate pipeline. And the capability the entire paradigm leans on, an agent&#x27;s ability to find the flaws in a spec before any code is written, was measured by Grant Hamblin and colleagues at just forty-four point four percent — every agent they tested scored below forty-five.</p>
+  <p>So read the evidence as promising and pointing in a consistent direction — not as settled.</p>
+  <h2>My reading across the corpus</h2>
+  <p>Everything up to here was the papers. Here&#x27;s my own reading across them — this part is inference, not a finding any single paper states.</p>
+  <p>These papers describe different pieces of one shape. Read together, they sketch a closed loop. Intent gets discovered in conversation. It&#x27;s frozen into a reviewed, grounded contract. An agent generates against that contract. An automated oracle — a fuzzer, a hidden test suite, a deterministic engine — checks the output against the spec. And the output is accepted on evidence proportional to risk. The human holds the two ends: intent at the top, accountability at the gates, with governance wrapped around the whole thing.</p>
+  <p>If that&#x27;s right, a few bets follow. The durable artifact isn&#x27;t the prose spec — it&#x27;s the spec bound to an automatic check; without an oracle, a spec behaves like a prompt. Process discipline, not model choice, will separate teams — but only above a base-model capability floor, because orchestration can&#x27;t rescue a weak model. And security and governance have to be specified, not assumed.</p>
+  <p>And here&#x27;s where I&#x27;d hold back. I would not retire human code review on this evidence — the argument is strong but it&#x27;s a position paper with unresolved risks. I wouldn&#x27;t bank on full lifecycle autonomy on any particular timeline; it sits at the least-evidenced end of these papers&#x27; own roadmaps. I wouldn&#x27;t yet claim spec-driven development measurably reduces defects or technical debt end to end — the measured effects are small and local, and there are no long-term studies. And I wouldn&#x27;t trust agents to author the spec unsupervised — that upstream step is sitting at forty-four percent.</p>
+  <h2>Closing</h2>
+  <p>So, the one-line version. On the strength of these fourteen papers, spec-driven development is best understood not as &quot;write a spec, then generate code,&quot; but as closing a loop: turn intent into a machine-checkable contract, let agents run against it, and accept the result on evidence proportional to risk — with humans owning intent and accountability at the ends.</p>
+  <p>Again — that&#x27;s fourteen preprints from a single three-month window, not a verdict on the field. For every number and every attribution, the written review and its bibliography link back to the original papers on arXiv. This has been a reading of this corpus, and only this corpus.</p>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">Spec-Driven Development &amp; the AI SDLC · a provenance-cited review of 14 arXiv papers (Apr–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpus — Multi-Agent Systems & Orchestration · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="frameworks.html">Frameworks</a>
+  <a class="nav" href="communication.html">Communication</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav active" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">Corpus · the provenance backbone</p>
+  <h1>The 20 papers</h1>
+  <p class="lede">Every citation chip on this site resolves to an entry below, and each entry links onward to the paper on arXiv — the chain is always <em>claim → chip → bibliography → arXiv</em>. This is a review of these 20 papers and nothing else: all are arXiv preprints posted <strong>May–June 2026</strong>, surfaced by an automated relevance search and curated to 20. Many are systems papers, position/vision arguments, or single-run reports rather than controlled studies; the role badges and per-entry notes say which.</p>
+
+  <div class="box inference"><p class="box-h">⟡ How this corpus was assembled — read this first</p>
+  <p>These papers were surfaced by an automated multi-source search (arXiv + OpenAlex + Hugging Face) for "multi-agent systems" and "multi-agent orchestration," embedded and relevance-ranked, then filtered to arXiv-fetchable preprints published <strong>on or after 1 May 2026</strong> and curated to 20 by topical fit. It is a <em>search-shaped, two-month sample of recent, mostly un-peer-reviewed preprints</em> — not a census of the field. Strong relevant work that lacked a fetchable arXiv id (for example an LLM-orchestration survey and an enterprise-CRM orchestration paper found only via OpenAlex) was excluded. Weight the entries accordingly.</p></div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:var(--anchor,#7c3aed)"></span> Anchor — survey/taxonomy that frames the topic</span>
+    <span><span class="sw" style="background:var(--core,#2563eb)"></span> Core — central to the topic</span>
+    <span><span class="sw" style="background:var(--support,#64748b)"></span> Support — adjacent / contextual</span>
+  </div>
+
+  <h2>Anchors — the maps of the territory</h2>
+
+  <div class="bibentry" id="p-2605-14892">
+    <span class="role anchor">Anchor</span><span class="bt">Beyond Individual Intelligence: Surveying Collaboration, Failure Attribution, and Self-Evolution in LLM-based Multi-Agent Systems</span>
+    <div class="meta"><span class="idtag">arXiv:2605.14892</span> · Qi, Ma, Xing, Guo, Huang et al. (Xi'an Jiaotong Univ.; CCNU; Sydney AI Centre), 2026 · survey · <strong>cite: Qi+ '26</strong></div>
+    <div class="rel">A lifecycle survey of LLM-based MAS organised around the "LIFE" progression (Lay capability → Integrate via collaboration → Find faults via attribution → Evolve via self-improvement). Supplies the formal MAS definition S=(A,E,C,G,Π), a four-part collaboration taxonomy (Role / Communication / Orchestration / Interaction), the three-way orchestration topology split (centralized / distributed / hybrid), and a comparison of inter-agent protocols (MCP, A2A, ANP, ACP, Agora). The organising vocabulary this review borrows; all of its performance numbers are cited from other works.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.14892" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-19135">
+    <span class="role anchor">Anchor</span><span class="bt">A Technical Taxonomy of LLM Agent Communication Protocols</span>
+    <div class="meta"><span class="idtag">arXiv:2606.19135</span> · Sander, Gidey, Lenz, Knoll (TU München), 2026 · survey / taxonomy · <strong>cite: Sander+ '26</strong></div>
+    <div class="rel">Builds a five-dimension empirical taxonomy (counterparty · payload · interaction state · discovery mechanism · schema flexibility) and classifies nine open-source protocols — MCP, A2A, LAP, agents.json, Agora, ANP, LMOS, ACP, agntcy. Finds all seven agent-to-agent protocols are stateful and hybrid-payload, schema flexibility is rising, and decentralized discovery and privacy/policy enforcement are largely absent. Argues the field heads toward a federated, layered protocol stack rather than one winner.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.19135" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Core — central to the topic</h2>
+
+  <div class="bibentry" id="p-2606-13707">
+    <span class="role core">Core</span><span class="bt">Orchestra-o1: Omnimodal Agent Orchestration</span>
+    <div class="meta"><span class="idtag">arXiv:2606.13707</span> · F. Zhang, V. Zhang, Qian, Li et al. (CUHK; LIGHTSPEED; PKU; THU; Tongji), 2026 · framework (empirical) · <strong>cite: F. Zhang+ '26</strong></div>
+    <div class="rel">An omnimodal (text/image/audio/video) orchestration framework that decouples a high-level main agent from modality-specialized sub-agents via dependency-aware decomposition and parallel sub-task execution, trained with a decision-aligned RL recipe (DA-GRPO) that rewards orchestration decisions rather than only final answers. Reports a new SOTA on OmniGAIA (72.8% with GPT-5) and an open-source 8B main agent at 30.0%. Includes formal latency-speedup and information-gain propositions.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.13707" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-11440">
+    <span class="role core">Core</span><span class="bt">InfraMind: Infrastructure-Aware Multi-Agent Orchestration</span>
+    <div class="meta"><span class="idtag">arXiv:2606.11440</span> · Kabir, Xue, Zheng, Lou (Univ. Central Florida), 2026 · system/tool + framework · <strong>cite: Kabir+ '26</strong></div>
+    <div class="rel">Names "infrastructure blindness" — orchestrators that route on static task/model features while ignoring runtime serving state (queue depth, KV-cache pressure, latency). Couples an infra-aware planner, executor, and earliest-deadline-first scheduler trained jointly as a hierarchical constrained MDP with RL, conditioning topology and model/reasoning-depth on live load. Reports higher accuracy at low load and up to 99.9% SLO compliance under high load where baselines collapse.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.11440" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-22177">
+    <span class="role core">Core</span><span class="bt">Maestro: Reinforcement Learning to Orchestrate Hierarchical Model-Skill Ensembles</span>
+    <div class="meta"><span class="idtag">arXiv:2605.22177</span> · Wu, Zhai, Jin, Shen et al. (Tsinghua; Zhejiang; CUHK; NTU; Tongji), 2026 · framework (empirical) · <strong>cite: Wu+ '26</strong></div>
+    <div class="rel">Trains a lightweight 4B RL "orchestrator" to dynamically compose ensembles of frozen expert models and a two-tier skill library, deciding which model-skill pair to invoke and when to stop via a compositional action <span class="mono">Model@@Skill: Query</span>. Reaches 70.1% average across ten multimodal benchmarks — above GPT-5 (69.3%) — and generalises plug-and-play to unseen experts/skills. RL is the primary driver (+17.4% over the same workflow without it).</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.22177" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-27466">
+    <span class="role core">Core</span><span class="bt">AgensFlow: A Coordination-Policy Substrate for Multi-Agent Systems</span>
+    <div class="meta"><span class="idtag">arXiv:2605.27466</span> · Nicole Koenigstein (independent), 2026 · system/tool + framework · <strong>cite: Koenigstein '26</strong></div>
+    <div class="rel">Treats coordination as an online policy-learning problem under partial observability: skill, role/model, topology (including a first-class <span class="mono">skip:X</span> omission action), and reward become observable and learnable from repeated trajectories via reliability-aware UCB1 over a folded task signature. Learned routing beats a fixed pipeline under a cross-family three-judge audit, and the work makes reward-signal auditability a first-class part of orchestration design.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.27466" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-00708">
+    <span class="role core">Core</span><span class="bt">MOSAIC: Modular Orchestration for Structured Agentic Intelligence and Composition</span>
+    <div class="meta"><span class="idtag">arXiv:2606.00708</span> · Bao, Xi, Liu, Ge et al. (NUS; UCL; Edinburgh; Alan Turing Inst.; NatWest), 2026 · system/tool + framework · <strong>cite: Bao+ '26</strong></div>
+    <div class="rel">Casts automated data science as memory-grounded modular workflow construction: an explicit "blueprint" intermediate representation grounds an LLM <em>executor</em> in retrieved cases and code modules, while a failure-aware offline-RL policy selects high-level refinement actions (with trajectory branching and rollback). A planner/executor separation with a coordinating artifact — orchestration-flavoured but a single pipeline, not a population of communicating peers. Evaluated on financial time-series forecasting/generation.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.00708" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-02801">
+    <span class="role core">Core</span><span class="bt">Reinforcement Learning for LLM-based Multi-Agent Systems through Orchestration Traces</span>
+    <div class="meta"><span class="idtag">arXiv:2605.02801</span> · Chenchen Zhang (independent), 2026 · survey (curated) · <strong>cite: C. Zhang '26</strong></div>
+    <div class="rel">A curated survey (84 retained entries, cutoff 4 May 2026) that reframes RL for LLM-MAS around the <em>orchestration trace</em> — a temporal event graph of spawn/delegate/message/tool/return/aggregate/stop — and organises the design space into eight reward families (R1–R8, with R7 "orchestration reward" the MAS-specific one), an eight-level credit-bearing-unit hierarchy, and five orchestration sub-decisions (O1–O5). Reports that no pooled method trains the stopping decision as an RL target. The spine reference for the Learning page.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.02801" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-13598">
+    <span class="role core">Core</span><span class="bt">Reward Modeling for Multi-Agent Orchestration (Orch-RM)</span>
+    <div class="meta"><span class="idtag">arXiv:2606.13598</span> · Tsang, Zhao, Venkataramani, Shi, Ke, Yavuz, Joty, Wang (Rutgers; Salesforce AI Research), 2026 · empirical (framework) · <strong>cite: Tsang+ '26</strong></div>
+    <div class="rel">A self-supervised, orchestration-level Bradley-Terry reward model that scores an orchestration plan <em>before</em> any sub-agent runs, built from preference pairs mined from intermediate training checkpoints (specialized-over-base and correct-over-incorrect). Improves training-token efficiency up to 10× while raising multi-agent test-time-scaling accuracy up to 8%, beating LLM-as-judge and trajectory-level rewards at a fraction of the verification cost.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.13598" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-10917">
+    <span class="role core">Core</span><span class="bt">Role-Agent: Bootstrapping LLM Agents via Dual-Role Evolution</span>
+    <div class="meta"><span class="idtag">arXiv:2606.10917</span> · X. Wang, Ma, Yang, Huang, P. Wang, Y. Wang, Chu (USTC; AMAP, Alibaba), 2026 · empirical (RL framework) · <strong>cite: Wang+ '26</strong></div>
+    <div class="rel">Uses a single LLM as both agent and environment for bootstrapped co-evolution: a World-In-Agent module predicts future states to form a process/predictive reward, and an Agent-In-World module mines structured failure modes to reshape the training task distribution. Averages over 4% gain on ALFWorld/WebShop/search-QA. A "dual-role" rather than true multi-agent system — included for its role-assignment and credit-assignment mechanics relevant to orchestration.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.10917" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-11376">
+    <span class="role core">Core</span><span class="bt">LLM-X: A Scalable Negotiation-Oriented Exchange for Communication Among Personal LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2605.11376</span> · Lorenzoni, Alencar, Cowan (Univ. of Waterloo), 2026 · system/tool + empirical · <strong>cite: Lorenzoni+ '26</strong></div>
+    <div class="rel">A negotiation-centric message-bus substrate for LLM-to-LLM coordination: typed JSON envelopes, a policy engine, and Contract-Net / FIPA-Alternating-Offers protocols, deliberately reorienting from tool/API-centric designs (e.g. MCP) to agent-to-agent dialogue. Reports a 12-hour, 12-agent run sustaining 100% round completeness at ~6 ms mean latency. Caveat: the agents are synthetic Python wrappers, so results reflect transport/protocol dynamics, not emergent LLM negotiation.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.11376" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-03042">
+    <span class="role core">Core</span><span class="bt">ARIS: Autonomous Research via Adversarial Multi-Agent Collaboration</span>
+    <div class="meta"><span class="idtag">arXiv:2605.03042</span> · R. Yang, Li, Li (Shanghai Jiao Tong Univ.; Shanghai Innovation Inst.), 2026 · system/tool (technical report) · <strong>cite: R. Yang+ '26</strong></div>
+    <div class="rel">A long-horizon autonomous-research harness built on the premise that a single agent is unreliable — its failure mode being "plausible unsupported success" (claims outrunning evidence). Pairs a cross-model-family executor/reviewer adversarial loop with a multi-stage evidence-to-claim assurance cascade. Evidence is a single observational overnight run; cross-family separation is the recommended default, not enforced in code. A vision/system contribution on verification-as-orchestration.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.03042" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-08878">
+    <span class="role core">Core</span><span class="bt">PerspectiveGap: A Benchmark for Multi-Agent Orchestration Prompting</span>
+    <div class="meta"><span class="idtag">arXiv:2606.08878</span> · Sun, Ren, Zhang, Liu, Guo (Univ. of Maryland; CUHK; Stanford), 2026 · benchmark · <strong>cite: Sun+ '26</strong></div>
+    <div class="rel">Evaluates the artifact a main agent writes for its sub-agents — does the orchestration prompt preserve each role's information boundary <em>before</em> any worker acts? Across 27 models, average combined pass rate is just 14.9% (GPT-5.5 leads at 62.0%); coding-strong Opus 4.7 underperforms, and standard tricks (few-shot, scratchpad, more reasoning) don't reliably help. Catalogs five failure modes including out-of-role leakage as a reward-hacking channel.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.08878" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-02646">
+    <span class="role core">Core</span><span class="bt">The Ringelmann Effect in Multi-Agent LLM Systems: A Scaling Law for Effective Team Size</span>
+    <div class="meta"><span class="idtag">arXiv:2606.02646</span> · Bertalanič, Fortuna (Jožef Stefan Institute), 2026 · empirical (+ theory) · <strong>cite: Bertalanič+ '26</strong></div>
+    <div class="rel">Derives a two-parameter scaling law R(N)=1/(1+c(N−1)N^−β) for the effective (independent) team size of a multi-agent system; the exponent β sorts any configuration into hard-ceiling, sublinear, or linear regimes. Fits 44 (model×task×condition) cells at R²>0.99. Finds that for homogeneous instruct-class teams the "debate" gain is largely re-evaluation (a noise placebo matches it) and that architectural diversity is the only validated lever that raises the ceiling.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.02646" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Support — adjacent / contextual</h2>
+
+  <div class="bibentry" id="p-2606-05158">
+    <span class="role support">Support</span><span class="bt">Streaming Communication in Multi-Agent Reasoning (StreamMA)</span>
+    <div class="meta"><span class="idtag">arXiv:2606.05158</span> · Z. Yang, X. Xu, Wang, Chen, Xu, Y.-C. Chen (HKUST-GZ; Alibaba; ZJU), 2026 · framework (system + theory + empirical) · <strong>cite: Z. Yang+ '26</strong></div>
+    <div class="rel">Replaces the default "generate-then-transfer" protocol with a reasoning-step-level <em>stream</em> that forwards each step the moment it is produced, pipelining agents over a DAG. Because early reasoning steps are more reliable than late ones, streaming both cuts latency and improves quality (avg +7.3 pp for Claude, up to 26.9× wall-clock speedup), and introduces per-agent step count as a second scaling axis. Theorem 1 gives a per-edge protocol selector.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.05158" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-25188">
+    <span class="role support">Support</span><span class="bt">DarkForest: Less Talk, Higher Accuracy for Multi-Agent LLMs</span>
+    <div class="meta"><span class="idtag">arXiv:2605.25188</span> · Y. Li, Wei, Jiang, Guo, Q. Li, B. Li (UT Dallas; UC Davis), 2026 · framework + empirical · <strong>cite: Y. Li+ '26</strong></div>
+    <div class="rel">Argues coordination is not "more text" but the controlled disclosure of compact, policy-permitted evidence: agents generate candidates independently, a calibrated belief state weighs which agents support which answer, and only that summary plus a deterministic guardrail reach a coordinator. Beats debate/mixture/graph baselines by 2.52–5.00 points while cutting tokens up to 6.5×, and shows that exposing more raw text can <em>hurt</em>.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.25188" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-07790">
+    <span class="role support">Support</span><span class="bt">Byzantine Cheap Talk: Adversarial Resilience and Topology Effects in LLM Coordination Games</span>
+    <div class="meta"><span class="idtag">arXiv:2606.07790</span> · El Mir, Takáč, Lahlou (MBZUAI), 2026 · empirical · <strong>cite: El Mir+ '26</strong></div>
+    <div class="rel">A 4-player LLM Stag Hunt with cheap-talk messaging. A single deterministic deceiver (signals cooperation, defects) collapses group cooperation even though peers detect the betrayal; and disclosing a restricted communication topology collapses cooperation while applying the identical restriction silently preserves it — so failure stems from agents' meta-reasoning about hidden information, not information loss. Frames cheap talk as an adversarial-injection surface and reports stable per-model "defection-prone vs cooperation-persistent" archetypes.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.07790" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2605-19193">
+    <span class="role support">Support</span><span class="bt">Sequential Consensus for Multi-Agent LLM Debates: A Wald-SPRT Compute Governor with Calibration-Based Failure Detection</span>
+    <div class="meta"><span class="idtag">arXiv:2605.19193</span> · Andrea Morandi (Cisco Systems), 2026 · empirical (simulation + real-LLM) · <strong>cite: Morandi '26</strong></div>
+    <div class="rel">Wraps any multi-agent debate in Wald's Sequential Probability Ratio Test as a plug-in "compute governor": after each round an LLM judge scores consensus and a Wald monitor decides whether to stop. On GSM8K it cuts calls 3.7× at −2 pp accuracy; on MMLU the calibrated likelihoods collapse (KL≈0), which the rule correctly reports as an uninformative signal — making the calibration step itself a cheap failure detector. Honest about near-saturated benchmarks and weak statistical power.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2605.19193" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-10307">
+    <span class="role support">Support</span><span class="bt">Early-Token Confidence Predicts Reasoning Quality in Multi-Agent LLM Debate</span>
+    <div class="meta"><span class="idtag">arXiv:2606.10307</span> · Keramati, Cheok, Horne, Warschauer (UC Irvine), 2026 · empirical · <strong>cite: Keramati+ '26</strong></div>
+    <div class="rel">In a three-role debate (Advocate / Skeptic / Synthesizer-Judge) for essay scoring, token-level log-probability — especially from the first few generated tokens — predicts externally judged reasoning quality better than full-sequence statistics, and aligns more strongly with supportive than adversarial reasoning. A lightweight, no-extra-inference signal for per-role quality monitoring and failure screening in debate systems.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.10307" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-01385">
+    <span class="role support">Support</span><span class="bt">MAAD: Bridging Requirements and Architecture via Multi-Agent Orchestration with External Knowledge and Hierarchical Memory</span>
+    <div class="meta"><span class="idtag">arXiv:2606.01385</span> · R. Li, Zhou, Cai, Liang, Xuan, Jin, Zhang, Sun, Liu (Wuhan Univ.; NTU), 2026 · system/tool + empirical · <strong>cite: R. Li+ '26</strong></div>
+    <div class="rel">Orchestrates four role-specialized agents (Analyst → Modeler → Designer → Evaluator) to turn a software requirements spec into multi-view architecture, grounded by RAG and a three-layer (working/episodic/semantic) memory, with per-stage evaluation as a feedback loop. Beats MetaGPT on architecture-quality metrics, but its headline claim for this review is conceptual: orchestration is a "capability amplifier" bounded by the base model's competence, not a corrective for a weak model.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.01385" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="pager">
+    <a href="synthesis.html">← Synthesis</a>
+    <a href="index.html">Overview →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

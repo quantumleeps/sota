@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Agent Systems & Orchestration — a review of 20 papers (May–Jun 2026) · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav active" href="index.html">Overview</a>
+  <a class="nav" href="frameworks.html">Frameworks</a>
+  <a class="nav" href="communication.html">Communication</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">State of the Art · Multi-Agent Systems &amp; Orchestration</p>
+  <h1>The orchestrator becomes the model</h1>
+  <p class="lede">Across these 20 papers — all arXiv preprints from <strong>May–June 2026</strong> — the recurring move is to treat <strong>coordination itself</strong> as the object of engineering. As individual LLMs plateau on bounded tasks, the leverage shifts to <em>how</em> work is decomposed, delegated, communicated, aggregated, and stopped across a team of agents. The papers converge less on "which model is smartest" and more on a system question: <em>which orchestration policy turns a pool of models, tools, and skills into a reliable whole — and when does adding agents stop helping?</em></p>
+
+  <div class="box inference"><p class="box-h">⟡ Scope — read this first</p>
+  <p>This is a review of <strong>20 sources</strong>, gathered in <strong>June 2026</strong> by an automated multi-source relevance search (arXiv + OpenAlex + Hugging Face) for "multi-agent systems" and "multi-agent orchestration," filtered to a hard <strong>1 May 2026</strong> date floor and curated to 20 by topical fit. It is a reading of <em>this corpus</em> — a search-shaped, two-month sample of mostly un-peer-reviewed preprints, several of them systems descriptions or single-run reports — <strong>not</strong> a complete survey and not a claim about where the field is heading. Where this site says "across these papers," it means exactly that. Provenance for every claim lives in the <a href="corpus.html">Corpus</a>.</p></div>
+
+  <div class="grid g3">
+    <div class="card stat">
+      <div class="big">70.1%</div>
+      <div class="lbl">Average across ten multimodal benchmarks reached by a <em>4B</em> RL orchestrator composing frozen experts — above GPT-5 (69.3%). Orchestration as an alternative to scaling one model. <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big amber">1.12</div>
+      <div class="lbl">Effective (independent) team size of <em>thirty</em> dense debating agents on MMLU-Hard — no more answer diversity than one agent. Adding agents hits a hard ceiling. <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big">14.9%</div>
+      <div class="lbl">Average pass rate across 27 models asked to write sub-agent prompts that preserve each role's information boundary — orchestration prompting is its own hard, unsolved skill. <a class="cite" href="corpus.html#p-2606-08878">Sun+&nbsp;'26</a></div>
+    </div>
+  </div>
+
+  <div class="box finding"><p class="box-h">▦ How to read this site</p>
+  <p>Citation chips like <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a> follow every sourced claim and link to the <a href="corpus.html">Corpus</a> → arXiv. Claim-type tags show how strong a claim is in its source: <span class="tag emp">Empirical</span> measured, <span class="tag thy">Theory</span> analytical, <span class="tag prop">Proposal</span> proposed-but-unvalidated, <span class="tag def">Definition</span> a term/taxonomy. <strong>Amber blocks are my inference</strong>; blue blocks are paper findings; teal blockquotes are verbatim. This matters here because the corpus mixes measured systems with position papers and single-run reports — the tags keep proposal separate from evidence.</p></div>
+
+  <h2>What recurs across these 20 papers</h2>
+  <p class="note">Claims with enough independent support <em>within this corpus</em> to count as a shared view <em>here</em> — not field-level verdicts.</p>
+
+  <div class="box finding"><p class="box-h">1 · Orchestration is being recast from fixed wiring into a learned, adaptive policy <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span></p>
+  <p>The strongest throughline: stop hand-designing pipelines and <em>learn</em> the coordination decisions. AgensFlow treats coordination as "an online policy-learning problem under partial observability" <a class="cite" href="corpus.html#p-2605-27466">Koenigstein&nbsp;'26</a>; Maestro trains a 4B policy to route over model-skill ensembles <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a>; InfraMind learns planner/executor/scheduler jointly as one MDP <a class="cite" href="corpus.html#p-2606-11440">Kabir+&nbsp;'26</a>; Orchestra-o1 trains the main agent's decisions with DA-GRPO <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a>; and the RL survey reframes the whole problem around the learnable orchestration trace <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>. <a class="cardlink" href="learning.html">→ Learning to orchestrate</a></p></div>
+
+  <div class="box finding"><p class="box-h">2 · More agents and more talk is not more intelligence <span class="tag emp">Empirical</span></p>
+  <p>Several papers independently find diminishing — sometimes negative — returns to scale and chatter. Effective team size hits a hard ceiling (thirty debaters ≈ one) <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>; exposing more raw inter-agent text can <em>hurt</em> accuracy, so disclosing only a compact belief beats sharing transcripts <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a>; fixed-round debate wastes calls a sequential test can reclaim 3.7× <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a>; and <em>when</em> a reasoning step arrives matters more than how much context does <a class="cite" href="corpus.html#p-2606-05158">Z. Yang+&nbsp;'26</a>. <a class="cardlink" href="debate.html">→ Debate &amp; scale</a></p></div>
+
+  <div class="box finding"><p class="box-h">3 · The base model sets a ceiling; orchestration amplifies, it does not rescue <span class="tag thy">Theory</span> <span class="tag emp">Empirical</span></p>
+  <p>Coordination magnifies a capable model and exposes a weak one. MAAD names orchestration a "capability amplifier" bounded by the base model's competence, "a performance ceiling… not a bottleneck coordination can bypass" <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a>; the scaling law shows stronger/thinking models reach the ceiling with <em>fewer</em> agents <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>; and coding-strong models are not orchestration-strong <a class="cite" href="corpus.html#p-2606-08878">Sun+&nbsp;'26</a>. <a class="cardlink" href="frameworks.html">→ Frameworks</a></p></div>
+
+  <div class="box finding"><p class="box-h">4 · Reward and credit should attach to the orchestration plan, not just the final answer <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span></p>
+  <p>The RL-for-MAS work converges on supervising coordination directly. The survey organises rewards into eight families with an MAS-specific "orchestration reward" and an eight-level credit hierarchy, noting events — not agents — carry credit <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>; Orch-RM scores the plan <em>before</em> sub-agents run, 10× cheaper <a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a>; DA-GRPO rewards step-level orchestration decisions <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a>; Maestro shows outcome-only RL is the primary driver <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a>. <a class="cardlink" href="learning.html">→ Learning to orchestrate</a></p></div>
+
+  <div class="box finding"><p class="box-h">5 · Communication needs structure and standards, not free-form transcripts <span class="tag def">Definition</span> <span class="tag prop">Proposal</span></p>
+  <p>The communication layer is being formalised. A five-axis taxonomy classifies nine protocols (MCP, A2A, ANP, ACP…) and predicts a federated, layered stack <a class="cite" href="corpus.html#p-2606-19135">Sander+&nbsp;'26</a>; LLM-X builds a typed-envelope negotiation bus <a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a>; DarkForest replaces transcript-passing with controlled disclosure of a calibrated belief <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a>; StreamMA refines the transmission unit to the reasoning step <a class="cite" href="corpus.html#p-2606-05158">Z. Yang+&nbsp;'26</a>. <a class="cardlink" href="communication.html">→ Communication &amp; coordination</a></p></div>
+
+  <div class="box finding"><p class="box-h">6 · Coordination is fragile and adversarially exploitable, and evaluation lags <span class="tag emp">Empirical</span> <span class="tag thy">Theory</span></p>
+  <p>A sober counter-current. A single deceiver collapses group cooperation, and merely disclosing the topology can be an attack surface <a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a>; long-horizon agents fail silently via "plausible unsupported success" <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>; the survey catalogs failure-attribution as an open problem <a class="cite" href="corpus.html#p-2605-14892">Qi+&nbsp;'26</a>; and no pooled benchmark jointly measures task success, parallelism, collaboration, and protocol overhead <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>. <a class="cardlink" href="limitations.html">→ Limitations</a></p></div>
+
+  <h2>Map of the territory</h2>
+  <div class="grid g2">
+    <a class="card cardlink" href="frameworks.html"><h3>Frameworks</h3><p>The systems that coordinate agents — omnimodal, infrastructure-aware, modular, and requirement-driven orchestrators — and the shared shift from fixed pipelines to learned, inspectable coordination policies.</p></a>
+    <a class="card cardlink" href="communication.html"><h3>Communication &amp; Coordination</h3><p>What crosses agent boundaries and how: the protocol taxonomy, negotiation buses, streaming step-level transfer, controlled disclosure, and the orchestration-prompt artifact that allocates each role's context.</p></a>
+    <a class="card cardlink" href="learning.html"><h3>Learning to Orchestrate</h3><p>RL for multi-agent systems: the orchestration trace, reward families and credit assignment, orchestration-level reward models, and decision-aligned training of the coordinator.</p></a>
+    <a class="card cardlink" href="debate.html"><h3>Debate &amp; Scale</h3><p>Does more talk help? The effective-team-size scaling law, when-to-stop sequential consensus, adversarial collaboration and verification, and confidence signals inside debate.</p></a>
+    <a class="card cardlink" href="evidence.html"><h3>Evidence</h3><p>The measured-effect ledger — what was actually quantified across the corpus, with method, scale, and my confidence appraisal. The corpus mixes strong system results with single-run reports.</p></a>
+    <a class="card cardlink" href="limitations.html"><h3>Limitations</h3><p>Failure families the papers themselves name: coordination collapse and adversarial fragility, scaling ceilings, the communication-as-attack-surface, thin evidence, and the missing MAS-native benchmarks.</p></a>
+    <a class="card cardlink" href="synthesis.html"><h3>Synthesis</h3><p>My corpus-scoped reasoning: a reference model that unifies these papers' mechanisms into one orchestration stack, and the bets I would and would not place on the strength of this corpus.</p></a>
+    <a class="card cardlink" href="corpus.html"><h3>Corpus</h3><p>The 20 papers with role, type, and a one-paragraph note each — the bibliography every chip resolves to, linking onward to arXiv.</p></a>
+  </div>
+
+  <h2>The corpus on a timeline</h2>
+  <div class="box inference"><p class="box-h">⟡ The grouping is just chronology</p>
+  <p>All 20 papers were posted across two months; the split below is the arXiv posting month, not "eras." A two-month window is far too short to read a trend into — treat this as a snapshot of what was being written, not a trajectory.</p></div>
+  <div class="timeline">
+    <div class="tl-item"><div class="when">May 2026</div><div class="what">RL through Orchestration Traces <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a> · ARIS <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a> · LLM-X <a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a> · LIFE survey <a class="cite" href="corpus.html#p-2605-14892">Qi+&nbsp;'26</a> · Sequential Consensus <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a> · Maestro <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a> · DarkForest <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a> · AgensFlow <a class="cite" href="corpus.html#p-2605-27466">Koenigstein&nbsp;'26</a></div></div>
+    <div class="tl-item"><div class="when">Jun 2026</div><div class="what">MOSAIC <a class="cite" href="corpus.html#p-2606-00708">Bao+&nbsp;'26</a> · MAAD <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a> · Ringelmann Effect <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a> · StreamMA <a class="cite" href="corpus.html#p-2606-05158">Z. Yang+&nbsp;'26</a> · Byzantine Cheap Talk <a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a> · PerspectiveGap <a class="cite" href="corpus.html#p-2606-08878">Sun+&nbsp;'26</a> · Early-Token Confidence <a class="cite" href="corpus.html#p-2606-10307">Keramati+&nbsp;'26</a> · Role-Agent <a class="cite" href="corpus.html#p-2606-10917">Wang+&nbsp;'26</a> · InfraMind <a class="cite" href="corpus.html#p-2606-11440">Kabir+&nbsp;'26</a> · Orch-RM <a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a> · Orchestra-o1 <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a> · Protocol Taxonomy <a class="cite" href="corpus.html#p-2606-19135">Sander+&nbsp;'26</a></div></div>
+  </div>
+
+  <div class="pager">
+    <a href="corpus.html">← Corpus</a>
+    <a href="frameworks.html">Frameworks →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

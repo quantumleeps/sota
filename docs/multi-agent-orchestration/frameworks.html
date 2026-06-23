@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orchestration Frameworks — Multi-Agent Systems & Orchestration · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav active" href="frameworks.html">Frameworks</a>
+  <a class="nav" href="communication.html">Communication</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">01 · Orchestration Frameworks</p>
+  <h1>From fixed pipelines to learned coordination</h1>
+  <p class="lede">Six papers in this corpus ship an orchestration <em>system</em>: a main agent or controller that decomposes a task and coordinates specialized workers, tools, or models. Read together, they share one direction of travel — the coordination logic that used to be hand-wired (a chosen topology, a fixed routing rule, a static pipeline) is becoming a <strong>learned, inspectable policy</strong> conditioned on the task and, in one case, on the live serving infrastructure.</p>
+
+  <h2>What an "orchestrator" coordinates</h2>
+  <p>The frameworks differ in <em>what</em> they coordinate, which is worth separating before comparing them.</p>
+  <ul class="clean">
+    <li><strong>Modality-specialized sub-agents.</strong> Orchestra-o1's main agent delegates perception/action to text/image/audio/video sub-agents over a dependency graph with parallel execution <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a>.</li>
+    <li><strong>Frozen expert models + skills.</strong> Maestro routes over a pool of frozen experts and a two-tier skill library, picking a <span class="mono">Model@@Skill</span> pair per step <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a>.</li>
+    <li><strong>Roles mapped to a human workflow.</strong> MAAD chains Analyst → Modeler → Designer → Evaluator to turn a requirements spec into architecture <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a>.</li>
+    <li><strong>Reasoning modules behind a blueprint.</strong> MOSAIC composes retrieved code modules under an explicit blueprint, using the LLM "as an executor of this structured context rather than as an unconstrained code generator" <a class="cite" href="corpus.html#p-2606-00708">Bao+&nbsp;'26</a>.</li>
+    <li><strong>A whole serving stack.</strong> InfraMind coordinates planner, executor, and a deadline-first scheduler against live GPU-cluster state <a class="cite" href="corpus.html#p-2606-11440">Kabir+&nbsp;'26</a>.</li>
+    <li><strong>The coordination policy itself.</strong> AgensFlow exposes skill, role/model, and topology choices as a learnable action space over repeated runs <a class="cite" href="corpus.html#p-2605-27466">Koenigstein&nbsp;'26</a>.</li>
+  </ul>
+
+  <h2>The shared move: learn the policy, and make it inspectable</h2>
+
+  <div class="box finding"><p class="box-h">▦ Coordination as an online policy-learning problem <span class="tag prop">Proposal</span></p>
+  <p>AgensFlow reframes the design question away from model choice: not "which model is best?" but "which coordination policy works under this observable task regime and operating constraint?" — and makes <em>omission</em> a first-class topology decision via a <span class="mono">skip:X</span> action, with the reward signal itself "exposed to cross-judge audit rather than treated as a fixed evaluator" <a class="cite" href="corpus.html#p-2605-27466">Koenigstein&nbsp;'26</a>. The learned routing moved off the default solver on 7 of 8 task classes, keeping the default only on the highest-cost-of-error class — risk-adaptive, not uniform cheapening.</p></div>
+
+  <blockquote class="q">the relevant question is therefore not "which model is best?" but "which coordination policy works under this observable task regime and operating constraint?"
+    <span class="src">— AgensFlow <a class="cite" href="corpus.html#p-2605-27466">Koenigstein&nbsp;'26</a>, §Discussion</span>
+  </blockquote>
+
+  <div class="box finding"><p class="box-h">▦ Orchestration can substitute for model scale <span class="tag emp">Empirical</span></p>
+  <p>Maestro's 4B learned orchestrator, composing frozen experts, reaches 70.1% average across ten multimodal benchmarks — above GPT-5 (69.3%) and Gemini-2.5-Pro (68.7%) — and removing the model pool costs −12.1% while removing skills costs only −2.7%: "specialized models supply the domain-specific 'brain'… skills serve as the 'eyes' and 'hands'." RL is the driver: the same workflow without it scores 52.7% <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a>. Orchestra-o1 echoes this with a harness ablation — under identical tools, its orchestration lifts a GPT-5 ReAct agent from 53.9% to 72.8% on OmniGAIA, so the gain "comes from orchestration design, not just the backend" <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a>.</p></div>
+
+  <div class="box finding"><p class="box-h">▦ Structured intermediate artifacts beat free-form generation <span class="tag emp">Empirical</span> <span class="tag prop">Proposal</span></p>
+  <p>Two systems insert an explicit artifact between intent and execution. MOSAIC's blueprint grounds generation in retrieved modules; removing the blueprint drops its win rate to 0% on two datasets, and it holds a 100% run-success rate where baselines range 20–100% <a class="cite" href="corpus.html#p-2606-00708">Bao+&nbsp;'26</a>. MAAD makes per-stage evaluation "an integral part of architecture generation… rather than a one-shot generation task," and its Evaluator-driven loop beats MetaGPT on architecture-quality metrics <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a>.</p></div>
+
+  <h2>Infrastructure-awareness: the newest axis</h2>
+  <p>InfraMind is the corpus's clearest argument that orchestration research has been ignoring the machine the agents run on.</p>
+
+  <div class="box finding"><p class="box-h">▦ "Infrastructure blindness" <span class="tag def">Definition</span> <span class="tag emp">Empirical</span></p>
+  <p>Routing on static task/model features alone ignores runtime serving state. Profiling a prior router under load, preferred small models "accumulate queues exceeding 130 requests while equally capable large models sit nearly idle," producing &gt;30 s delays on queries an idle alternative would answer in under 10 s — yet at low load 67% of large-model GPU capacity goes unused <a class="cite" href="corpus.html#p-2606-11440">Kabir+&nbsp;'26</a>. InfraMind conditions topology, model, and reasoning depth on live queue/KV/latency telemetry, reaching up to 99.9% SLO compliance under high load where every baseline falls below 50%.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — two different things are both called "orchestration" here</p>
+  <p>It is worth not over-reading the convergence. Three of these systems (Orchestra-o1, Maestro, InfraMind) orchestrate a <em>population</em> of distinct agents/models; two (MOSAIC, and arguably MAAD's tightly-scripted chain) are closer to a single staged pipeline with role-labelled stages and a planner/executor split. They share vocabulary — "blueprint," "main agent," "delegation" — but the coordination problem differs: routing among autonomous peers versus sequencing one workflow. I read the corpus's "learn the policy" throughline as genuinely shared, but the <em>hardness</em> of what is being learned is not comparable across these two groups. Chips here mark the systems I reason from, not papers that draw this distinction themselves.</p></div>
+
+  <h2>How they coordinate, at a glance</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>System</th><th>Coordinates</th><th>Coordination learned?</th><th>Distinctive lever</th></tr></thead>
+    <tbody>
+      <tr><td>Orchestra-o1 <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a></td><td>Modality sub-agents</td><td class="pos">Yes — DA-GRPO</td><td>Dependency-graph parallelism; omnimodal</td></tr>
+      <tr><td>Maestro <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a></td><td>Frozen experts + skills</td><td class="pos">Yes — GRPO</td><td>Compositional <span class="mono">Model@@Skill</span> action; 4B controller</td></tr>
+      <tr><td>InfraMind <a class="cite" href="corpus.html#p-2606-11440">Kabir+&nbsp;'26</a></td><td>Planner/executor/scheduler</td><td class="pos">Yes — hierarchical MDP</td><td>Live infrastructure telemetry</td></tr>
+      <tr><td>AgensFlow <a class="cite" href="corpus.html#p-2605-27466">Koenigstein&nbsp;'26</a></td><td>Skill/role/topology policy</td><td class="pos">Yes — UCB1 online</td><td><span class="mono">skip:X</span> omission; audited reward</td></tr>
+      <tr><td>MOSAIC <a class="cite" href="corpus.html#p-2606-00708">Bao+&nbsp;'26</a></td><td>Code modules via blueprint</td><td class="pos">Refinement only — offline RL</td><td>Blueprint intermediate representation</td></tr>
+      <tr><td>MAAD <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a></td><td>Role-specialized stages</td><td class="neg">No — prompt-engineered</td><td>Per-stage evaluation loop; hierarchical memory</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">"Learned?" reflects whether the <em>coordination</em> decisions are trained, not whether the underlying models are. See <a href="learning.html">Learning to orchestrate</a> for the training methods and <a href="evidence.html">Evidence</a> for the measured effects.</p>
+
+  <div class="box gap"><p class="box-h">◇ The shared caveat: the base model is the ceiling</p>
+  <p>MAAD states the bound directly — orchestration is a "capability amplifier" that "elevates the generation precision… of stronger LLMs, while exposing the deficiencies of weaker LLMs," and the base model's competence "establish[es] a performance ceiling for the entire pipeline, rather than a mere bottleneck that coordination strategies can easily bypass" <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a>. Every framework here is reported against strong backbones; none demonstrates that orchestration rescues a weak one.</p></div>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="communication.html">Communication →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

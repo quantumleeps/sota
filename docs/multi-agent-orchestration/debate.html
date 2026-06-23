@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debate & Scale — Multi-Agent Systems & Orchestration · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="frameworks.html">Frameworks</a>
+  <a class="nav" href="communication.html">Communication</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav active" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">04 · Debate &amp; Scale</p>
+  <h1>Does more talk — and more agents — actually help?</h1>
+  <p class="lede">Multi-agent debate is the oldest "more agents = more intelligence" bet, and this corpus interrogates it hard. The papers here ask three pointed questions: how much independent reasoning do you really gain by adding agents, when should a debate stop, and how do you verify what a team produced? The answers lean sceptical — but they also supply concrete tools for spending the coordination budget well.</p>
+
+  <h2>The ceiling: counting agents overcounts evidence</h2>
+
+  <div class="box finding"><p class="box-h">▦ A scaling law for effective team size <span class="tag emp">Empirical</span> <span class="tag thy">Theory</span></p>
+  <p>The Ringelmann paper derives R(N)=1/(1+c(N−1)N<sup>−β</sup>), where the exponent β sorts any configuration into hard-ceiling (β=0), sublinear, or linear regimes; the form fits all 44 (model×task×condition) cells at R²&gt;0.99. For homogeneous instruct-class teams on bounded tasks the regime is a hard ceiling: thirty dense debating agents yield an effective (independent) team size of 1.12 on MMLU-Hard — "no more answer diversity than one." Crucially, a small N≤5 pilot extrapolates the N=30 ceiling at 5.5% mean error <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>.</p></div>
+
+  <blockquote class="q">counting nominal agents conflates cost with independent evidence.
+    <span class="src">— The Ringelmann Effect <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>, Abstract</span>
+  </blockquote>
+
+  <div class="box finding"><p class="box-h">▦ Much of "debate's" gain is re-evaluation, not peer content <span class="tag emp">Empirical</span></p>
+  <p>A noise placebo — feeding agents length-matched answers from <em>other</em> problems — tracks genuine self-correction almost exactly on GSM-Hard (c = 0.33 vs 0.34; β = 0.27 vs 0.25). Team accuracy is statistically equivalent across communication modes (debate ≈ self-correction, TOST p &lt; 0.02) while debate costs 10–45× more prompt tokens per effective agent, and peer count k and rounds τ collapse to their product kτ <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>. The one validated escape from the ceiling is architectural diversity — heterogeneous model families lower the initial correlation c.</p></div>
+
+  <blockquote class="q">the only validated lever that escapes the ceiling is reducing initial inter-agent correlation via architectural diversity (heterogeneous ensembles).
+    <span class="src">— The Ringelmann Effect <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>, Conclusion</span>
+  </blockquote>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — two corpus papers point to the same lever from opposite ends</p>
+  <p>The scaling law says diversity is the lever that lowers correlation; ARIS (below) bets its whole design on <em>cross-model-family</em> executor/reviewer pairs for the same reason — less-correlated critiques. They are the theory and the system instance of one idea: heterogeneity, not headcount, is what buys independent evidence. Neither paper cites the other (ARIS frames it as a design analogy, not a proven result), so I mark this convergence as my reading. Chips show what I reason from.</p></div>
+
+  <h2>When to stop: spending the debate budget</h2>
+
+  <div class="box finding"><p class="box-h">▦ A sequential test as a plug-in compute governor <span class="tag emp">Empirical</span></p>
+  <p>Sequential Consensus wraps any debate in Wald's SPRT: after each round an LLM judge scores consensus and a Wald monitor decides stop-or-continue. On GSM8K it cuts calls 3.7× (4.06 vs 15) at −2 pp accuracy, with 98% of items resolved in a single round. On MMLU the calibrated likelihoods collapse (KL ≈ 0) and the rule correctly refuses to draw signal — "not a violation… the rule correctly reporting that the consensus signal carries no information," making the calibration step itself a cheap failure detector <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a>.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ An honest power caveat from inside the paper</p>
+  <p>At frontier strength the benchmarks are near-saturated: a fixed-5 debate buys no measurable accuracy over a 3-sample vote, and with n ≈ 191–200 the 95% CI is ±4.4 pp, so the GSM8K 99→97% drop is only ~1.4σ and "no pairwise difference is statistically significant" <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a>. The contribution is the compute-and-failure-detection mechanism, not an accuracy win — a refreshing piece of self-scepticism this corpus could use more of.</p></div>
+
+  <div class="box finding"><p class="box-h">▦ A cheap intrinsic signal for per-role quality <span class="tag emp">Empirical</span></p>
+  <p>In a three-role debate (Advocate / Skeptic / Synthesizer-Judge) for essay scoring, token-level log-probability — especially the first few generated tokens — predicts externally judged reasoning quality better than full-sequence statistics, with critical-failure detection up to AUROC 0.849 for the Advocate. The signal aligns more strongly with supportive than adversarial reasoning ("the opening phase of generation is the most heterogeneous and therefore most informative"), and needs no extra inference pass <a class="cite" href="corpus.html#p-2606-10307">Keramati+&nbsp;'26</a>.</p></div>
+
+  <h2>Verification: who checks the team's work?</h2>
+
+  <div class="box finding"><p class="box-h">▦ Adversarial collaboration against silent failure <span class="tag prop">Proposal</span></p>
+  <p>ARIS builds a long-horizon research harness on the premise that "any long-term task performed by a single agent is unreliable," whose failure mode is "plausible unsupported success" — claims outrunning their evidence. It pairs a cross-model-family executor/reviewer loop (reviewers read raw artifacts, not the executor's summary, to avoid shared-error contamination) with a multi-stage evidence-to-claim audit cascade. Evidence is a single observational overnight run (review score 5.0→7.5/10), and cross-family separation is the recommended default, "not enforced in code" <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>.</p></div>
+
+  <blockquote class="q">the central failure mode is not visible breakdown but plausible unsupported success.
+    <span class="src">— ARIS <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>, Abstract</span>
+  </blockquote>
+
+  <p>DarkForest belongs here too as the consensus-aggregation counterpoint: rather than debate to agreement, it keeps agents independent and aggregates a calibrated belief, beating debate baselines while cutting tokens — see <a href="communication.html">Communication &amp; Coordination</a> <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a>.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — the corpus quietly demotes debate-to-consensus</p>
+  <p>Put the four findings together: dense debate adds little independent evidence <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>, fixed-round debate wastes calls <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a>, sharing transcripts can hurt <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a>, and where verification matters the winning pattern is cross-family adversarial review plus an audit cascade <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>. My reading: within this corpus, "let N agents debate to consensus" is treated less as a capability multiplier and more as a budget to be governed, diversified, or replaced by structured aggregation. This is a corpus-scoped impression, not a field verdict — and it rests partly on small-N and single-run evidence (see <a href="limitations.html">Limitations</a>).</p></div>
+
+  <div class="pager">
+    <a href="learning.html">← Learning</a>
+    <a href="evidence.html">Evidence →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

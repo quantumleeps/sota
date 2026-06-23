@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>State of the Art — Reviews of AI Coding Agents: Context, Memory &amp; Spec-Driven Development</title>
+<title>State of the Art — Reviews of AI Agents: Context, Memory, Spec-Driven Development &amp; Multi-Agent Orchestration</title>
 <!-- hub landing: one card per topic under docs/<slug>/ -->
 
 <link rel="stylesheet" href="styles.css">
@@ -17,12 +17,13 @@
   <a class="nav" href="agent-memory/index.html">Context&nbsp;×&nbsp;Memory</a>
   <a class="nav" href="agent-memory-v2/index.html">LLM&nbsp;Agent&nbsp;Memory</a>
   <a class="nav" href="spec-driven-development/index.html">Spec-Driven&nbsp;Dev</a>
+  <a class="nav" href="multi-agent-orchestration/index.html">Multi-Agent&nbsp;Orchestration</a>
 </div></nav>
 
 <div class="wrap">
   <p class="kicker">State of the Art · provenance-cited reviews</p>
   <h1>State-of-the-art reviews</h1>
-  <p class="lede">A small set of hyperlinked, provenance-cited reviews of the literature on how AI coding agents are steered by what they're given — their <strong>context</strong>, their <strong>memory</strong>, and the <strong>specifications</strong> that drive them across the development lifecycle. Each review absorbs one sealed corpus of papers and writes its own self-contained site; every sourced claim links back through a bibliography to the original on arXiv or the publishing lab.</p>
+  <p class="lede">A small set of hyperlinked, provenance-cited reviews of the literature on how AI agents are steered by what they're given — their <strong>context</strong>, their <strong>memory</strong>, the <strong>specifications</strong> that drive them across the development lifecycle, and how they are <strong>orchestrated</strong> as multi-agent systems. Each review absorbs one sealed corpus of papers and writes its own self-contained site; every sourced claim links back through a bibliography to the original on arXiv or the publishing lab.</p>
 
   <h2>The reviews</h2>
   <div class="grid g2">
@@ -55,6 +56,12 @@
       <h3 style="margin-top:.1em">Context Engineering for Coding Agents</h3>
       <p>A 2026 snapshot (Jan–Jun) of how context is engineered <em>around</em> LLM coding agents: repository instruction files (<span class="mono">AGENTS.md</span>/<span class="mono">CLAUDE.md</span>) and what scales past them, repository exploration as the dominant token cost, fidelity-first context compression, the <strong>harness</strong> as the real substrate, persistent project memory, and governance at the execution boundary. A focused <strong>review</strong> of 17 papers — read as its own sealed corpus, a <em>v2</em> companion to <em>Context Engineering</em> above, not a merge of it.</p>
       <p class="note">Instruction Files · Provisioning · Context Limits · The Harness · Memory · Governance · Evidence · Synthesis →</p>
+    </a>
+    <a class="card cardlink" href="multi-agent-orchestration/index.html">
+      <p class="ct">Topic 06 · <span class="tag emp">Review</span> · <span class="tag def">🎧 Listen</span></p>
+      <h3 style="margin-top:.1em">Multi-Agent Systems &amp; Orchestration</h3>
+      <p>A frontier snapshot (<strong>May–Jun 2026</strong>) of how LLM agents are coordinated as teams: orchestration recast from fixed pipelines into a <em>learned policy</em> (over models, skills, topology, and even live serving infrastructure), what should cross the boundary between agents (typed protocols, controlled disclosure, step-level streaming), RL for the coordinator (reward &amp; credit on the orchestration plan), and a sceptical counter-current — a scaling law showing thirty debating agents add no more evidence than one, plus adversarial fragility. A focused <strong>review</strong> of 20 papers, read as its own sealed corpus.</p>
+      <p class="note">Frameworks · Communication · Learning · Debate &amp; Scale · Evidence · Limitations · Synthesis →</p>
     </a>
   </div>
   <p class="note"><strong>Review</strong> = the given paper set read in full. <strong>Deep dive</strong> = also ingests the next level of cited references from an anchor paper (clearly marked, with a reference count).</p>

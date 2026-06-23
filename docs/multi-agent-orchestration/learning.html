@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning to Orchestrate — Multi-Agent Systems & Orchestration · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="frameworks.html">Frameworks</a>
+  <a class="nav" href="communication.html">Communication</a>
+  <a class="nav active" href="learning.html">Learning</a>
+  <a class="nav" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">03 · Learning to Orchestrate</p>
+  <h1>Training the coordinator with reinforcement learning</h1>
+  <p class="lede">If coordination is a policy, it can be learned. Seven papers in this corpus apply reinforcement learning to multi-agent orchestration, and they pull toward one organising idea: supervise the <strong>orchestration decisions</strong> — when to spawn, whom to delegate to, how to aggregate, when to stop — rather than only the final answer. The recurring obstacle is the same one classical multi-agent RL has always faced: <strong>credit assignment</strong>, now over a tree of LLM calls that is expensive to roll out.</p>
+
+  <h2>The organising abstraction: the orchestration trace</h2>
+
+  <div class="box finding"><p class="box-h">▦ Reframe RL-for-MAS around a temporal event graph <span class="tag def">Definition</span></p>
+  <p>The corpus's spine survey replaces the per-agent trajectory with the <em>orchestration trace</em> — a temporal graph of spawn / delegate / message / tool / return / aggregate / stop events drawn from a "dynamic Dec-POMDP" that adds spawn/despawn dynamics. It organises the design space into eight reward families (R1–R8, with R7 "orchestration reward" — parallelism, finish-rate, split correctness — the one with no single-agent analogue), an eight-level credit-bearing-unit hierarchy (team → orchestrator → role → agent → turn → message → tool → token), and five orchestration sub-decisions O1–O5 <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>.</p></div>
+
+  <blockquote class="q">RL must optimize not only individual actions, but also how work is spawned, delegated, communicated, aggregated, and stopped.
+    <span class="src">— RL through Orchestration Traces <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>, Abstract</span>
+  </blockquote>
+
+  <div class="box finding"><p class="box-h">▦ Two gaps in the pooled literature, as of May 2026 <span class="tag emp">Empirical</span></p>
+  <p>From 84 retained entries the survey reports that <strong>no method explicitly trains the stopping decision (O5) as an RL target</strong>, and that explicit counterfactual message-level credit is near-absent (one entry). It also argues "the gap is not primarily algorithmic — it is in what shape of rollout and harness academic methods train against," noting multi-agent rollouts are "10–100× more expensive than single-agent" <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>. These are survey-scoped counts over a curated pool, not field-wide prevalence.</p></div>
+
+  <h2>Where the reward signal attaches</h2>
+  <p>The empirical RL papers can be read as different answers to "what do we reward, and at what granularity?"</p>
+
+  <div class="box finding"><p class="box-h">▦ Reward the plan before sub-agents run <span class="tag emp">Empirical</span></p>
+  <p>Orch-RM trains a self-supervised, orchestration-level Bradley-Terry reward model that scores an orchestration plan — roles, role descriptions, collaboration structure, interaction graph — <em>before</em> any sub-agent executes, using preference pairs mined from intermediate training checkpoints. It improves training-token efficiency up to 10× while raising multi-agent test-time-scaling accuracy up to 8%, and beats the strongest trajectory-level LLM judge on BrowseComp+ at roughly 17× lower verification cost <a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a>. It motivates this by noting MAS-Orchestra's GRPO "consum[es] over 1B tokens for only 100 update steps."</p></div>
+
+  <div class="box finding"><p class="box-h">▦ Reward the step-level orchestration decisions <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span></p>
+  <p>Orchestra-o1's DA-GRPO scores each main-agent decision (delegation, sub-agent/backend selection, tool use, answer) against expert trajectories with a four-dimension rubric reward, "instead of GRPO's final-answer-only reward" — using the expert decision "as a reference rather than the only correct answer." On Qwen3-8B it beats SFT and vanilla GRPO (30.0% vs 28.6% / 27.7% on OmniGAIA) <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a>.</p></div>
+
+  <div class="box finding"><p class="box-h">▦ Reward only the outcome — and let routing emerge <span class="tag emp">Empirical</span></p>
+  <p>Maestro takes the opposite tack: a GRPO policy trained with an outcome reward plus a format reward, "no step-level routing supervision," learns the compositional <span class="mono">Model@@Skill</span> routing on its own. RL contributes the bulk of the result (+17.4% over the untrained workflow), and removing the format reward costs −13.1% because malformed actions break the multi-turn protocol <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a>. AgensFlow's online UCB1 is a non-RL point on the same spectrum — bandit acquisition over a folded task signature, with reward-signal auditability treated as part of the design <a class="cite" href="corpus.html#p-2605-27466">Koenigstein&nbsp;'26</a>.</p></div>
+
+  <div class="box finding"><p class="box-h">▦ Collapse the roles into one model <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span></p>
+  <p>Role-Agent uses a single LLM as both agent and environment: a World-In-Agent module predicts future states to form a multiplicative <em>predictive reward</em> (so it "cannot independently introduce extra credit" for failed trajectories), and an Agent-In-World module mines structured failure modes to reshape the task distribution — averaging over 4% gain with ~5.2% extra compute and no separate environment model <a class="cite" href="corpus.html#p-2606-10917">Wang+&nbsp;'26</a>. It is dual-role, not multi-agent, but its credit-assignment and curriculum mechanics are squarely orchestration-relevant.</p></div>
+
+  <h2>Where the reward attaches, summarised</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Method</th><th>Reward granularity</th><th>Algorithm</th><th>Headline efficiency / effect</th></tr></thead>
+    <tbody>
+      <tr><td>Orch-RM <a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a></td><td>Whole plan, pre-execution</td><td>BT reward model + GRPO</td><td class="pos">up to 10× fewer training tokens, +8% TTS</td></tr>
+      <tr><td>Orchestra-o1 <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a></td><td>Per orchestration decision</td><td>DA-GRPO (rubric)</td><td class="pos">30.0% vs 27.7% vanilla GRPO (8B)</td></tr>
+      <tr><td>Maestro <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a></td><td>Outcome + format</td><td>GRPO</td><td class="pos">+17.4% over untrained workflow</td></tr>
+      <tr><td>InfraMind <a class="cite" href="corpus.html#p-2606-11440">Kabir+&nbsp;'26</a></td><td>Outcome under budget constraint</td><td>Hierarchical constrained MDP (PPO + REINFORCE)</td><td class="pos">budget-awareness emerges, +19.4 pp as budget grows</td></tr>
+      <tr><td>Role-Agent <a class="cite" href="corpus.html#p-2606-10917">Wang+&nbsp;'26</a></td><td>Predictive (process) reward</td><td>GiGPO-style, dual-role</td><td class="pos">+4% avg; failure-mode curriculum</td></tr>
+      <tr><td>AgensFlow <a class="cite" href="corpus.html#p-2605-27466">Koenigstein&nbsp;'26</a></td><td>Trajectory, audited</td><td>UCB1 bandit (online)</td><td class="pos">+0.068 over fixed pipeline (3-judge)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">"TTS" = test-time scaling. These are each paper's own primary numbers; see <a href="evidence.html">Evidence</a> for method, scale, and my confidence appraisal.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — the field is reinventing credit assignment for LLM teams</p>
+  <p>Reading these together, the open problem the survey names theoretically — credit diffuses to noise under a shared terminal reward as the trace grows <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a> — is exactly what the empirical papers route around in practice: Orch-RM moves the signal up to the plan, DA-GRPO and Role-Agent move it down to per-decision/per-step, Maestro keeps it terminal but adds a structural format reward. None of them, in this corpus, learns <em>when to stop</em> as an RL target, matching the survey's stated gap. I read "where does the reward attach" as the live design axis of LLM-MAS RL; chips mark the methods I reason from, not a consensus they declare.</p></div>
+
+  <div class="pager">
+    <a href="communication.html">← Communication</a>
+    <a href="debate.html">Debate &amp; Scale →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

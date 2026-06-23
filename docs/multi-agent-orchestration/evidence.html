@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence — Multi-Agent Systems & Orchestration · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="frameworks.html">Frameworks</a>
+  <a class="nav" href="communication.html">Communication</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav active" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">05 · Evidence</p>
+  <h1>The measured-effect ledger</h1>
+  <p class="lede">What was actually quantified across these 20 papers, with method, scale, and a confidence appraisal. The corpus mixes strongly-powered studies (a scaling law fit to 44 conditions, a 27-model benchmark) with single-run system reports and synthetic-agent simulations — so the final column, my confidence, is where the reading earns its keep.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My confidence scale — not from the papers</p>
+  <p>The right-hand column is <strong>my</strong> appraisal of how much weight each result bears, not a label the authors assigned. <strong>Strong</strong> = well-powered, replicated across conditions, or significance-tested with clear margins. <strong>Moderate</strong> = a real, sizable effect on genuine benchmarks but from a single system/setup, no significance test, or with a known confound. <strong>Indicative</strong> = small-N, single-run, synthetic, exploratory, or flagged underpowered by the authors themselves. Numbers are the papers' own primary results unless noted as cited.</p></div>
+
+  <div class="grid g3">
+    <div class="card stat">
+      <div class="big green">R²&gt;0.99</div>
+      <div class="lbl">Fit of the effective-team-size scaling law across all 44 (model×task×condition) cells; held-out extrapolation from N≤5 to N=30 at 5.5% error. The corpus's best-powered result. <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big">70.1% &gt; 69.3%</div>
+      <div class="lbl">A 4B learned orchestrator over frozen experts edges out GPT-5 across ten multimodal benchmarks (Wilcoxon p=9.7×10⁻⁴ vs the strongest baseline). <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big green">10×</div>
+      <div class="lbl">Training-token efficiency gain from scoring the orchestration plan before sub-agents run, while improving test-time-scaling accuracy up to 8%. <a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a></div>
+    </div>
+  </div>
+
+  <h2>The ledger</h2>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>What was measured</th><th>Result</th><th>Method &amp; scale</th><th>Source</th><th>My confidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Effective team size under dense debate</td>
+        <td class="num">N_eff = <strong>1.12</strong> at N=30 (MMLU-Hard); law fits 44 cells</td>
+        <td>5 model families, 3 tasks, N up to 30, ~2,000 GPU-hrs; held-out audit + TOST</td>
+        <td><a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a></td>
+        <td><strong>Strong</strong> (scoped to homogeneous role-symmetric teams)</td>
+      </tr>
+      <tr>
+        <td>Learned orchestration vs frontier model</td>
+        <td class="num"><strong>70.1%</strong> avg vs GPT-5 69.3% / Gemini-2.5-Pro 68.7%</td>
+        <td>4B orchestrator, 10 multimodal benchmarks; Wilcoxon p=9.7×10⁻⁴</td>
+        <td><a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a></td>
+        <td><strong>Moderate–Strong</strong></td>
+      </tr>
+      <tr>
+        <td>RL as the orchestration driver (ablation)</td>
+        <td class="num pos">+17.4%</td>
+        <td>Same workflow with vs without RL: 52.7%→70.1% pass@1</td>
+        <td><a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a></td>
+        <td><strong>Strong</strong> (clean ablation)</td>
+      </tr>
+      <tr>
+        <td>Infrastructure-aware routing under load</td>
+        <td class="num pos">+7.6 pp acc; up to 99.9% SLO (baselines &lt;50%)</td>
+        <td>5 benchmarks, Poisson arrivals 10–100 req/min, 5-model pool, 2×B200</td>
+        <td><a class="cite" href="corpus.html#p-2606-11440">Kabir+&nbsp;'26</a></td>
+        <td><strong>Moderate</strong> (no significance; single cluster)</td>
+      </tr>
+      <tr>
+        <td>Step-streaming vs generate-then-transfer</td>
+        <td class="num pos">+7.3 pp avg (Claude); up to 26.9× speedup</td>
+        <td>8 benchmarks, 2 frontier LLMs, 3 DAG topologies, 3 runs</td>
+        <td><a class="cite" href="corpus.html#p-2606-05158">Z. Yang+&nbsp;'26</a></td>
+        <td><strong>Moderate</strong></td>
+      </tr>
+      <tr>
+        <td>Orchestration-level reward model (test-time)</td>
+        <td class="num">AIME BoN 63.33%→<strong>68.33%</strong>; ~17× cheaper than LLM-judge</td>
+        <td>4 benchmarks, BoN to N=64, MAS-Orchestra backbone</td>
+        <td><a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a></td>
+        <td><strong>Moderate</strong></td>
+      </tr>
+      <tr>
+        <td>Controlled disclosure vs sharing transcripts</td>
+        <td class="num pos">+2.52–5.00 pts; up to 6.5× fewer tokens</td>
+        <td>6 benchmarks, 3 independent agents (7–8B), 6 baselines; no sig. test</td>
+        <td><a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a></td>
+        <td><strong>Moderate</strong></td>
+      </tr>
+      <tr>
+        <td>Omnimodal orchestration vs native model</td>
+        <td class="num"><strong>72.8%</strong> vs Gemini-3-Pro 62.5% (+10.3 abs)</td>
+        <td>OmniGAIA; GPT-5 main agent; harness ablation isolates orchestration (53.9→72.8)</td>
+        <td><a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a></td>
+        <td><strong>Moderate</strong> (baseline 62.5% is cited, not re-measured)</td>
+      </tr>
+      <tr>
+        <td>Orchestration-prompting capability (panel)</td>
+        <td class="num">avg <strong>14.9%</strong> pass; GPT-5.5 62.0%; Opus 4.7 19.1%</td>
+        <td>27 models, 110 scenarios, 2 formats, 2 seeds; rule scorer 99.44% human-agreement</td>
+        <td><a class="cite" href="corpus.html#p-2606-08878">Sun+&nbsp;'26</a></td>
+        <td><strong>Moderate–Strong</strong> (broad panel, validated scorer)</td>
+      </tr>
+      <tr>
+        <td>Single deceiver in a coordination game</td>
+        <td class="num neg">group cooperation 77%→0%</td>
+        <td>4-player Stag Hunt, 6 models, 20 trials/condition; mean ±95% CI; no seeds</td>
+        <td><a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a></td>
+        <td><strong>Moderate</strong> (large effect; small game)</td>
+      </tr>
+      <tr>
+        <td>Topology disclosure effect (explicit vs silent)</td>
+        <td class="num">star: <strong>0%</strong> explicit vs 80% silent cooperation</td>
+        <td>Same setup; identical message filtering, with/without disclosure</td>
+        <td><a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a></td>
+        <td><strong>Moderate</strong></td>
+      </tr>
+      <tr>
+        <td>Sequential stopping for debate</td>
+        <td class="num">3.7× fewer calls at −2 pp (GSM8K); MMLU signal collapses</td>
+        <td>200+200 real-LLM items, 3 heterogeneous agents + judge; +50k-trajectory sim</td>
+        <td><a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a></td>
+        <td><strong>Indicative</strong> (authors: no pairwise sig.; near-saturated)</td>
+      </tr>
+      <tr>
+        <td>Dual-role co-evolution vs GiGPO</td>
+        <td class="num pos">+4% avg (ALFWorld/WebShop)</td>
+        <td>Qwen2.5-1.5/3/7B; point-biserial 0.41 (p&lt;0.01); ±std over 3 runs</td>
+        <td><a class="cite" href="corpus.html#p-2606-10917">Wang+&nbsp;'26</a></td>
+        <td><strong>Moderate</strong></td>
+      </tr>
+      <tr>
+        <td>Blueprint-grounded data-science pipeline</td>
+        <td class="num pos">RMSE −8% (LOB) vs TS-Agent; 100% run success</td>
+        <td>3 financial datasets, 4 backbones, offline IQL refinement; 5-run avg</td>
+        <td><a class="cite" href="corpus.html#p-2606-00708">Bao+&nbsp;'26</a></td>
+        <td><strong>Moderate</strong> (single domain)</td>
+      </tr>
+      <tr>
+        <td>Negotiation-bus throughput</td>
+        <td class="num">9,672 offers / 100% completeness / 6.18 ms over 12 h</td>
+        <td>12 synthetic Python agents, High policy; ×3 seeds (not for significance)</td>
+        <td><a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a></td>
+        <td><strong>Indicative</strong> (synthetic agents, not live LLMs)</td>
+      </tr>
+      <tr>
+        <td>Role-specialized vs general MAS (architecture)</td>
+        <td class="num">cohesion 0.69 vs 0.36; interface complexity 2.08 vs 0.00</td>
+        <td>10 SRS cases vs MetaGPT (both Qwen3.5); structural metrics; 6 interviews</td>
+        <td><a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a></td>
+        <td><strong>Indicative</strong> (single baseline; subjective metrics)</td>
+      </tr>
+      <tr>
+        <td>Early-token confidence as quality proxy</td>
+        <td class="num">critical-failure AUROC up to 0.849 (Advocate)</td>
+        <td>2 ASAP essay sets; GPT-4o-mini debate + GPT-5-mini judge; Spearman/AUROC</td>
+        <td><a class="cite" href="corpus.html#p-2606-10307">Keramati+&nbsp;'26</a></td>
+        <td><strong>Indicative</strong> (exploratory; one model family)</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">Secondary-cited figures (numbers a paper quotes from <em>other</em> work) are kept out of this ledger. Examples that recur in the corpus but are <em>not</em> the citing paper's own evidence: industrial deployment envelopes (Kimi up to 300 sub-agents/4,000 steps; Anthropic 16 parallel Claudes) and method results such as Optima "2.8× gain, 90% fewer tokens" — all relayed by the survey <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a> / <a class="cite" href="corpus.html#p-2605-14892">Qi+&nbsp;'26</a>, not measured by it.</p>
+
+  <h2>Appraisal — where the evidence is consistent, and where it is thin</h2>
+
+  <div class="box inference"><p class="box-h">⟡ My reading of the ledger</p>
+  <p>Two claims are <strong>consistently</strong> supported across independent setups in this corpus: (1) <em>learned/structured coordination beats static wiring or naive scaling</em> — Maestro, InfraMind, StreamMA, Orch-RM, AgensFlow, Orchestra-o1 all show it on real benchmarks, several with ablations isolating the coordination component; and (2) <em>naive scaling of agents/communication has sharply diminishing returns</em> — the scaling law (strong), DarkForest, and Sequential Consensus all point the same way. The evidence is <strong>thinner</strong> exactly where the field's excitement is highest: long-horizon autonomy rests on a single observational run <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>; "at-scale" negotiation uses synthetic agents <a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a>; and almost no system reports significance tests or cross-team replication. Treat single-system SOTA numbers as existence proofs, not rankings.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ What would raise confidence (drawn from the papers' own future work)</p>
+  <p>The corpus names its own missing instrument: a <strong>MAS-native benchmark</strong> that jointly reports task success, parallelism efficiency, collaboration quality, and protocol overhead at realistic trace lengths — none exists in the pooled literature <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>. Beyond that: live-LLM (not synthetic) negotiation at scale <a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a>; controlled, compute-matched comparisons of single- vs cross-family review <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>; scaling-law tests on role-asymmetric and verifier-aggregator pipelines (the paper offers explicit falsification conditions) <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>; and standardized orchestration datasets for reward modeling <a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a>.</p></div>
+
+  <div class="pager">
+    <a href="debate.html">← Debate &amp; Scale</a>
+    <a href="limitations.html">Limitations →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

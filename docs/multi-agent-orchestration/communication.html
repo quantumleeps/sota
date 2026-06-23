@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Communication & Coordination — Multi-Agent Systems & Orchestration · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="frameworks.html">Frameworks</a>
+  <a class="nav active" href="communication.html">Communication</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">02 · Communication &amp; Coordination</p>
+  <h1>What crosses the boundary between agents</h1>
+  <p class="lede">If frameworks decide <em>who</em> does what, this cluster is about <em>what passes between them</em> — and the corpus's most counter-intuitive finding lives here: across several papers, sending agents <strong>more</strong> of each other's text does not help and sometimes hurts. The work splits into three questions: how should the channel be standardised, what should actually travel on it, and is the channel itself safe?</p>
+
+  <h2>Standardising the channel: a taxonomy, not a winner</h2>
+
+  <div class="box finding"><p class="box-h">▦ Five axes for agent communication protocols <span class="tag def">Definition</span></p>
+  <p>The anchor taxonomy classifies nine open-source protocols along five dimensions — <strong>counterparty</strong> (agent / context / hybrid), <strong>payload</strong> (structured / conversation / hybrid), <strong>interaction state</strong> (stateless / session), <strong>discovery</strong> (static / centralized / decentralized / hybrid), and <strong>schema flexibility</strong> (single / multiple / evolving) <a class="cite" href="corpus.html#p-2606-19135">Sander+&nbsp;'26</a>. Empirically, all seven agent-to-agent protocols carry session state and hybrid payloads; schema flexibility is rising (two protocols negotiate schemas at runtime); decentralized discovery is rare (only one); and privacy, compliance, and policy enforcement are "widely absent" across all nine.</p></div>
+
+  <p>The protocols classified include the names that recur across the rest of the corpus — MCP, A2A, ANP, ACP, agents.json, Agora, LMOS, LAP, agntcy — and the survey's lifecycle paper independently tabulates the same protocol family as the "Communication" leg of its collaboration taxonomy <a class="cite" href="corpus.html#p-2605-14892">Qi+&nbsp;'26</a>.</p>
+
+  <blockquote class="q">no single protocol is likely to maximize versatility, efficiency, and portability simultaneously. The field will more likely evolve toward a federated, layered protocol stack.
+    <span class="src">— Technical Taxonomy <a class="cite" href="corpus.html#p-2606-19135">Sander+&nbsp;'26</a>, Abstract</span>
+  </blockquote>
+
+  <div class="box finding"><p class="box-h">▦ A negotiation bus, separate from tool-calling <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span></p>
+  <p>LLM-X deliberately reorients from tool/API-centric protocols (it name-checks MCP) to agent-to-agent dialogue, instantiating Contract-Net and FIPA Alternating-Offers over typed JSON envelopes with a policy engine; stricter acceptance policies "improve robustness and fairness but increase latencies and message volume." A 12-hour, 12-agent run sustained 100% round completeness across 9,672 offers at ~6.18 ms mean latency with no drift <a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a>. Caveat carried from the Corpus: the agents are synthetic Python wrappers, so this measures the transport substrate, not LLM negotiation behaviour.</p></div>
+
+  <h2>What should travel: less, and at the right time</h2>
+
+  <div class="box finding"><p class="box-h">▦ Controlled disclosure beats sharing transcripts <span class="tag emp">Empirical</span></p>
+  <p>DarkForest keeps agents independent and routes only a compact, calibrated belief — "not how many agents support a candidate; it also… which agents support it" — to a coordinator. Exposing full reasoning traces instead of the belief summary <em>lowered</em> GPQA accuracy (36.67% vs 40.00%) while costing more tokens, and the method beats debate/mixture/graph baselines by 2.52–5.00 points at up to 6.5× fewer tokens <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a>.</p></div>
+
+  <blockquote class="q">coordination is not equivalent to sharing more text; it is the controlled exposure of compact, policy-permitted, and verifiable evidence.
+    <span class="src">— DarkForest <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a>, §Introduction</span>
+  </blockquote>
+
+  <div class="box finding"><p class="box-h">▦ Refine the transmission unit to the reasoning step <span class="tag emp">Empirical</span> <span class="tag thy">Theory</span></p>
+  <p>StreamMA replaces "generate-then-transfer" with a stream that forwards each reasoning step the moment it is produced, pipelining agents over a DAG. Because early steps are more reliable than late ones, starting downstream from the reliable prefix both cuts latency and <em>improves</em> quality — averaging +7.3 pp for Claude over the serial protocol and up to a 26.9× wall-clock speedup, with a closed-form rule (Theorem 1) for when streaming wins per edge <a class="cite" href="corpus.html#p-2606-05158">Z. Yang+&nbsp;'26</a>.</p></div>
+
+  <blockquote class="q">the non-uniform quality structure of multi-step LLM reasoning makes when context arrives matter more than how much context arrives.
+    <span class="src">— StreamMA <a class="cite" href="corpus.html#p-2606-05158">Z. Yang+&nbsp;'26</a>, Conclusion</span>
+  </blockquote>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — a single thread under three different mechanisms</p>
+  <p>DarkForest (disclose a belief, not a transcript), StreamMA (forward a step, not a finished response), and the scaling-law paper on the <a href="debate.html">Debate &amp; Scale</a> page (dense chatter adds no independent evidence) are attacking the same target from three angles: <strong>raw inter-agent text is a poor coordination medium.</strong> What helps is structuring what crosses the boundary — a calibrated summary, an early reliable prefix, a typed envelope. I read this as the corpus's most actionable communication principle, though no single paper states it at this level of generality. Chips mark the work I reason from.</p></div>
+
+  <h2>Before the channel: allocating context into roles</h2>
+
+  <div class="box finding"><p class="box-h">▦ Writing the sub-agent's prompt is a distinct, unsolved skill <span class="tag emp">Empirical</span></p>
+  <p>PerspectiveGap moves evaluation one step earlier than task success: can the main agent write each sub-agent a prompt that preserves its information boundary? Across 27 models the average combined pass rate is 14.9% (GPT-5.5 leads at 62.0%); coding-strong Opus 4.7 reaches only 19.1%, and standard interventions — few-shot, scratchpad, more reasoning effort — do not reliably help (medium effort is the sweet spot) <a class="cite" href="corpus.html#p-2606-08878">Sun+&nbsp;'26</a>. One failure mode is a security hole: leaking private tests to a coder agent is "a reward-hacking channel created by the orchestration prompt itself."</p></div>
+
+  <blockquote class="q">Generated sub-agent prompts should not be assumed to preserve role-specific information boundaries without inspection.
+    <span class="src">— PerspectiveGap <a class="cite" href="corpus.html#p-2606-08878">Sun+&nbsp;'26</a>, Conclusion</span>
+  </blockquote>
+
+  <h2>Is the channel safe?</h2>
+
+  <div class="box risk"><p class="box-h">⚠ Cheap talk is an adversarial-injection surface</p>
+  <p>In a 4-player LLM Stag Hunt, a single deterministic deceiver that signals cooperation but defects drives group cooperation to 0% — even though ~50% of honest peers keep cooperating after detecting the betrayal. And merely <em>disclosing</em> a restricted communication topology collapses cooperation (explicit star: 0%) while applying the identical restriction <em>silently</em> preserves it (silent star: 80%), so the failure is meta-reasoning about hidden information, not information loss <a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a>. The authors call cheap talk "structurally equivalent to an adversarial prompt injection attack."</p></div>
+
+  <blockquote class="q">increasing transparency about system structure can decrease system performance when agents engage in meta-reasoning about that structure.
+    <span class="src">— Byzantine Cheap Talk <a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a>, §Topology as attack surface</span>
+  </blockquote>
+
+  <div class="box gap"><p class="box-h">◇ Open: classical distributed-systems defenses are untested here</p>
+  <p>The corpus connects LLM coordination to Byzantine fault tolerance and prompt-injection literatures but does not transfer their defenses: verified channels, reputation, and commitment devices are named as open targets <a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a>, and no protocol in the taxonomy ships policy enforcement <a class="cite" href="corpus.html#p-2606-19135">Sander+&nbsp;'26</a>. See <a href="limitations.html">Limitations</a>.</p></div>
+
+  <div class="pager">
+    <a href="frameworks.html">← Frameworks</a>
+    <a href="learning.html">Learning →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

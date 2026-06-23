@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthesis — Multi-Agent Systems & Orchestration · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="frameworks.html">Frameworks</a>
+  <a class="nav" href="communication.html">Communication</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav active" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">07 · Synthesis</p>
+  <h1>What this corpus suggests</h1>
+
+  <div class="box inference"><p class="box-h">⟡ This whole page is my inference — read it as such</p>
+  <p>Everything below is <strong>my reasoning across these 20 papers</strong>, not a claim any one of them makes. Citation chips mark what I reason <em>from</em>, not sources that endorse the conclusion. Nothing here is a forecast of where the field is going — it is a reading of a two-month, search-shaped sample of preprints, several of them position papers or single-run reports. Treat it as a structured hypothesis, not a verdict.</p></div>
+
+  <h2>A reference model: the orchestration stack</h2>
+  <p>The twenty papers stop looking scattered if you read them as filling in layers of one stack — the set of decisions any LLM multi-agent system has to make, from the wire up to governance. No paper draws this stack; it is my attempt to unify their mechanisms.</p>
+
+  <div class="box inference"><p class="box-h">⟡ Six layers, and where the corpus works on each</p>
+  <ul class="clean">
+    <li><strong>1 · Substrate — the channel.</strong> Typed protocols and message buses: the five-axis protocol taxonomy <a class="cite" href="corpus.html#p-2606-19135">Sander+&nbsp;'26</a> and the negotiation exchange <a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a>.</li>
+    <li><strong>2 · Coordination policy — who acts, in what shape.</strong> Learned routing, topology, and role/model selection: AgensFlow <a class="cite" href="corpus.html#p-2605-27466">Koenigstein&nbsp;'26</a>, Maestro <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a>, InfraMind <a class="cite" href="corpus.html#p-2606-11440">Kabir+&nbsp;'26</a>, Orchestra-o1 <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a>, MOSAIC <a class="cite" href="corpus.html#p-2606-00708">Bao+&nbsp;'26</a>, MAAD <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a>.</li>
+    <li><strong>3 · Boundary content — what crosses, and when.</strong> Controlled disclosure of a belief <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a> and step-level streaming <a class="cite" href="corpus.html#p-2606-05158">Z. Yang+&nbsp;'26</a>.</li>
+    <li><strong>4 · Learning signal — where reward and credit attach.</strong> The orchestration-trace framing <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>, plan-level reward models <a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a>, decision-level RL <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a>, predictive-reward co-evolution <a class="cite" href="corpus.html#p-2606-10917">Wang+&nbsp;'26</a>.</li>
+    <li><strong>5 · Governance — stopping, verifying, monitoring.</strong> Sequential stopping <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a>, adversarial review + audit cascade <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>, confidence-based screening <a class="cite" href="corpus.html#p-2606-10307">Keramati+&nbsp;'26</a>.</li>
+    <li><strong>0 · Two invariants under all of it.</strong> The base model is the ceiling <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a>, and diversity — not headcount — is the lever that buys independent evidence <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>.</li>
+  </ul>
+  <p>The lifecycle survey's four-part collaboration taxonomy (Role / Communication / Orchestration / Interaction) maps cleanly onto layers 1–2, and its failure-attribution and self-evolution stages sit at layer 5 — which is why I treat it as the corpus's connective tissue rather than a single data point <a class="cite" href="corpus.html#p-2605-14892">Qi+&nbsp;'26</a>.</p></div>
+
+  <h2>Bets this corpus supports</h2>
+
+  <div class="box inference"><p class="box-h">⟡ Bet 1 — spend the agent budget on diversity, not headcount</p>
+  <p>The single most actionable, best-evidenced design principle here: independent evidence comes from <em>de-correlating</em> agents (different model families), not from adding more copies. The scaling law makes this quantitative and falsifiable <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>; ARIS bets its architecture on cross-family review for the same reason <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>. Corollary: pilot at N≤5 to predict the N=30 ceiling before paying for the team.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ Bet 2 — make less cross the boundary, and structure what does</p>
+  <p>Raw transcript-passing is a weak coordination medium. Disclose a calibrated belief, not a transcript <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a>; forward an early reliable reasoning step, not a finished response <a class="cite" href="corpus.html#p-2606-05158">Z. Yang+&nbsp;'26</a>; wrap it in a typed envelope, not free text <a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a>. All three cut tokens and, in two cases, raise accuracy.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ Bet 3 — govern the loop; don't fix the rounds</p>
+  <p>Stop treating "N rounds of debate" as a constant. Make stopping a decision — a sequential test reclaims 3.7× of the calls and doubles as a failure detector <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a> — and notice the survey flags that <em>nobody yet learns when to stop</em> as an RL target <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>. That gap is, to me, the highest-leverage open problem in layer 5.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ Bet 4 — attach the reward to the plan and the decisions, not the final answer</p>
+  <p>Terminal-only rewards drown in credit diffusion as traces grow. The corpus's efficiency wins all come from moving the signal: up to the plan (Orch-RM, ~10× cheaper) <a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a> or down to each orchestration decision (DA-GRPO) <a class="cite" href="corpus.html#p-2606-13707">F. Zhang+&nbsp;'26</a>. If you must keep it terminal, add a structural format reward to protect the protocol <a class="cite" href="corpus.html#p-2605-22177">Wu+&nbsp;'26</a>.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ Bet 5 — treat the orchestration prompt and the topology as security surfaces</p>
+  <p>Two papers independently turn coordination structure into an attack vector: the orchestration prompt can leak a reward-hacking channel <a class="cite" href="corpus.html#p-2606-08878">Sun+&nbsp;'26</a>, and disclosing the communication topology can itself collapse cooperation <a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a>. Design reviews for multi-agent systems should inspect <em>what each role can see</em>, not just what each role can do.</p></div>
+
+  <h2>Where I would hold back</h2>
+
+  <div class="box gap"><p class="box-h">◇ Bets I would not place on this corpus alone</p>
+  <ul class="clean">
+    <li><strong>That debate-to-consensus is a capability multiplier at frontier strength.</strong> The corpus's debate evidence is sceptical or near-saturated/underpowered <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a>; I would treat debate as a budget to govern, not a default win.</li>
+    <li><strong>That cross-family adversarial review is <em>proven</em> superior.</strong> Its strongest in-corpus statement is a design analogy backed by a single observational run, with family separation not even enforced in code <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>. Promising, unproven.</li>
+    <li><strong>That single-system SOTA numbers rank approaches.</strong> Almost none are significance-tested or cross-team-replicated; read them as existence proofs (see <a href="evidence.html">Evidence</a>).</li>
+    <li><strong>That "at-scale" autonomy/negotiation claims transfer to production.</strong> The headline scale results lean on synthetic agents or one overnight run <a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a> <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>.</li>
+    <li><strong>Anything about "where the field is heading."</strong> Twenty preprints over two months, shaped by a search query, cannot support a trend line — only a snapshot.</li>
+  </ul></div>
+
+  <div class="box inference"><p class="box-h">⟡ The one-sentence version</p>
+  <p>On this corpus's evidence, the frontier of multi-agent work has shifted from "build a smarter agent" to "learn a better coordinator" — and the same papers that chase that shift also show coordination is capped by the base model, fragile to a single bad actor, and not yet measurable by any shared benchmark. The interesting bet is not whether multi-agent orchestration helps, but whether <em>learning</em> the coordination outruns the ceiling on coordination itself. This corpus opens that question; it does not close it.</p></div>
+
+  <div class="pager">
+    <a href="limitations.html">← Limitations</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

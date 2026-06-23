@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations — Multi-Agent Systems & Orchestration · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="frameworks.html">Frameworks</a>
+  <a class="nav" href="communication.html">Communication</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav active" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">06 · Limitations &amp; Open Problems</p>
+  <h1>What this corpus says is still broken</h1>
+  <p class="lede">These are the failure families the papers themselves name — synthesised into groups, with each claim tied to the source that raised it. Read alongside the <a href="evidence.html">Evidence</a> appraisal: the open problems below are why even the strong results should be read as existence proofs rather than settled practice.</p>
+
+  <h2>1 · Coordination is fragile and adversarially exploitable</h2>
+
+  <div class="box risk"><p class="box-h">⚠ A single bad actor — or even a disclosed topology — can collapse a team</p>
+  <p>One deterministic deceiver drives group cooperation from 77% to 0%, and disclosing a restricted communication topology collapses cooperation that the identical silent restriction preserves — failure by meta-reasoning, not information loss <a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a>. The survey independently catalogs structural MAS threats — inter-agent message pollution, shared-memory contagion, orchestrator misdirection — and finds steerability is not formalised as a training objective anywhere in its pool <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>.</p></div>
+
+  <div class="box risk"><p class="box-h">⚠ Silent failure: claims that outrun their evidence</p>
+  <p>For long-horizon autonomy the dangerous failure is invisible — "plausible unsupported success," where results are real but misreported and claims outrun the evidence that licenses them <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>. The orchestration prompt is itself an attack surface: leaking private tests to a coder sub-agent is "a reward-hacking channel created by the orchestration prompt itself" <a class="cite" href="corpus.html#p-2606-08878">Sun+&nbsp;'26</a>.</p></div>
+
+  <h2>2 · Adding agents and rounds has a hard ceiling</h2>
+
+  <div class="box gap"><p class="box-h">◇ Diminishing — sometimes negative — returns to scale</p>
+  <p>For homogeneous instruct-class teams, effective team size saturates (thirty debaters ≈ one), peer count and rounds collapse to their product, and the "debate" gain is largely re-evaluation that a noise placebo reproduces <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>. Sharing more inter-agent text can lower accuracy <a class="cite" href="corpus.html#p-2605-25188">Y. Li+&nbsp;'26</a>, and at frontier strength extra debate rounds buy no measurable accuracy <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a>. The survey echoes that "more agents ≠ better performance" is an unresolved scalability bottleneck <a class="cite" href="corpus.html#p-2605-14892">Qi+&nbsp;'26</a>.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ The base model caps the system</p>
+  <p>Orchestration "elevates… stronger LLMs while exposing the deficiencies of weaker LLMs," setting "a performance ceiling… not a bottleneck coordination can bypass" <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a>. No framework in the corpus demonstrates that orchestration rescues a weak backbone — every reported win is on a strong one.</p></div>
+
+  <h2>3 · The communication layer lacks safety and standards</h2>
+
+  <div class="box risk"><p class="box-h">⚠ Privacy, compliance, and policy enforcement are "widely absent"</p>
+  <p>Across all nine protocols in the taxonomy, privacy safeguards, compliance checks, and policy enforcement are missing, and decentralized discovery is rare <a class="cite" href="corpus.html#p-2606-19135">Sander+&nbsp;'26</a>. The field also has no settled standard: short-term convergence pressure exists, but the authors expect a federated, layered stack rather than one interoperable protocol — leaving today's systems wired to a moving target. Classical distributed-systems defenses (verified channels, reputation, commitment devices) are named but untested in the LLM setting <a class="cite" href="corpus.html#p-2606-07790">El Mir+&nbsp;'26</a>.</p></div>
+
+  <h2>4 · Credit assignment and evaluation are unsolved</h2>
+
+  <div class="box gap"><p class="box-h">◇ Credit diffuses; stopping is never learned</p>
+  <p>Under a shared terminal reward the per-unit signal "becomes increasingly indistinguishable from baseline noise as trace length grows," and the counterfactual effect of a spawn decision is not identifiable from on-policy traces alone; explicit counterfactual message-level credit appears in just one pooled entry, and <strong>no method trains the stopping decision as an RL target</strong> <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>. Failure attribution — which agent, which step caused a failure — is itself an open problem with unsettled definitions and synthetic-only data <a class="cite" href="corpus.html#p-2605-14892">Qi+&nbsp;'26</a>.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ No MAS-native benchmark exists</p>
+  <p>No open benchmark in the pooled literature jointly measures task success, parallelism efficiency, collaboration quality, and protocol overhead at realistic trace lengths; most report task success only <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>. Orch-RM likewise flags the absence of standardized orchestration datasets/benchmarks <a class="cite" href="corpus.html#p-2606-13598">Tsang+&nbsp;'26</a>, and several debate/consensus results sit on near-saturated benchmarks where differences are statistically insignificant <a class="cite" href="corpus.html#p-2605-19193">Morandi&nbsp;'26</a>.</p></div>
+
+  <h2>5 · The evidence base itself is thin in places</h2>
+
+  <div class="box gap"><p class="box-h">◇ Single runs, synthetic agents, narrow scope</p>
+  <p>Concrete reproducibility limits the corpus admits: ARIS's deployment evidence is one observational overnight run ("we do not generalize from it") <a class="cite" href="corpus.html#p-2605-03042">R. Yang+&nbsp;'26</a>; LLM-X's "at-scale negotiation" uses synthetic Python agents, not live LLMs <a class="cite" href="corpus.html#p-2605-11376">Lorenzoni+&nbsp;'26</a>; the RL survey is single-author-tagged with no inter-annotator agreement <a class="cite" href="corpus.html#p-2605-02801">C. Zhang&nbsp;'26</a>; the scaling law is bounded to homogeneous, role-symmetric, fully-connected teams <a class="cite" href="corpus.html#p-2606-02646">Bertalanič+&nbsp;'26</a>; the confidence-proxy study covers two essay sets and one model family <a class="cite" href="corpus.html#p-2606-10307">Keramati+&nbsp;'26</a>; and MAAD evaluates against a single, "somewhat outdated" baseline on subjective metrics <a class="cite" href="corpus.html#p-2606-01385">R. Li+&nbsp;'26</a>.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ The cross-cutting tension I see</p>
+  <p>The corpus is pulled between two of its own findings. It is racing to make orchestration <em>more capable</em> — learned policies, omnimodal teams, infrastructure-aware scheduling — while simultaneously proving that orchestration is <em>more capped and more fragile</em> than the hype assumes: a hard scaling ceiling, a base-model bound, adversarial brittleness, and no instrument to measure collaboration as such. The unresolved question underneath all twenty papers is whether the gains from <em>better</em> coordination (real, repeatedly demonstrated) outrun the limits of coordination <em>itself</em> (also real, repeatedly demonstrated). On this corpus's evidence that is genuinely open — which is the honest place for a two-month snapshot of a fast field to land. My reading; see <a href="synthesis.html">Synthesis</a> for where I would and would not place bets.</p></div>
+
+  <div class="pager">
+    <a href="evidence.html">← Evidence</a>
+    <a href="synthesis.html">Synthesis →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

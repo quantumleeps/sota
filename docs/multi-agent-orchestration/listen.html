@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Listen — Multi-Agent Systems &amp; Orchestration</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  #sa-audio { width:100%; margin:1.2em 0 .2em; }
+  .sa-speed { display:flex; align-items:center; gap:.55em; flex-wrap:wrap; margin:.4em 0 .2em; font-family:var(--sans); }
+  .sa-speed > .lbl { font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .sa-rates { display:flex; gap:.35em; flex-wrap:wrap; }
+  .sa-rates button { font-family:var(--sans); font-size:.85rem; padding:.18em .65em; border:1px solid var(--line);
+    border-radius:6px; background:var(--card); color:var(--ink-soft); cursor:pointer; line-height:1.4; }
+  .sa-rates button:hover { border-color:var(--accent); color:var(--accent); }
+  .sa-rates button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+</style>
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">Multi-Agent&nbsp;<span>Orchestration</span> · SotA</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="frameworks.html">Frameworks</a>
+  <a class="nav" href="communication.html">Communication</a>
+  <a class="nav" href="learning.html">Learning</a>
+  <a class="nav" href="debate.html">Debate&nbsp;&amp;&nbsp;Scale</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="limitations.html">Limitations</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav active" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">🎧 Audio narration</p>
+  <h1>Listen — Multi-Agent Systems &amp; Orchestration</h1>
+  <p class="lede">A single continuous, audio-native narration of this review — the same corpus-scoped reading as the site, rewritten for the ear. About 13 minutes. The full transcript follows the player.</p>
+
+  <audio id="sa-audio" data-rate="1" controls preload="none" src="audio/multi-agent-orchestration.mp3">Your browser does not support audio playback.</audio>
+  <div class="sa-speed" role="group" aria-label="Playback speed">
+    <span class="lbl">Speed</span>
+    <div class="sa-rates">
+      <button type="button" data-rate="1" aria-pressed="true">1×</button>
+      <button type="button" data-rate="1.25" aria-pressed="false">1.25×</button>
+      <button type="button" data-rate="1.5" aria-pressed="false">1.5×</button>
+      <button type="button" data-rate="1.75" aria-pressed="false">1.75×</button>
+      <button type="button" data-rate="2" aria-pressed="false">2×</button>
+    </div>
+  </div>
+  <p class="note">~13 min listen · <a href="audio/multi-agent-orchestration.mp3" download>download the MP3</a>. Single continuous narration; the full transcript is below.</p>
+  <script>
+  (function () {
+    var a = document.getElementById('sa-audio');
+    var btns = document.querySelectorAll('.sa-rates button');
+    function set(rate, el) {
+      a.playbackRate = parseFloat(rate);
+      Array.prototype.forEach.call(btns, function (b) {
+        b.setAttribute('aria-pressed', b === el ? 'true' : 'false');
+      });
+    }
+    Array.prototype.forEach.call(btns, function (b) {
+      b.addEventListener('click', function () { set(b.dataset.rate, b); });
+    });
+    a.addEventListener('loadedmetadata', function () { a.playbackRate = parseFloat(a.dataset.rate || '1'); });
+  })();
+  </script>
+
+  <h2>Transcript</h2>
+  <p>Multi-agent systems and orchestration. How do you get a team of language-model agents to work together — and does putting them in a team actually help?</p>
+  <p>Across the twenty papers in this review, one move keeps repeating: the interesting object of engineering is no longer the single agent. It&#x27;s the coordination itself. How work gets split, delegated, communicated, aggregated, and stopped across a group of agents. As individual models plateau on bounded tasks, the leverage shifts to the orchestrator — and in several of these papers, the orchestrator becomes the thing you train.</p>
+  <p>Before we go further, the scope. This is a reading of twenty sources, all preprints posted to arXiv in May and June of twenty twenty-six, surfaced by an automated relevance search and curated down to twenty by topical fit. It is a reading of this particular set of papers — a two-month, search-shaped snapshot — not a complete survey of the field, and not a claim about where the field is heading. Several of these are systems descriptions or single-run reports, so I&#x27;ll flag how strong each claim is as we go.</p>
+  <p>Here&#x27;s how this narration goes. First, the handful of positions that recur across the corpus. Then the main themes, in order: the frameworks, how agents communicate, how the coordinator gets trained, and the sceptical work on debate and scale. Then the evidence — what was actually measured. And finally, my own reading across it all, clearly marked as mine.</p>
+  <h2>What recurs across these papers</h2>
+  <p>Six positions show up again and again.</p>
+  <p>The first, and the strongest thread: orchestration is being recast from fixed wiring into a learned, adaptive policy. Instead of hand-designing a pipeline, you learn the coordination decisions. AgensFlow calls coordination &quot;an online policy-learning problem under partial observability.&quot; Maestro trains a small policy to route over a pool of expert models. InfraMind learns its planner, executor, and scheduler jointly. The thread runs through at least half the corpus.</p>
+  <p>Second — and this is the corpus&#x27;s most useful counterweight — more agents, and more talk, is not more intelligence. Several papers independently find sharply diminishing, sometimes negative, returns to scale and to chatter.</p>
+  <p>Third, the base model sets a ceiling. Orchestration amplifies a capable model and exposes a weak one; it does not rescue it. As the MAAD paper puts it, coordination is a capability amplifier, and the base model&#x27;s competence is a performance ceiling, not a bottleneck that coordination can bypass.</p>
+  <p>Fourth, when you do train the coordinator with reinforcement learning, the reward and the credit should attach to the orchestration plan and its decisions — not just to the final answer.</p>
+  <p>Fifth, communication between agents needs structure and standards, not free-form transcripts. Typed protocols, controlled disclosure, a converging but layered protocol stack.</p>
+  <p>And sixth, a sober counter-current: coordination is fragile and adversarially exploitable, and our ability to evaluate it lags behind our ability to build it.</p>
+  <h2>Frameworks</h2>
+  <p>First, the frameworks — the systems that actually coordinate agents.</p>
+  <p>They differ in what they coordinate. Orchestra-o1 coordinates modality-specialized sub-agents across text, image, audio, and video. Maestro coordinates a pool of frozen expert models plus a library of skills. InfraMind coordinates a whole serving stack. MAAD coordinates role-specialized stages — an analyst, a modeler, a designer, an evaluator. But read together, they share one direction of travel: the coordination logic that used to be hand-wired is becoming a learned, inspectable policy.</p>
+  <p>The headline result here is striking. In the Maestro paper, from Wu and colleagues, a four-billion-parameter learned orchestrator, composing frozen experts, reaches seventy point one percent average accuracy across ten multimodal benchmarks. That edges out GPT-five, at sixty-nine point three percent. The reinforcement learning is the driver — the same workflow without it scores about seventeen percentage points lower. The reading the authors offer: intelligent orchestration is a high-leverage alternative to scaling one model.</p>
+  <p>The newest twist comes from InfraMind, which names a failure mode it calls &quot;infrastructure blindness&quot; — orchestrators that route on the task while ignoring the machine underneath. Preferred small models pile up queues of over a hundred and thirty requests while equally capable large models sit nearly idle. By conditioning on live infrastructure state, InfraMind keeps service-level compliance near ninety-nine point nine percent under heavy load, where every baseline falls below fifty.</p>
+  <h2>Communication</h2>
+  <p>Now, how agents talk to each other — and the corpus&#x27;s most counter-intuitive finding lives here. Sending agents more of each other&#x27;s text often does not help, and sometimes hurts.</p>
+  <p>There&#x27;s a protocol taxonomy from Sander and colleagues at TU Munich that classifies nine open protocols — names like MCP, A2A, and ANP — along five dimensions, and predicts not a single winner but a federated, layered stack.</p>
+  <p>But the sharper finding is about what should cross the boundary. DarkForest argues that coordination is not sharing more text; it is the controlled exposure of compact, policy-permitted evidence. Keep the agents independent, share only a calibrated belief about which agent supports which answer, and you beat debate-style baselines while cutting tokens by up to six and a half times. Exposing the full reasoning traces instead actually lowered accuracy.</p>
+  <p>StreamMA makes a related move on timing. Instead of waiting for an agent to finish, it streams each reasoning step to downstream agents the moment it&#x27;s produced. Because early reasoning steps are more reliable than late ones, this both cuts latency and improves quality — about seven point three percentage points on average for one frontier model, with wall-clock speedups up to nearly twenty-seven times. As the authors put it: when context arrives matters more than how much context arrives.</p>
+  <p>And before any of that, there&#x27;s the question PerspectiveGap raises: can a main agent even write a good prompt for its sub-agents — one that gives each role exactly what it needs and nothing more? Across twenty-seven models, the average pass rate is just fourteen point nine percent. The best, GPT-five-point-five, reaches sixty-two percent; a coding-strong model reaches only nineteen. Orchestration prompting, it turns out, is its own hard, unsolved skill.</p>
+  <h2>Learning to orchestrate</h2>
+  <p>Next, training the coordinator. Seven papers apply reinforcement learning to orchestration, and they converge on one idea: supervise the orchestration decisions, not just the final answer. The recurring obstacle is credit assignment, across a tree of expensive model calls.</p>
+  <p>The spine here is a survey that reframes the whole problem around the orchestration trace — a temporal graph of spawn, delegate, message, aggregate, and stop events. It organizes rewards into eight families and credit into an eight-level hierarchy, and it reports a telling gap: in its pooled literature, no method yet trains the decision of when to stop as a reinforcement-learning target.</p>
+  <p>The empirical papers can be read as different answers to: where does the reward attach? Orch-RM, from Tsang and colleagues at Rutgers and Salesforce, attaches it to the whole plan, scoring an orchestration before any sub-agent runs — improving training-token efficiency by up to ten times. Orchestra-o1 attaches it to each decision, with a decision-aligned variant of GRPO. Maestro keeps it at the outcome but adds a structural format reward. My reading is that &quot;where the reward attaches&quot; has become the live design axis of this subfield.</p>
+  <h2>Debate and scale</h2>
+  <p>Now the sceptical work — does more talk, and more agents, actually help?</p>
+  <p>The centerpiece is a scaling law, from Bertalanič and Fortuna. They derive a two-parameter law for the effective, independent team size of a multi-agent system, and it fits forty-four different configurations with an R-squared above zero point nine nine. The punchline: for teams of identical, instruction-tuned models on bounded tasks, thirty densely debating agents produce no more answer diversity than one — an effective team size of one point one two. Even more pointed: a noise placebo, feeding agents answers from unrelated problems, reproduces most of what &quot;debate&quot; was credited with. The one validated way to raise the ceiling is architectural diversity — mixing different model families to lower the correlation between agents.</p>
+  <p>There&#x27;s a practical companion to this from Morandi, a sequential-consensus method that wraps a debate in a classical statistical stopping test. On one benchmark it cuts the number of model calls by three point seven times at a two-point accuracy cost — and, refreshingly, the paper is honest that at frontier strength the differences aren&#x27;t even statistically significant.</p>
+  <p>And ARIS, an autonomous-research harness, names the failure mode that haunts long-horizon agents: not visible breakdown, but &quot;plausible unsupported success&quot; — where the claims quietly outrun the evidence. Its answer is cross-model-family adversarial review. Which, notice, is the same lever the scaling law points to — diversity, not headcount.</p>
+  <h2>Evidence</h2>
+  <p>So what&#x27;s actually measured, and how much weight does it bear?</p>
+  <p>The best-powered result is that scaling law — replicated across forty-four conditions, with held-out predictions accurate to about five and a half percent. The most eye-catching is Maestro beating GPT-five with a four-billion-parameter orchestrator. And the most useful efficiency result is Orch-RM&#x27;s roughly ten-times training savings.</p>
+  <p>But the evidence is thinnest exactly where the excitement is highest. Long-horizon autonomy, in ARIS, rests on a single overnight run — the authors explicitly decline to generalize from it. The &quot;at-scale&quot; negotiation result, in a system called LLM-X, uses synthetic Python agents, not live language models. And almost none of these papers report significance tests or independent replication. So treat single-system state-of-the-art numbers as existence proofs, not rankings. The corpus even names its own missing instrument: there is no shared benchmark that jointly measures task success, parallelism, collaboration quality, and communication overhead.</p>
+  <h2>My reading</h2>
+  <p>Everything up to here was the papers. Here&#x27;s my own reading across them — this part is inference, not a finding, so take it as a structured hypothesis.</p>
+  <p>I think these twenty papers stop looking scattered if you read them as filling in layers of one stack. At the bottom, the communication substrate — protocols and typed messages. Above it, the coordination policy — who acts, in what shape. Then, what crosses the boundary — a belief, not a transcript; an early step, not a finished response. Then the learning signal — where reward and credit attach. Then governance — stopping, verifying, monitoring. And underneath all of it, two invariants the corpus keeps rediscovering: the base model is the ceiling, and diversity, not headcount, is what buys you independent evidence.</p>
+  <p>If I had to name the bets this corpus supports: spend your agent budget on diversity, not on more copies. Make less cross the boundary, and structure what does. Govern the loop instead of fixing the number of rounds. Attach the reward to the plan, not just the answer. And treat the orchestration prompt and the communication topology as security surfaces — because two separate papers turn each of them into an attack.</p>
+  <p>And where I&#x27;d hold back: I would not yet bet that debate-to-consensus is a real capability multiplier at frontier strength; the evidence here is sceptical or underpowered. I would not read single-system records as rankings. And I would not assume the splashy autonomy and scale claims transfer to production, when they rest on one run or on synthetic agents.</p>
+  <p>The one-sentence version: on this corpus&#x27;s evidence, the frontier has shifted from building a smarter agent to learning a better coordinator — and the very same papers show that coordination is capped by the base model, fragile to a single bad actor, and not yet measurable by any shared benchmark. The open question is whether learning the coordination outruns the ceiling on coordination itself.</p>
+  <p>That&#x27;s the review. Again — twenty papers from a two-month window, a reading of this corpus, not a verdict on the field. Every number and attribution I mentioned is laid out, with links to the originals on arXiv, on the site&#x27;s corpus page. Thanks for listening.</p>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">Multi-Agent Systems &amp; Orchestration · a provenance-cited review of 20 arXiv papers (May–Jun 2026) · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

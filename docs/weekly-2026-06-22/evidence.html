@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence — SotA Weekly · 15–22 June 2026 · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">SotA&nbsp;<span>Weekly</span> · 22 Jun 2026</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="cognition.html">Cognition</a>
+  <a class="nav" href="safety.html">Safety</a>
+  <a class="nav" href="evaluation.html">Evaluation</a>
+  <a class="nav active" href="evidence.html">Evidence</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">04 · Evidence</p>
+  <h1>The measured-effect ledger</h1>
+  <p class="lede">Every quantified result I pulled from these ten papers, with what was measured, the method and scale behind it, and my own confidence appraisal. The point of the ledger is to keep a number's <em>weight</em> visible: most rows come from a single benchmark, a single model family, or a single run, and the confidence column says so.</p>
+
+  <div class="box inference"><p class="box-h">⟡ The "my confidence" column is mine, not the papers'</p>
+  <p>A coarse appraisal of how much I'd lean on each result, given its design — <strong>not</strong> a number from the source. Scale: <strong>Strong</strong> = controlled, significance-tested, or large-scale production; <strong>Moderate</strong> = clean measurement but single-setting / single-model / no significance tests; <strong>Indicative</strong> = synthetic data, single run, LLM-as-judge, or otherwise one-datapoint. All ten papers are recent, mostly un-peer-reviewed preprints; treat the whole table as provisional.</p></div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>What was measured</th><th>Result</th><th>Method &amp; scale</th><th>Source</th><th>My confidence</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Fixed hybrid retrieval vs full adaptive agentic-RAG pipeline (multi-hop QA)</td>
+        <td class="num"><span class="pos">+1.8 EM / +1.9 F1</span></td>
+        <td>HotpotQA 5,000-q sample, Qwen2.5-7B local; McNemar's exact, bootstrap CIs, Holm-Bonferroni</td>
+        <td><a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a></td>
+        <td>Strong</td>
+      </tr>
+      <tr>
+        <td>Two retrieval iterations vs five (same pipeline)</td>
+        <td class="num">95% of the gain at 2 steps</td>
+        <td>same; steps-1 EM 46.1 → steps-2 52.9 → steps-3 53.2 (CIs overlap)</td>
+        <td><a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a></td>
+        <td>Strong</td>
+      </tr>
+      <tr>
+        <td>Public vs hidden leaderboard rank correlation (execution)</td>
+        <td class="num"><span class="neg">ρ = −0.13</span> (p=0.71)</td>
+        <td>149-team CODS-2025 competition, n=13 (cited within the paper)</td>
+        <td><a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Interactive automata discovery, 8–9-state DFAs (best model vs classic L*/TTT)</td>
+        <td class="num"><span class="neg">≤25%</span> vs 100%</td>
+        <td>80 instances, 4 complexity buckets, 6 models, 2× query budget; ±1 SD shading, no sig. tests</td>
+        <td><a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Reasoning vs non-reasoning, 4–5-state DFAs</td>
+        <td class="num">85% vs 0%</td>
+        <td>Gemini 3.1 Pro 85%; GPT-5.4 (no thinking), Flash-Lite, Llama-3.3-70B at 0%</td>
+        <td><a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>End-to-end scientific-instrument workflow success (best agent)</td>
+        <td class="num"><span class="neg">26.3%</span></td>
+        <td>GPT-5.5, 10 runs/workflow, 8 simulators; vs 0.814 subtask score, human 0.924</td>
+        <td><a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Over-privileged tool-use rate (worst vs best 2026 models)</td>
+        <td class="num">64.9% vs &lt;10%</td>
+        <td>ToolPrivBench, 544 scenarios, 11 models, temp 0, ≤5 turns; OPUR@5 metric</td>
+        <td><a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>General safety alignment → least-privilege transfer (Qwen2.5-7B)</td>
+        <td class="num"><span class="neg">50.4% → 60.7%</span> (worse)</td>
+        <td>AgentAlign cut AgentHarm harm 41.9%→6.7% but OPUR rose; no transfer</td>
+        <td><a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Privilege-aware SFT+GRPO: OPUR reduction with capability retained</td>
+        <td class="num"><span class="pos">→ 18.93%</span>, 96–100% retained</td>
+        <td>Qwen3-4B-Think; MMLU/GSM8K/MetaTool retention 95.8–100.2%</td>
+        <td><a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Agent-runtime vulnerability detection recall (held-out advisories)</td>
+        <td class="num"><span class="pos">14–22% → 67–75%</span></td>
+        <td>OpenClawBench, 217 test advisories; +ClawAudit STRIDE rules; ±4pp train→test</td>
+        <td><a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a></td>
+        <td>Strong</td>
+      </tr>
+      <tr>
+        <td>Live-code precision of the same ruleset</td>
+        <td class="num"><span class="neg">~12%</span> (6/50 TP)</td>
+        <td>OpenClaw HEAD, 16,433 files; single-reviewer stratified audit of 50 findings</td>
+        <td><a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>AutoRAS performance drop under 4-vector attack (avg)</td>
+        <td class="num"><span class="pos">−2.13%</span> vs −14% to −18%</td>
+        <td>MMLU/MS-MARCO/MATH/ProgramDev, GPT-4o-mini base, 11 baselines; partial-compromise injection</td>
+        <td><a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Memory write-control: QA accuracy vs memory volume</td>
+        <td class="num"><span class="pos">+9.0% acc, −9.1% memory</span></td>
+        <td>AdaMem-Bench (synthetic, 5 stories × 10 weeks), LLM-as-judge; vs Mem0</td>
+        <td><a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Policy inference under implicit vs explicit feedback (alignment by week 10)</td>
+        <td class="num">53–63% vs ~88%</td>
+        <td>same benchmark; adherence stays high (80–86%), inference is the bottleneck</td>
+        <td><a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Clarification F1 from uncertainty decomposition (avg over 5 backbones)</td>
+        <td class="num"><span class="pos">+73% vs ReAct+UE</span></td>
+        <td>WebShop/ALFWorld-Clarification, 100 tasks/cell, single run, synthetic underspecification</td>
+        <td><a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a></td>
+        <td>Indicative</td>
+      </tr>
+      <tr>
+        <td>Capability dilution from added uncertainty objectives (mean task success)</td>
+        <td class="num"><span class="neg">28.6% → 27.0%</span></td>
+        <td>5 benchmarks × 5 backbones; monotonic; concentrated on hard tasks (REAL 32.1%→19.2%)</td>
+        <td><a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Product-aggregated confidence vs length surrogates (fault detection, ALFWorld)</td>
+        <td class="num">0.92–0.99 from random/1-over-length</td>
+        <td>50-seed surrogate diagnostic; real product ROC-AUC matched by length proxy</td>
+        <td><a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>SwarmX tail-latency reduction (structured pipeline, P95)</td>
+        <td class="num"><span class="pos">up to 61.5%</span></td>
+        <td>128 H20 GPU testbed, Deep Research workload vs Ray; vLLM 0.16.0</td>
+        <td><a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a></td>
+        <td>Strong</td>
+      </tr>
+      <tr>
+        <td>SwarmX production throughput under same SLO</td>
+        <td class="num"><span class="pos">~2×</span>, P99 −44–52%</td>
+        <td>320 H20 + 560 L20 GPUs; ~11M-record production traffic</td>
+        <td><a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a></td>
+        <td>Strong</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h2>The single strongest result</h2>
+  <div class="grid g3">
+    <div class="card stat"><div class="big green">+1.8 EM</div><div class="lbl">Fixed hybrid retrieval over the full adaptive agentic-RAG pipeline — the one finding here with a controlled ablation, paired significance tests, bootstrap CIs, and multiple-comparison correction. <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">2,420</div><div class="lbl">Trajectories behind the largest single experiment cited in the eval paper (SmartGridBench), where orchestration changes alone moved pass rate 43.2%→55.5%. <a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big amber">~$2.50</div><div class="lbl">Cost per datapoint for the automata benchmark (~$1,200 / 480 runs; a single run up to ~20h, ~30M tokens, ~$50) — a reminder agent evaluation is now expensive enough to bias who can do it. <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a></div></div>
+  </div>
+
+  <div class="box inference"><p class="box-h">⟡ Appraisal — where the evidence is consistent vs thin</p>
+  <p><strong>Most consistent across the corpus:</strong> the long-horizon ceiling. Independent of subfield, every paper that measured a multi-step trajectory found degradation — 26.3% workflow success <a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a>, ≤25% automata success with rising non-informative queries <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a>, escalation under transient failure <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a>, retrieval decay over 10 weeks <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a>. Different methods, same wall — that convergence is the table's most trustworthy signal.</p>
+  <p><strong>Strongest single results:</strong> the controlled RAG ablation <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a>, the runtime-detection recall lift <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a>, and the production serving wins <a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a> — each has either significance testing or large-scale deployment behind it.</p>
+  <p><strong>Thinnest:</strong> anything on synthetic data with an LLM judge (AdaMem) or single-run / synthetic-underspecification (clarification F1), and the ρ=−0.13 figure, which is real but n=13 and cited rather than re-run. Believe the <em>direction</em> of these; don't quote the <em>magnitude</em> as settled.</p></div>
+
+  <div class="box gap"><p class="box-h">◇ What would raise confidence (from the papers' own future work)</p>
+  <p>Larger, non-synthetic memory cohorts over year-long horizons and without LLM-as-judge <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a>; the pre-registered predictive-validity pilot (n=80 paired ranks, 1,200 perturbed observations) the eval paper proposes but hasn't run <a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a>; matched negative controls and multi-rater precision audits for runtime scanning <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a>; sandboxed executable tools and longer-than-five-turn trajectories for privilege selection <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a>; and moving the uncertainty decomposition from the prompt into the model via alignment training to test whether the gains survive once capability dilution is removed <a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a>.</p></div>
+
+  <div class="pager">
+    <a href="evaluation.html">← Evaluation</a>
+    <a href="synthesis.html">Synthesis →</a>
+  </div>
+</div>
+
+<footer class="site">SotA Weekly · 15–22 June 2026 · a provenance-cited review of 10 arXiv papers · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluation &amp; Serving — SotA Weekly · 15–22 June 2026 · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">SotA&nbsp;<span>Weekly</span> · 22 Jun 2026</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="cognition.html">Cognition</a>
+  <a class="nav" href="safety.html">Safety</a>
+  <a class="nav active" href="evaluation.html">Evaluation</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">03 · Evaluation &amp; Serving</p>
+  <h1>Measuring and running agents honestly</h1>
+  <p class="lede">The last three papers ask how we <em>know</em> an agent is good and how we <em>run</em> it at scale. One argues the leaderboard number we report doesn't predict deployment and proposes a different criterion; one builds a harder benchmark where strong subtask scores evaporate over a full workflow; one treats the agentic workload's own runtime variability as a first-class systems problem. The first two extend this week's skeptical register to evaluation itself; the third is the infrastructure underneath all of it.</p>
+
+  <h2>Rank by predictive validity, not by the mean</h2>
+  <p><a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a> is a position paper with a blunt thesis: aggregate-score leaderboards "systematically underspecify the dimensions on which deployed LLM agents are evaluated." Its proposed replacement criterion is <strong>predictive validity</strong> — the correlation between an in-sample ranking and an out-of-sample one — measured over a twelve-tier apparatus that spans tool-call hygiene, planning quality, cost, failure modes, multi-turn dialog, and evidence-grounded verification, most of which no single prior benchmark reports.</p>
+
+  <div class="box finding"><p class="box-h">▦ The ranking doesn't transfer <span class="tag emp">Empirical</span></p>
+  <p>In a 149-team agentic competition, the correlation between public and hidden rankings was <strong>ρ = −0.13</strong> on execution (n=13, p=0.71 — indistinguishable from zero) and 0.69 on planning, whose upper confidence bound just touches the paper's proposed falsification threshold of 0.85 <a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a>. A separate cross-benchmark study it cites found rank correlations of just 0.32–0.85 across six benchmarks. <span class="tag emp">Empirical</span></p></div>
+
+  <blockquote class="q">The deployment-relevant question is not "what is the mean," but "does this ranking transfer."
+    <span class="src">— Beyond Static Leaderboards <a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a>, §2.3</span></blockquote>
+
+  <div class="box gap"><p class="box-h">◇ Weigh this as convergence, not replication <span class="tag thy">Theory</span></p>
+  <p>The paper is explicit that it "do[es] not run new controlled experiments"; its evidence is 14 parallel implementation studies that converged on the same measurement dimensions from different architectural starting points — "convergent architectural sensitivity," <em>not</em> independent triangulation, since the studies share institutional context (an IBM benchmark + Columbia course projects) and are unpublished. It is also entirely in one domain (industrial asset operations). I read its <em>diagnosis</em> (aggregate scores hide deployment behaviour) as well-supported by the ρ=−0.13 datapoint, and its <em>prescription</em> (predictive validity + twelve tiers) as a reasonable but as-yet-unvalidated proposal — which is how the paper frames it too.</p></div>
+
+  <h2>When subtask competence doesn't survive the workflow</h2>
+  <p><a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a> (LabOSBench) drags computer-use evaluation into a harder regime — controlling scientific instruments, where success depends on feedback-driven parameter adjustment, not just clicking the right widget. It's browser-native (Playwright, no OS virtualization), 96 subtasks across eight instrument simulators, and it can grade intermediate <em>scientific state</em> (e.g. PSNR on a focus task), not only final completion.</p>
+
+  <div class="box finding"><p class="box-h">▦ A 0.814 agent that finishes 26% of workflows <span class="tag emp">Empirical</span></p>
+  <p>The best method (GTA1 w/ GPT-5.5) reaches a <strong>0.814</strong> average subtask score (human 0.924) — but in the end-to-end pilot, average workflow success is only <strong>26.3%</strong>, "much lower than its subtask-level performance, indicating severe error accumulation" <a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a>. Several subtasks (precise alignment, focus, tilt, mosaic-ROI save) score <strong>0.00 for all twelve methods</strong>. And an agent wrapper can be the worst method overall (VLAA-GUI w/ Opus-4.5, 0.456). <span class="tag emp">Empirical</span></p></div>
+
+  <blockquote class="q">simply adding an agent loop is not enough: wrong clicks, incorrect control adjustments, and invalid recovery actions can still derail scientific procedures
+    <span class="src">— LabOSBench <a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a>, §Category-level analysis</span></blockquote>
+
+  <p>This is the evaluation-side mirror of the cognition findings: the gap between a benchmark's headline subtask number and what an operator would see end-to-end is exactly the gap <a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a> says aggregate leaderboards conceal — here made concrete as a 0.814-vs-0.263 cliff, and as the long-horizon ceiling the <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a> automata work measures from the cognition side.</p>
+
+  <h2>Serving an agent is its own scheduling problem</h2>
+  <p>Underneath evaluation sits execution. <a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a> (SwarmX) observes that an agentic workflow's inference time and call structure depend on prompt <em>semantics</em> — revealed only at runtime — so conventional cluster schedulers misfire. Its answer is "agentic scheduling": routers and scalers become lightweight scheduler agents that use compact, distribution-aware neural predictors and keep predictions <em>distributional</em> until the final decision, because for low-QPS agentic workloads a single bad decision dominates the tail.</p>
+
+  <div class="grid g3">
+    <div class="card stat"><div class="big">up to 61.5%</div><div class="lbl">P95 latency reduction on structured agentic pipelines (Deep Research) vs Ray. <a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">~2×</div><div class="lbl">Production throughput under the same SLO vs the prior scheduler, with P99 latency cut 44–52%. <a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">35M for 8B</div><div class="lbl">A 35M-param semantic predictor stands in for an 8B target, running ~4–30 ms vs multi-second model calls. <a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a></div></div>
+  </div>
+
+  <blockquote class="q">This point estimate can hide skewed, heavy-tailed, or multi-modal behavior, which is common in LLM serving because latency depends strongly on prompt semantics.
+    <span class="src">— SwarmX <a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a>, §Prediction-Distribution-Aware Scheduling</span></blockquote>
+
+  <p>SwarmX is the one paper in this sample that is unabashedly a <em>building</em> result rather than a skeptical one — a production-deployed system (128 H20 GPUs in test; 320 H20 + 560 L20 in production; CPU clusters over a million cores) with strong tail-latency wins. Its honesty markers are systems-paper-typical: several ablations omitted "due to space," eventual-consistency drift in predictor weights, and the semantic model needing retraining on a target-model change. Notably it, too, frames a classic systems component — the cluster scheduler — as an "agent," extending the week's appetite for casting infrastructure as learned policy.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>Stack these three and you get a full vertical slice of "agent quality": SwarmX runs the workload, LabOSBench measures whether the run actually finished the job, and Patel+ argues the number we publish about that should be a transferable rank, not a mean. None cites the others, and I'm imposing the stack — but it's a useful way to see that two of the three (eval, measurement) belong to this week's audit-your-defaults mood, while the third (serving) is the unsexy infrastructure that has to work regardless of mood.</p></div>
+
+  <div class="pager">
+    <a href="safety.html">← Safety &amp; Robustness</a>
+    <a href="evidence.html">Evidence →</a>
+  </div>
+</div>
+
+<footer class="site">SotA Weekly · 15–22 June 2026 · a provenance-cited review of 10 arXiv papers · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

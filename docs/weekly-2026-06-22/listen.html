@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Listen — SotA Weekly</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  #sa-audio { width:100%; margin:1.2em 0 .2em; }
+  .sa-speed { display:flex; align-items:center; gap:.55em; flex-wrap:wrap; margin:.4em 0 .2em; font-family:var(--sans); }
+  .sa-speed > .lbl { font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .sa-rates { display:flex; gap:.35em; flex-wrap:wrap; }
+  .sa-rates button { font-family:var(--sans); font-size:.85rem; padding:.18em .65em; border:1px solid var(--line);
+    border-radius:6px; background:var(--card); color:var(--ink-soft); cursor:pointer; line-height:1.4; }
+  .sa-rates button:hover { border-color:var(--accent); color:var(--accent); }
+  .sa-rates button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+</style>
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">SotA&nbsp;<span>Weekly</span> · 22 Jun 2026</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="cognition.html">Cognition</a>
+  <a class="nav" href="safety.html">Safety</a>
+  <a class="nav" href="evaluation.html">Evaluation</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav active" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">🎧 Audio narration</p>
+  <h1>Listen — SotA Weekly</h1>
+  <p class="lede">A single continuous, audio-native narration of this review — the same corpus-scoped reading as the site, rewritten for the ear. About 12 minutes. The full transcript follows the player.</p>
+
+  <audio id="sa-audio" data-rate="1" controls preload="none" src="audio/weekly-2026-06-22.mp3">Your browser does not support audio playback.</audio>
+  <div class="sa-speed" role="group" aria-label="Playback speed">
+    <span class="lbl">Speed</span>
+    <div class="sa-rates">
+      <button type="button" data-rate="1" aria-pressed="true">1×</button>
+      <button type="button" data-rate="1.25" aria-pressed="false">1.25×</button>
+      <button type="button" data-rate="1.5" aria-pressed="false">1.5×</button>
+      <button type="button" data-rate="1.75" aria-pressed="false">1.75×</button>
+      <button type="button" data-rate="2" aria-pressed="false">2×</button>
+    </div>
+  </div>
+  <p class="note">~12 min listen · <a href="audio/weekly-2026-06-22.mp3" download>download the MP3</a>. Single continuous narration; the full transcript is below.</p>
+  <script>
+  (function () {
+    var a = document.getElementById('sa-audio');
+    var btns = document.querySelectorAll('.sa-rates button');
+    function set(rate, el) {
+      a.playbackRate = parseFloat(rate);
+      Array.prototype.forEach.call(btns, function (b) {
+        b.setAttribute('aria-pressed', b === el ? 'true' : 'false');
+      });
+    }
+    Array.prototype.forEach.call(btns, function (b) {
+      b.addEventListener('click', function () { set(b.dataset.rate, b); });
+    });
+    a.addEventListener('loadedmetadata', function () { a.playbackRate = parseFloat(a.dataset.rate || '1'); });
+  })();
+  </script>
+
+  <h2>Transcript</h2>
+  <p>Welcome to the SotA Weekly, for the week of June the twenty-second, twenty twenty-six. This is an audio-native walk through one week of agent research on arXiv — ten papers, one from each corner of the field, listened to as a set.</p>
+  <p>Before anything else, the scope, because it shapes everything that follows. This is a review of ten sources. They were chosen on June the twenty-second from a pool of three hundred and nineteen papers that an automated search pulled across about fourteen agent subfields. We filtered that down to the two hundred and forty papers genuinely posted in the seven days from the fifteenth to the twenty-second of June, and then hand-picked one representative from each subfield, to get breadth. So this is a deliberately wide, but very thin, slice of a single week — mostly un-peer-reviewed preprints. It is a reading of these ten papers. It is not a survey of the week, and it is certainly not a verdict on where the field is going. Keep that in your ear the whole way through.</p>
+  <p>Here&#x27;s how this goes. First, the one thing that recurs across these ten. Then three themes — cognition, safety, and evaluation. Then the evidence, spoken honestly. And finally, my own reading, clearly flagged as mine.</p>
+  <h2>The recurring move</h2>
+  <p>So, the recurring move. What struck me, reading these ten together, was not a new capability. It was a change of register. A surprising number of these papers stop asking &quot;can an agent do this?&quot; and start asking &quot;does the machinery we bolted on to make it do this actually earn its keep — and where exactly does it break?&quot; Fixed beats adaptive. Strong subtask scores don&#x27;t survive the full workflow. A leaderboard ranking doesn&#x27;t transfer to deployment. And the unaudited part of the agent turns out to be its own runtime. Read together — and only together — these ten read like a field auditing its own defaults. That phrase, auditing the defaults, is mine, not theirs. The papers did not coordinate. But the rhyme is hard to miss.</p>
+  <h2>Cognition</h2>
+  <p>First theme. Cognition — what the agent knows, remembers, and retrieves.</p>
+  <p>Start with memory. The default design is to remember everything and retrieve later. The AdaMem paper, Chen and colleagues, argues that under real cost and context budgets that just produces memory bloat — irrelevant trivia crowding out what matters. Their fix is to learn what to remember, a write-side policy tuned per user. The measured result: up to nine percent higher question-answering accuracy while storing nine point one percent less memory. More accuracy, on less memory. The honest caveat: that&#x27;s on a synthetic benchmark, judged by another language model, so treat the direction as more trustworthy than the exact number.</p>
+  <p>Next, the agent&#x27;s sense of its own uncertainty. Matsnev takes the single confidence score an agent reports and splits it in two — how sure am I this action is right, versus how sure am I I even understand what you want. That second channel lets the agent ask a clarifying question. It improves clarification by seventy-three percent over the baseline. But — and this is the interesting part — adding that extra objective slightly lowers raw task success every time. The author calls it capability dilution, and traces it to a fixed shared reasoning budget. There&#x27;s also a lovely methodological warning buried in there: a confidence score that looks like a great failure detector turns out to mostly be measuring how long the trajectory was, not how confident the agent was.</p>
+  <p>Third, can an agent build a model of an environment by poking at it? Menaged and colleagues turn a classic computer-science problem into an agent test: uncover a hidden automaton by asking questions, with the exact textbook algorithms as a hundred-percent-solving baseline. Reasoning models can do real interactive discovery. But it falls apart with complexity — on the larger automata, no model exceeds twenty-five percent, where the classic algorithms solve everything. And as the interaction gets longer, the agents waste more and more of their questions asking things they already know.</p>
+  <p>And fourth, retrieval. Shaikh runs a careful, statistically tested ablation of an agentic retrieval pipeline on a small local model. The headline is almost deflationary: fixed, simple retrieval beats the fancy adaptive version by one point eight points of exact-match, and running the retrieval loop just twice captures ninety-five percent of the benefit of running it five times. Most of the gain came from running a short loop at all — not from the adaptivity, and not from the depth.</p>
+  <p>Notice the pattern across all four. In each one, the simpler, more controlled design matched or beat the more elaborate one.</p>
+  <h2>Safety</h2>
+  <p>Second theme. Safety — and here the move is to take &quot;agent safety&quot; off the model and put it onto the substrate the model runs in.</p>
+  <p>Zhang and colleagues make the sharpest version of the argument. A local agent, they say, is not just a model wrapper — it&#x27;s a privileged software runtime. The parser, the tool dispatcher, the skill loader, the permission gate — that whole pipeline runs at your privileges, and it had never been systematically audited. Their line sticks with me: even an agent that correctly refuses every dangerous prompt can still be exploited through its runtime. They build a benchmark of real vulnerabilities and a set of agent-specific scanning rules that lift detection from around fourteen to twenty-two percent, up to sixty-seven to seventy-five percent. And they&#x27;re refreshingly honest that on live code, precision is low — about twelve percent — and that some vulnerabilities simply have no syntactic surface for a rule to catch. One detail worth flagging: this paper deliberately uses pseudonyms for the products it audits, names like OpenClaw and Nanobot, and I&#x27;m preserving those exactly without guessing what real software they map to.</p>
+  <p>Yang and colleagues find a related leak one layer up, in the agent&#x27;s own tool choices. They call it over-privileged tool selection — reaching for a more powerful tool when a weaker, sufficient one was right there. Six of eleven current models do this more than thirty percent of the time; one was as high as sixty-four point nine percent, while the strongest models stayed under ten. And here&#x27;s the kicker: general safety alignment did not transfer to this. On one model, alignment training that slashed harmful behavior actually made over-privileging worse. Transient tool failures make it worse too — the agent loses confidence in the low-privilege tool and escalates.</p>
+  <p>The constructive answer comes from Yue and colleagues, the AutoRAS paper. If patching after the fact fails, design robustness in from the start. They search over agent designs with safety built into the building blocks, and the result drops only about two point one three percent under attack, where the baselines lose fourteen to eighteen. They scope the claim carefully — structural robustness within their threat model, not immunity to everything. But the direction is the theme of this whole section: defend the substrate, not just the prompt.</p>
+  <h2>Evaluation</h2>
+  <p>Third theme. Evaluation and serving — how we know an agent is good, and how we run it.</p>
+  <p>Patel and colleagues argue that aggregate leaderboard scores systematically hide what deployment exposes, and they have a striking number to prove it. In a competition with a hundred and forty-nine teams, the correlation between the public ranking and the hidden ranking, on execution, was minus zero point one three. That&#x27;s statistically indistinguishable from zero. A ranking that doesn&#x27;t transfer isn&#x27;t predicting anything. Their proposal: rank by predictive validity instead. It&#x27;s a position paper, not new experiments — its strength is many studies converging, which they&#x27;re careful to call convergence, not replication.</p>
+  <p>Zou and colleagues make the same gap concrete with a hard new benchmark — computer-use agents controlling scientific instruments. The best agent scores zero point eight one four at the subtask level, against a human at zero point nine two four. But run the whole workflow end to end, and success collapses to twenty-six point three percent. Errors accumulate. As they put it, simply adding an agent loop is not enough.</p>
+  <p>And underneath all of it, Huang and colleagues, the SwarmX paper — the one unambiguously building result in the set. They treat serving an agent as its own scheduling problem, because an agentic workload&#x27;s runtime structure depends on the prompt. The payoff is real and deployed: up to sixty-one point five percent lower tail latency, and about two times the production throughput under the same service target. It&#x27;s the unglamorous infrastructure that has to work regardless of anyone&#x27;s mood about defaults.</p>
+  <h2>The evidence, honestly</h2>
+  <p>Now, the evidence, weighed honestly. The most consistent signal across all ten papers isn&#x27;t any single number — it&#x27;s the long-horizon ceiling. Every paper that measured a long, multi-step trajectory found it degrading. Workflow success cratering to twenty-six percent. Automata discovery collapsing past a certain size. Tool choice eroding under repeated failure. Memory decaying over ten weeks. Different subfields, different methods, same wall. That convergence is the thing I&#x27;d actually bank on.</p>
+  <p>The strongest single results are the ones with real rigor behind them: the controlled retrieval ablation, with significance testing; the runtime-scanning recall lift; and the production serving wins. The thinnest are the ones on synthetic data with a model-as-judge, and the minus zero point one three figure, which is real but rests on just thirteen data points. Believe the direction of those. Don&#x27;t quote the magnitude as settled.</p>
+  <h2>My own reading</h2>
+  <p>Everything up to here was the papers. Here&#x27;s my own reading across them — and this is inference, not a finding.</p>
+  <p>If I had to name the week in one phrase, it&#x27;s earn every component. Most of this corpus says: strip back the machinery you can&#x27;t justify. But two of its strongest engineering results — the serving scheduler and the robust-design search — say the opposite, that the right machinery pays off handsomely. I don&#x27;t think those conflict. The difference is accountability. The complexity that won was measured and learnable — a predictor with sub-millisecond overhead, a safety primitive whose effect you can ablate. The complexity that lost was assumed. So the throughline isn&#x27;t simple versus complex. It&#x27;s: make every part of the agent earn its place.</p>
+  <p>Three things I would not bet on, though. I would not bet that &quot;simpler beats complex&quot; generalizes — it&#x27;s two clean results in two narrow settings. I would not bet this is a real turn in the field rather than my own pattern-matching on a tiny sample. And I would not bet the exact magnitudes hold up. Carry the directions forward. Re-derive the numbers before you spend on them.</p>
+  <p>That&#x27;s the week. Ten papers, one per subfield, one week of June twenty twenty-six — not the field, just this set. The full provenance, every number and every citation, lives on the written version of this review, on the corpus page. Thanks for listening.</p>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">SotA Weekly · 15–22 June 2026 · a provenance-cited review of 10 arXiv papers · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

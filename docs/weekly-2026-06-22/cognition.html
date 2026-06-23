@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cognition — SotA Weekly · 15–22 June 2026 · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">SotA&nbsp;<span>Weekly</span> · 22 Jun 2026</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav active" href="cognition.html">Cognition</a>
+  <a class="nav" href="safety.html">Safety</a>
+  <a class="nav" href="evaluation.html">Evaluation</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">01 · Cognition</p>
+  <h1>What the agent knows, remembers, and retrieves</h1>
+  <p class="lede">Four papers in this sample sit at the agent's "inner loop" — how it stores experience, how it represents its own uncertainty, whether it builds a model of an environment through interaction, and whether the retrieval machinery it runs is worth its cost. They were written independently, but they rhyme: in each, a deliberately <em>simpler, controlled</em> design matches or beats the more elaborate one, and the residual difficulty is the long, multi-step trajectory.</p>
+
+  <h2>Memory as write-control, not accumulation</h2>
+  <p>The default design for long-term agent memory is to "remember everything" and retrieve later. <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a> argues that under real inference-cost and context budgets this produces <em>memory bloat</em> — irrelevant trivia crowding out what matters at retrieval time — and that the agent should instead exert <strong>write control</strong>, learning a role-specific Memory Policy that keeps only what each user cares about.</p>
+
+  <div class="box finding"><p class="box-h">▦ Less memory, more accuracy <span class="tag emp">Empirical</span></p>
+  <p>AdaMem improves QA accuracy by up to <strong>+9.0%</strong> over a uniform-extraction baseline (85.2% vs 76.2%) while <em>shrinking</em> memory volume <strong>9.1%</strong> (371 vs 430 stored memories) <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a>. Gains concentrate in "soft preference" categories — Emotion/Attitude +15.9, Schedule/Time +9.9 — and are near-zero for hard facts (Fact/Number +1.1), exactly where a policy of selective retention should help. <span class="tag emp">Empirical</span></p></div>
+
+  <p>The paper's most useful diagnostic separates two abilities an agent needs: <span class="tag def">Definition</span> <em>policy adherence</em> (following a given memory policy) versus <em>policy inference</em> (working out the right one from feedback). Adherence is already high (Policy-Following Rate 80–86%); the bottleneck is inference under weak signal — under explicit feedback the policy converges to ~88% ground-truth alignment, but under implicit feedback learning stalls at 53–63% <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a>.</p>
+
+  <blockquote class="q">an agent should not remember everything, but instead learn what to remember, because what counts as important is subjective and role-dependent
+    <span class="src">— AdaMem <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a>, §Introduction</span></blockquote>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>AdaMem's adherence-vs-inference split is, to me, the more transferable contribution than the headline accuracy number (which rests on a synthetic 5-story / 10-week benchmark with an LLM judge). "The model follows policies fine; it can't reliably <em>infer</em> them from weak feedback" is a clean way to state where a lot of personalization work actually fails, and it rhymes with the clarification result below — both are about an agent's difficulty inferring an unstated goal from indirect signal. I read that as one problem wearing two hats, not two findings.</p></div>
+
+  <h2>Splitting confidence so the agent can ask</h2>
+  <p>A single confidence scalar can't tell "I'm unsure my action is right" apart from "I'm unsure what you even want." <a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a> decomposes it into <strong>action confidence</strong> and <strong>request uncertainty</strong>, giving the agent a dedicated channel for goal ambiguity that triggers a clarifying question — all prompt-only, so it runs in one forward pass on a black-box API with no logprobs or labelled trajectories.</p>
+
+  <div class="box finding"><p class="box-h">▦ A clarification channel works — but isn't free <span class="tag emp">Empirical</span></p>
+  <p>The decomposition improves clarification F1 by <strong>73%</strong> over ReAct+UE and 36% over UAM, averaged across five 2026 backbones <a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a>. But it comes bundled with a <strong>capability dilution</strong>: mean task success falls monotonically 28.6% → 27.8% → 27.0% as each extra uncertainty objective is added to the prompt, concentrated on the hardest benchmarks (REAL 32.1% → 19.2%). The author attributes this to a fixed shared reasoning budget, not phrasing. <span class="tag thy">Theory</span></p></div>
+
+  <p>The sharpest methodological warning is about how trajectory confidence is aggregated. Product-aggregation looks like a strong fault detector (ROC-AUC up to 0.99) — but confidence-free surrogates (uniform random, or simply <em>1/length</em>) hit 0.92–0.99 too, so the signal is largely a trajectory-length proxy, not a measure of confidence <a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a>.</p>
+
+  <blockquote class="q">high product-aggregation ROC-AUC … can simply be evidence that the agent took more steps to fail
+    <span class="src">— Uncertainty Decomposition <a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a>, §7.4</span></blockquote>
+
+  <h2>Does the agent build a world model — or pattern-match?</h2>
+  <p><a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a> turns a classic theory problem into an agent benchmark: a tool-calling agent must uncover a hidden deterministic finite automaton through membership and equivalence queries, with the exact algorithms L* and TTT as 100%-solving baselines and passive learners used to diagnose <em>why</em> a run failed.</p>
+
+  <div class="grid g3">
+    <div class="card stat"><div class="big">100% → ≤25%</div><div class="lbl">Classic algorithms solve every instance; the best model tops out at ≤25% on 8–9-state automata. <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">85% vs 0%</div><div class="lbl">Reasoning vs non-reasoning on 4–5-state automata: Gemini 3.1 Pro 85%, several non-reasoning models 0%. <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big amber">~20%</div><div class="lbl">Non-informative queries even the most consistent model issues after ~60 steps; classic learners: 0% by construction. <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a></div></div>
+  </div>
+
+  <p>Two things make this more than a leaderboard. First, the paper rules out the obvious deflationary explanation — models are <em>not</em> imitating the classic algorithms: no run reproduces L*/TTT's query sequence, and the best model exceeds the equivalence-query bound in 92.5% of instances and produces non-monotonic hypothesis sequences throughout <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a>. Second, its failure taxonomy is mechanistic: <span class="tag def">Definition</span> a <em>planning failure</em> is one where no passive learner could recover the DFA from what the agent gathered (it didn't collect enough), while a <em>reasoning failure</em> is one where a passive learner <em>could</em> (the information was there, unused). Weaker models are dominated by planning failures (Llama-3.3-70B: 78.75% of instances).</p>
+
+  <h2>Dissecting agentic RAG: which complexity earns its keep?</h2>
+  <p>Agentic RAG adds query decomposition, adaptive retrieval routing, and deep iterative loops on the assumption the complexity helps. <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a> runs a controlled, significance-tested ablation on a local Qwen2.5-7B over HotpotQA to test that assumption — and most of it doesn't survive.</p>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Configuration</th><th class="num">EM</th><th class="num">F1</th><th>Read</th></tr></thead>
+    <tbody>
+      <tr><td>Single-pass dense baseline</td><td class="num">43.1</td><td class="num">54.0</td><td>no loop</td></tr>
+      <tr><td>Full adaptive agentic pipeline</td><td class="num">53.2</td><td class="num">61.6</td><td>+10.1 EM over baseline <span class="pos">(p&lt;0.001)</span></td></tr>
+      <tr><td><strong>Fixed hybrid retrieval (no routing)</strong></td><td class="num"><strong>55.0</strong></td><td class="num"><strong>63.5</strong></td><td><span class="pos">+1.8 EM over the full pipeline</span></td></tr>
+      <tr><td>Loop depth = 1 step</td><td class="num">46.1</td><td class="num">—</td><td>−7.1 EM (largest single drop)</td></tr>
+      <tr><td>Loop depth = 2 steps</td><td class="num">52.9</td><td class="num">—</td><td>within 0.3 EM of depth-5</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Numbers from <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a>, Tables main/ablation; 5,000-question HotpotQA sample, bootstrap CIs + McNemar's exact test, Holm-Bonferroni corrected.</p>
+
+  <p>The mechanism: running a short retrieval loop <em>at all</em> is the load-bearing move (iterative evidence accumulation), while adaptive routing actively hurts — the rule-based router fires on named entities/dates/numbers, which appear in nearly every multi-hop sub-question, sending 72% of all retrieval calls to BM25 <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a>. The per-strategy scores that appear to favour BM25 are flagged by the author as a selection-bias artifact: the heuristic routes the structurally simpler, entity-anchored queries there.</p>
+
+  <blockquote class="q">most of the gain comes from running a short retrieval loop, not from adaptive routing or from many iterations
+    <span class="src">— Dissecting Agentic RAG <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a>, Abstract</span></blockquote>
+
+  <div class="box gap"><p class="box-h">◇ What these four share — and what limits each</p>
+  <p>Each result is a <em>single setting</em>: AdaMem on a synthetic 5-story benchmark with an LLM judge; the clarification study at 100 tasks per cell, single-run, on synthetic underspecification; the automata work on binary-alphabet DFAs; the RAG ablation on one model family and one benchmark with its specific two-hop structure. None licenses a field-level law. What they jointly suggest — and only suggest — is that in this corner of the week, the marginal complexity layered onto agents (uniform memory, scalar confidence, deep adaptive retrieval) was easier to <em>add</em> than to <em>justify</em>.</p></div>
+
+  <div class="pager">
+    <a href="index.html">← Overview</a>
+    <a href="safety.html">Safety &amp; Robustness →</a>
+  </div>
+</div>
+
+<footer class="site">SotA Weekly · 15–22 June 2026 · a provenance-cited review of 10 arXiv papers · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

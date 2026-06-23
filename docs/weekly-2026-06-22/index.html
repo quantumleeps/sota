@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SotA Weekly — the agent-research frontier, 15–22 June 2026 (10 papers) · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">SotA&nbsp;<span>Weekly</span> · 22 Jun 2026</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav active" href="index.html">Overview</a>
+  <a class="nav" href="cognition.html">Cognition</a>
+  <a class="nav" href="safety.html">Safety</a>
+  <a class="nav" href="evaluation.html">Evaluation</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">SotA Weekly · the agent-research frontier · 15–22 June 2026</p>
+  <h1>The week the second-order questions arrived</h1>
+  <p class="lede">Ten papers, one per agent subfield, all posted to arXiv in a single week. What recurs across <em>this</em> cross-section is not a new capability but a change of register: a striking number of these papers stop asking "can an agent do X?" and start asking "does the machinery we added to make it do X actually earn its keep — and where exactly does it break?" Fixed beats adaptive; subtask success doesn't survive the full workflow; a leaderboard rank doesn't transfer; the unaudited part of the agent is its own runtime. Read together — and only together — they read like a field auditing its own defaults.</p>
+
+  <div class="box inference"><p class="box-h">⟡ Scope — read this first</p>
+  <p>This is a review of <strong>10 sources</strong>, selected on <strong>22 June 2026</strong> from a 319-paper automated search (arXiv + OpenAlex + Hugging Face) across ~14 agent subfields, filtered to the 240 papers genuinely posted <strong>15–22 June 2026</strong>, then curated to <em>one representative per subfield</em> for breadth. It is a reading of <em>this ten-paper sample</em> — a deliberately broad but tiny, search-shaped slice of one week of mostly un-peer-reviewed preprints — <strong>not</strong> a survey of the week and not a claim about where the field is going. The "second-order" framing above is the pattern <em>I</em> see across these ten; the papers did not coordinate. Where this site says "across these papers," it means exactly these ten. Provenance for every claim lives in the <a href="corpus.html">Corpus</a>.</p></div>
+
+  <div class="grid g3">
+    <div class="card stat">
+      <div class="big">+1.8 EM</div>
+      <div class="lbl">By which <em>fixed</em> hybrid retrieval beat the full rule-based <em>adaptive</em> agentic-RAG pipeline on multi-hop QA — and two retrieval iterations captured 95% of the gain of five. Most of the benefit was running a short loop at all. <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big amber">ρ = −0.13</div>
+      <div class="lbl">Public-vs-hidden execution rank correlation in a 149-team agent competition — statistically indistinguishable from zero. A leaderboard ranking that does not transfer is not predicting deployment. <a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a></div>
+    </div>
+    <div class="card stat">
+      <div class="big">≤ 25%</div>
+      <div class="lbl">Best success rate any model reached on 8–9-state hidden automata, where classic algorithms (L*, TTT) solve 100%. Interactive world-model discovery degrades sharply with complexity. <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a></div>
+    </div>
+  </div>
+
+  <div class="box finding"><p class="box-h">▦ How to read this site</p>
+  <p>Citation chips like <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a> follow every sourced claim and link to the <a href="corpus.html">Corpus</a> → arXiv. Claim-type tags show how strong a claim is in its source: <span class="tag emp">Empirical</span> measured, <span class="tag thy">Theory</span> analytical, <span class="tag prop">Proposal</span> proposed-but-unvalidated, <span class="tag def">Definition</span> a term/taxonomy. <strong>Amber blocks are my inference</strong>; blue blocks are paper findings; teal blockquotes are verbatim. This matters here because the corpus is one paper per subfield — the tags and chips keep a single controlled ablation from being read as a field-wide law.</p></div>
+
+  <h2>What recurs across these 10 papers</h2>
+  <p class="note">Threads that show up in more than one of these ten, independently — a shared register <em>in this sample</em>, not a field-level verdict. Each links to the page that develops it.</p>
+
+  <div class="box finding"><p class="box-h">1 · The simpler, controlled baseline keeps matching or beating the added machinery <span class="tag emp">Empirical</span></p>
+  <p>The loudest throughline. A controlled ablation finds fixed hybrid retrieval beats rule-based adaptive routing and that two loop iterations ≈ five <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a>; learning <em>what</em> to remember (write-control) beats remembering everything, with more accuracy on <em>less</em> memory <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a>; and on a hard new benchmark "simply adding an agent loop is not enough" — a wrapper can score worst of all <a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a>. <a class="cardlink" href="cognition.html">→ Cognition</a></p></div>
+
+  <div class="box finding"><p class="box-h">2 · Aggregate scores hide what deployment exposes <span class="tag emp">Empirical</span> <span class="tag prop">Proposal</span></p>
+  <p>Several papers drive a wedge between the headline number and the deployed behaviour. A leaderboard rank that fails to transfer out-of-sample (ρ=−0.13) is not predictive, so rank by <em>predictive validity</em> instead <a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a>; strong subtask scores collapse to 26.3% end-to-end once errors accumulate over a workflow <a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a>; and a product-aggregated confidence score that looks discriminative is largely a trajectory-length proxy <a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a>. <a class="cardlink" href="evaluation.html">→ Evaluation</a></p></div>
+
+  <div class="box finding"><p class="box-h">3 · The agent's real safety boundary is its runtime and its tool choices — not the model alone <span class="tag def">Definition</span> <span class="tag emp">Empirical</span></p>
+  <p>Three papers relocate "agent safety" away from prompt/jailbreak defence. The privileged <em>runtime</em> — parser, dispatcher, skill loader, permission gate — is an unaudited boundary: "even an agent that correctly refuses every dangerous prompt can still be exploited through its runtime" <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a>; agents over-select higher-privilege tools, and general safety alignment does <em>not</em> transfer to least-privilege choice <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a>; and robustness has to be a design objective, since "workflows cannot be reliably protected by patch-style defenses alone" <a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a>. <a class="cardlink" href="safety.html">→ Safety</a></p></div>
+
+  <div class="box finding"><p class="box-h">4 · Whatever robustness or control the agent has must be built in, not patched on <span class="tag prop">Proposal</span> <span class="tag emp">Empirical</span></p>
+  <p>A constructive counterpart to thread 3. The strongest-under-attack system bakes safety primitives into the design search rather than bolting on defences <a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a>; privilege hygiene comes from privilege-aware post-training, not prompt instructions that crumble under transient failure <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a>; and memory quality comes from <em>write</em>-side control at extraction time, not post-hoc compression <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a>. <a class="cardlink" href="safety.html">→ Safety</a></p></div>
+
+  <div class="box finding"><p class="box-h">5 · The shared ceiling is the long-horizon closed loop — reasoning models extend it, none close it <span class="tag emp">Empirical</span> <span class="tag thy">Theory</span></p>
+  <p>Where these papers measure long trajectories, they find the same wall. Interactive automata discovery degrades to ≤25% at 8–9 states and agents emit rising fractions of non-informative queries as interactions lengthen <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a>; workflow success accumulates error to 26.3% <a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a>; transient tool failures erode an agent's confidence in low-privilege tools over a multi-turn episode <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a>; and personalized memory retrieval decays over a 10-week horizon without write-control <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a>. Reasoning models clearly help <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a> but pay a "capability dilution" tax when loaded with extra objectives <a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a>. <a class="cardlink" href="cognition.html">→ Cognition</a></p></div>
+
+  <h2>Map of the territory</h2>
+  <div class="grid g2">
+    <a class="card cardlink" href="cognition.html"><h3>Cognition</h3><p>What agents know, remember, and retrieve: write-controlled memory, a decomposed uncertainty channel for clarification, interactive world-model inference, and a controlled dissection of agentic RAG. The cluster where "simpler, controlled" repeatedly wins.</p></a>
+    <a class="card cardlink" href="safety.html"><h3>Safety &amp; Robustness</h3><p>The agent as an attack surface: the privileged runtime layer as an unaudited boundary, over-privileged tool selection that safety-alignment doesn't fix, and automated design that makes robustness a first-class objective. Defence moves from the prompt to the substrate.</p></a>
+    <a class="card cardlink" href="evaluation.html"><h3>Evaluation &amp; Serving</h3><p>Measuring and running agents honestly: predictive validity over aggregate leaderboards, a feedback-driven computer-use benchmark where end-to-end success craters, and a serving scheduler that treats the agentic workload's own variability as the problem.</p></a>
+    <a class="card cardlink" href="evidence.html"><h3>Evidence</h3><p>The measured-effect ledger — every quantified result across the ten papers, with method, scale, and my confidence appraisal. The corpus is mostly single-benchmark / single-model studies; the ledger says where that bites.</p></a>
+    <a class="card cardlink" href="synthesis.html"><h3>Synthesis</h3><p>My corpus-scoped reasoning: why a week of independent papers converged on the same skeptical register, what an "audit-your-defaults" agenda would look like, and the bets I would and would not place on the strength of these ten.</p></a>
+    <a class="card cardlink" href="corpus.html"><h3>Corpus</h3><p>The 10 papers with affiliation, type, and a one-paragraph note each — the bibliography every chip resolves to, linking onward to arXiv.</p></a>
+  </div>
+
+  <h2>The corpus on a timeline</h2>
+  <div class="box inference"><p class="box-h">⟡ One week is not a trajectory</p>
+  <p>All ten papers carry an arXiv announce date inside <strong>15–22 June 2026</strong>; the split below is just that announce day, and announce dates cluster (five land on the 19th). There is no trend to read across seven days — this is a snapshot of what happened to be posted, ordered only so you can see the window is genuinely one week.</p></div>
+  <div class="timeline">
+    <div class="tl-item"><div class="when">Jun 15</div><div class="what">LabOSBench — computer-use for instruments <a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a> · Agentic Automata Learning <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a></div></div>
+    <div class="tl-item"><div class="when">Jun 17</div><div class="what">Uncertainty Decomposition for clarification <a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a></div></div>
+    <div class="tl-item"><div class="when">Jun 18</div><div class="what">Over-Privileged Tool Selection / ToolPrivBench <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a> · Beyond Static Leaderboards <a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a></div></div>
+    <div class="tl-item"><div class="when">Jun 19</div><div class="what">AdaMem — memory write-control <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a> · SwarmX — agentic scheduling <a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a> · Dissecting Agentic RAG <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a> · AutoRAS — robust agentic design <a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a> · ClawAudit — vulnerable runtimes <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a></div></div>
+  </div>
+
+  <div class="pager">
+    <a href="corpus.html">← Corpus</a>
+    <a href="cognition.html">Cognition →</a>
+  </div>
+</div>
+
+<footer class="site">SotA Weekly · 15–22 June 2026 · a provenance-cited review of 10 arXiv papers · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

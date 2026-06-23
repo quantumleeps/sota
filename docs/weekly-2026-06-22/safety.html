@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Safety &amp; Robustness — SotA Weekly · 15–22 June 2026 · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">SotA&nbsp;<span>Weekly</span> · 22 Jun 2026</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="cognition.html">Cognition</a>
+  <a class="nav active" href="safety.html">Safety</a>
+  <a class="nav" href="evaluation.html">Evaluation</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">02 · Safety &amp; Robustness</p>
+  <h1>The agent as an attack surface</h1>
+  <p class="lede">Three papers in this sample move "agent safety" off the model and onto the substrate the model runs in. One audits the agent's <em>runtime</em> as privileged software; one shows the agent's own <em>tool choices</em> leak privilege in ways safety-alignment never touched; one builds robustness <em>into the design search</em> instead of patching it on. Read together they make a single argument: the dangerous part of an agent is increasingly the code and the choices around the model, not the refusal behaviour of the model itself.</p>
+
+  <h2>The runtime is the unaudited boundary</h2>
+  <p><a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a> reframes a local LLM agent as "not merely a model wrapper… a <strong>privileged software runtime</strong>": a pipeline of prompt builder, parser, tool dispatcher, skill loader, memory writer, network client, and permission gate, all running at the user's privilege with no internal boundary between components. Prior agent-security work targets prompt injection, malicious skills, and black-box behaviour; the <em>implementation layer</em> that actually executes goals had not been systematically audited.</p>
+
+  <blockquote class="q">even an agent that correctly refuses every dangerous prompt can still be exploited through its runtime
+    <span class="src">— ClawAudit <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a>, §Implications</span></blockquote>
+
+  <div class="box finding"><p class="box-h">▦ Domain-specific rules find what generic scanners miss <span class="tag emp">Empirical</span></p>
+  <p>On a held-out set of 217 real source-level advisories, generic scanners detect a minority — Semgrep Pro <strong>21.7%</strong>, CodeQL <span class="mono">security-extended</span> <strong>13.8%</strong>. Adding ClawAudit's STRIDE-derived, agent-runtime rules lifts recall to <strong>66.8%</strong> (Semgrep) and <strong>75.1%</strong> (CodeQL) — and the gain generalizes temporally (train→test recall gaps within ±4 pp), so it isn't memorization <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a>. <span class="tag emp">Empirical</span></p></div>
+
+  <p>The paper is unusually honest about where rule-based auditing stops. On the <em>live</em> codebase, precision is low — a stratified manual audit found ~12% true positives (6 of 50 sampled findings) — and rule quality is bimodal: all six true positives came from six distinct narrow-scope rules, while high-volume broad rules produced none <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a>. And the residual gap is principled: vulnerability classes like incomplete denylists (CWE-184) and information exposure (CWE-200) have no syntactic surface for a rule to intercept.</p>
+
+  <blockquote class="q">the boundary is therefore not where static analysis stops working in the abstract, but where the bug stops having a syntactic surface to intercept
+    <span class="src">— ClawAudit <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a>, §RQ5</span></blockquote>
+
+  <div class="box risk"><p class="box-h">⚠ A scaling problem hiding in the tooling</p>
+  <p>Canonical taint queries don't scale to agent codebases: <strong>21 of 104</strong> CodeQL <span class="mono">security-extended</span> queries failed to terminate within a 4-hour-per-query budget on the 16,433-file runtime — including command-injection and request-forgery queries, exactly the classes one most wants to run <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a>. The safety tooling itself is not keeping pace with the size of agent runtimes. <span class="tag emp">Empirical</span></p></div>
+
+  <p class="note">The paper deliberately pseudonymizes the audited products ("OpenClaw", "Nanobot", "PicoClaw", "ClawHub"); this review preserves those names exactly and makes no claim about which real software they correspond to.</p>
+
+  <h2>Agents reach for more privilege than the task needs</h2>
+  <p>Even with a safe model, the agent's <em>tool selection</em> can quietly expand the blast radius. <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a> defines <strong>over-privileged tool selection</strong> — choosing or escalating to a higher-privilege tool when a sufficient lower-privilege alternative exists — and measures it with ToolPrivBench (544 scenarios, 8 domains, 5 risk types, every tool independently sufficient).</p>
+
+  <blockquote class="q">The failure is not that the agent cannot solve the task, but that it solves the task through a needlessly expansive channel, increasing the potential blast radius
+    <span class="src">— ToolPrivBench <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a>, §Introduction</span></blockquote>
+
+  <div class="grid g3">
+    <div class="card stat"><div class="big amber">6 of 11</div><div class="lbl">2026 models exceed a 30% over-privileged-use rate; Qwen3-8B 64.9%, LLaMA-3.1-8B 55.9%. <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">&lt; 10%</div><div class="lbl">Where Claude 4.6 Sonnet, GPT-5.2, and GLM-5 sit — the behaviour is sharply model-dependent, not universal. <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a></div></div>
+    <div class="card stat"><div class="big">50% → 61%</div><div class="lbl">Qwen2.5-7B's over-privilege rate <em>rose</em> after general safety alignment (AgentAlign) — alignment didn't transfer. <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a></div></div>
+  </div>
+
+  <p>Two findings make this a substrate problem rather than a model-quality footnote. First, it is amplified by <em>transient failure</em>: when a low-privilege tool fails for unrelated reasons, agents escalate — "repeated failures appear to erode agents' confidence in low-privilege tools" <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a>. Second, general safety alignment that slashes harmful-request scores does <em>not</em> transfer to least-privilege choice — and can make it worse. The fix the paper validates is targeted: a privilege-aware SFT+GRPO recipe that drops the rate (to 18.93% for a reasoning Qwen3-4B variant) while retaining 96–100% of MMLU/GSM8K/MetaTool capability.</p>
+
+  <div class="box inference"><p class="box-h">⟡ My inference — not from the papers</p>
+  <p>Put ToolPriv next to ClawAudit and a shared shape appears: the agent's danger lives at the <em>boundaries between components</em> — tool→privilege, parser→executor, skill-loader→permission-gate — not inside the model's weights. "Is the model safe?" is becoming the wrong unit of analysis; "is the <em>tool-selection policy and runtime</em> safe?" is the question both papers are really asking. That is an inference about framing across two papers, not a claim either makes about the other.</p></div>
+
+  <h2>Designing robustness in, not bolting it on</h2>
+  <p>If patches fail, the constructive move is to make robustness an objective of the design itself. <a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a> (AutoRAS) automates multi-agent-system design by representing a system as a sequence of symbolic <strong>primitives</strong> — jointly encoding topology and behaviour, including explicit safety primitives — compiled deterministically and searched with a GFlowNet / trajectory-balance optimizer driven by execution-derived safety signals.</p>
+
+  <div class="box finding"><p class="box-h">▦ Smallest drop under attack, by a wide margin <span class="tag emp">Empirical</span></p>
+  <p>Across MMLU / MS-MARCO / MATH / ProgramDev, AutoRAS posts the highest average clean accuracy (<strong>74.27%</strong>) and the smallest average performance drop under a four-vector attack suite (brain/memory/tool/agent-to-agent): <strong>−2.13%</strong>, versus −14.26% (AFlow), −18.43% (MaAS), −17.23% (G-Safeguard) <a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a>. Ablation: removing the textual safety signal causes the largest robustness loss (MMLU-under-attack 82.35 → 71.90). The learned policy is just 4.29M parameters over frozen API LLMs. <span class="tag emp">Empirical</span></p></div>
+
+  <blockquote class="q">once security incidents occur, agentic workflows cannot be reliably protected by patch-style defenses alone, but require redesign with safety as a first-class principle
+    <span class="src">— AutoRAS <a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a>, §Ablation</span></blockquote>
+
+  <div class="box gap"><p class="box-h">◇ Read the robustness claim at the size it was made</p>
+  <p>AutoRAS scopes its own result carefully: "our robustness claim refers to structural robustness within the evaluated agentic threat model, not immunity to all possible attacks" <a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a>. It evaluates four attack vectors with partial-compromise injection, and over-weighting robustness degrades clean accuracy — an explicit robustness–utility tradeoff. Like the other two safety papers here, it is a strong result inside a defined threat model, not a general guarantee; the honest reading is "this is the right <em>place</em> to defend," with the size of the win still benchmark-bound.</p></div>
+
+  <div class="pager">
+    <a href="cognition.html">← Cognition</a>
+    <a href="evaluation.html">Evaluation &amp; Serving →</a>
+  </div>
+</div>
+
+<footer class="site">SotA Weekly · 15–22 June 2026 · a provenance-cited review of 10 arXiv papers · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

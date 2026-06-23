@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthesis — SotA Weekly · 15–22 June 2026 · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">SotA&nbsp;<span>Weekly</span> · 22 Jun 2026</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="cognition.html">Cognition</a>
+  <a class="nav" href="safety.html">Safety</a>
+  <a class="nav" href="evaluation.html">Evaluation</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav active" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap">
+  <p class="kicker">05 · Synthesis</p>
+  <h1>Reading ten papers as one mood</h1>
+
+  <div class="box inference"><p class="box-h">⟡ This entire page is my inference — not the papers' claims</p>
+  <p>Everything below is my reasoning <em>across these ten papers</em>. Citation chips mark what I'm reasoning <em>from</em>, not sources that agree with my framing. Nothing here is a forecast about where agent research is going — it's an attempt to say what <em>this one-week, one-per-subfield sample</em> looks like when you stand back from it. A different ten papers from the same week would likely support a different mood; that is the nature of a tiny, search-shaped sample, and the reason this page is fenced off from the rest of the site.</p></div>
+
+  <h2>The one-line read</h2>
+  <p>If the Overview's claim is right — that this week's papers ask "does our machinery earn its keep?" more than "can the agent do X?" — then the ten cluster into a single posture I'd call <strong>auditing the defaults</strong>. Across cognition, safety, and evaluation, the same instinct recurs: take a thing the field added on the assumption it helps (adaptive retrieval, remember-everything memory, scalar confidence, the leaderboard mean, prompt-level safety), hold it next to a simpler or more principled alternative, and measure the difference honestly. The answers were rarely flattering to the elaborate option.</p>
+
+  <h2>A reference model: where each paper sits on the agent stack</h2>
+  <p>I find it clarifying to place these ten on the layers of a single deployed agent, bottom to top. It shows the week touched almost the whole stack, and it shows the "audit" instinct is not confined to one layer.</p>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Layer</th><th>The default being questioned</th><th>This week's finding</th><th>Paper</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Serving</strong></td><td>Generic schedulers fit agentic workloads</td><td>Prompt-dependent runtime structure needs distribution-aware, learned scheduling</td><td><a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a></td></tr>
+      <tr><td><strong>Runtime</strong></td><td>A safe model means a safe agent</td><td>The runtime layer is an unaudited privileged boundary</td><td><a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a></td></tr>
+      <tr><td><strong>Tools</strong></td><td>Safety alignment covers privilege hygiene</td><td>Agents over-select privilege; alignment doesn't transfer</td><td><a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a></td></tr>
+      <tr><td><strong>Retrieval</strong></td><td>Adaptive routing + deep loops earn their cost</td><td>Fixed hybrid + a 2-step loop matches or beats them</td><td><a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a></td></tr>
+      <tr><td><strong>Memory</strong></td><td>Remember everything, retrieve later</td><td>Write-control: more accuracy on less memory</td><td><a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a></td></tr>
+      <tr><td><strong>Self-model</strong></td><td>One confidence scalar suffices</td><td>Split it; but added objectives dilute capability</td><td><a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a></td></tr>
+      <tr><td><strong>World-model</strong></td><td>Agents infer environments through interaction</td><td>They do — but degrade sharply with complexity</td><td><a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a></td></tr>
+      <tr><td><strong>Design</strong></td><td>Patch robustness after incidents</td><td>Design it in via primitive search</td><td><a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a></td></tr>
+      <tr><td><strong>Evaluation</strong></td><td>Rank by the aggregate score</td><td>Rank by predictive validity; subtask ≠ end-to-end</td><td><a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a> · <a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">My arrangement, not a structure any paper proposes. The layer labels are mine; the findings are the papers'.</p>
+
+  <h2>Bets this corpus would support</h2>
+
+  <div class="box finding"><p class="box-h">Bet 1 · The fastest wins right now are subtractive, not additive</p>
+  <p>The cleanest result in the corpus is that removing complexity helped <a class="cite" href="corpus.html#p-2606-21553">Shaikh&nbsp;'26</a>, and the memory result is the same shape — keep less, score more <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a>. If I had to improve a deployed agent this week on the strength of these papers, I'd audit what it does that it can't justify before I'd add a new capability. <em>Reasoning from: the two controlled "simpler wins" results.</em></p></div>
+
+  <div class="box finding"><p class="box-h">Bet 2 · Move the safety budget down the stack, to the runtime and the tool-selection policy</p>
+  <p>Two independent papers locate exploitable risk below the model: the runtime's component boundaries <a class="cite" href="corpus.html#p-2606-21071">Zhang+&nbsp;'26</a> and the agent's own privilege escalation <a class="cite" href="corpus.html#p-2606-20023">Yang+&nbsp;'26</a>, with the explicit finding that model-level safety alignment does not transfer there. The implied allocation: spend on least-privilege tooling, runtime static analysis, and design-time safety primitives <a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a>, not only on model refusals. <em>Reasoning from: the three safety papers' shared relocation of the boundary.</em></p></div>
+
+  <div class="box finding"><p class="box-h">Bet 3 · Report a transferable rank and an end-to-end number, not a subtask mean</p>
+  <p>The evaluation pair makes the same point from two directions: aggregate ranks don't transfer <a class="cite" href="corpus.html#p-2606-19704">Patel+&nbsp;'26</a>, and a 0.814 subtask score can hide a 26.3% workflow completion <a class="cite" href="corpus.html#p-2606-16802">Zou+&nbsp;'26</a>. Whatever an org's internal agent leaderboard is, this corpus says it should carry an out-of-distribution check and a full-workflow number beside the headline. <em>Reasoning from: the eval and computer-use results read together.</em></p></div>
+
+  <div class="box finding"><p class="box-h">Bet 4 · Long-horizon evidence integration is the bottleneck worth funding</p>
+  <p>The most cross-cutting empirical pattern (see <a href="evidence.html">Evidence</a>) is that everything degrades over long trajectories — and the automata work localizes <em>why</em>: agents collect or fail to reuse evidence as context grows, emitting rising fractions of non-informative queries <a class="cite" href="corpus.html#p-2606-16576">Menaged+&nbsp;'26</a>. That points the research dollar at belief-updating and evidence reuse over many steps, which is also where memory <a class="cite" href="corpus.html#p-2606-21144">Chen+&nbsp;'26</a> and uncertainty <a class="cite" href="corpus.html#p-2606-19559">Matsnev&nbsp;'26</a> both live. <em>Reasoning from: the convergent long-horizon ceiling.</em></p></div>
+
+  <h2>Where I'd hold back</h2>
+
+  <div class="box gap"><p class="box-h">◇ Open bets I would not place on this corpus</p>
+  <p><strong>That "simpler beats complex" generalizes.</strong> It's two clean results in two narrow settings (one model family, one benchmark each). The opposite-signed paper exists too — SwarmX shows real, large-scale value in <em>more</em> machinery <a class="cite" href="corpus.html#p-2606-21401">Huang+&nbsp;'26</a> — and AutoRAS adds structure to <em>gain</em> robustness <a class="cite" href="corpus.html#p-2606-21445">Yue+&nbsp;'26</a>. The honest read is "audit your complexity," not "complexity is bad."</p>
+  <p><strong>That this is a "field turn."</strong> Ten papers, one per subfield, one week, chosen partly for breadth by a relevance search — the "auditing the defaults" mood could be my pattern-matching on a sample, or a genuine seasonal cluster of critical work, or simply what arXiv announced that Friday. I can't distinguish those from inside the sample, and neither should a reader.</p>
+  <p><strong>That the magnitudes hold.</strong> Several headline numbers ride on synthetic data, single runs, or LLM-as-judge (flagged Indicative in the Evidence ledger). I'd carry the <em>directions</em> forward and re-derive the <em>numbers</em> before betting budget on them.</p></div>
+
+  <div class="box inference"><p class="box-h">⟡ The cross-cutting tension</p>
+  <p>The corpus argues with itself in a productive way: most of it says <em>strip back the unjustified machinery</em>, while two of its strongest engineering results say <em>add the right machinery and it pays</em>. I don't think those conflict — they share a discipline. SwarmX and AutoRAS add complexity that is <em>measured, learned, and accountable</em> (a predictor with sub-ms overhead; a safety primitive whose ablation you can see). The retrieval and memory papers strip complexity that was <em>assumed</em>. The real throughline of the week, if there is one, isn't "simple vs complex" — it's <strong>earn every component</strong>.</p></div>
+
+  <div class="pager">
+    <a href="evidence.html">← Evidence</a>
+    <a href="corpus.html">Corpus →</a>
+  </div>
+</div>
+
+<footer class="site">SotA Weekly · 15–22 June 2026 · a provenance-cited review of 10 arXiv papers · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>

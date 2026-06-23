@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpus — SotA Weekly · 15–22 June 2026 · SotA</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="topnav"><div class="topnav-inner">
+  <a class="brand" href="index.html">SotA&nbsp;<span>Weekly</span> · 22 Jun 2026</a>
+  <a class="nav" href="../index.html">↑ All&nbsp;SotA</a>
+  <a class="nav" href="index.html">Overview</a>
+  <a class="nav" href="cognition.html">Cognition</a>
+  <a class="nav" href="safety.html">Safety</a>
+  <a class="nav" href="evaluation.html">Evaluation</a>
+  <a class="nav" href="evidence.html">Evidence</a>
+  <a class="nav" href="synthesis.html">Synthesis</a>
+  <a class="nav" href="listen.html">🎧&nbsp;Listen</a>
+  <a class="nav active" href="corpus.html">Corpus</a>
+</div></nav>
+
+<div class="wrap wide">
+  <p class="kicker">Corpus · the provenance backbone</p>
+  <h1>The 10 papers</h1>
+  <p class="lede">Every citation chip on this site resolves to an entry below, and each entry links onward to the paper on arXiv — the chain is always <em>claim → chip → bibliography → arXiv</em>. This is a review of these 10 papers and nothing else: all are arXiv preprints posted in the single week of <strong>15–22 June 2026</strong>, surfaced by an automated relevance search across ~14 agent subfields and curated to 10 for topical spread. Most are un-peer-reviewed preprints; several are benchmarks or single-model studies. The per-entry notes and type tags say which.</p>
+
+  <div class="box inference"><p class="box-h">⟡ How this corpus was assembled — read this first</p>
+  <p>These ten papers were drawn from a pool of <strong>319 candidates</strong> fetched on <strong>22 June 2026</strong> by an automated multi-source search (arXiv + OpenAlex + Hugging Face) spanning fourteen agent subfields — memory, multi-agent orchestration, tool use, planning, RAG, evaluation, RL, code agents, computer use, long context, and more. The pool was filtered to the <strong>240 papers</strong> genuinely posted 15–22 June 2026 (verified by arXiv id), embedded and relevance-ranked, then hand-curated down to <strong>one representative per subfield</strong> to make a deliberately broad cross-section. It is therefore a <em>search-shaped, one-week sample chosen for breadth</em> — not a census of the week, and emphatically not a verdict on the field. Where this site says "across these papers," it means exactly these ten. Strong work that lacked a fetchable arXiv id (e.g. an OpenAlex-only multi-agent-orchestration survey) was excluded.</p></div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:var(--core,#2563eb)"></span> Core — all ten are primary sources, read in full</span>
+    <span>Grouped by the three themes this cross-section falls into · <strong>review</strong> mode: no references harvested</span>
+  </div>
+
+  <h2>Cognition — what agents know, remember, and retrieve</h2>
+
+  <div class="bibentry" id="p-2606-21144">
+    <span class="role core">Core</span><span class="bt">AdaMem: Learning What to Remember for Personalized Long-Horizon LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2606.21144</span> · Xingyu Chen, Rui Wang, Zhaopeng Tu, Liefeng Bo (Shanghai Jiao Tong Univ.; Tencent), 2026 · empirical + benchmark · <strong>cite: Chen+ '26</strong></div>
+    <div class="rel">Reframes long-term agent memory as a <em>write-control</em> problem: instead of "remembering everything," an agent should learn a role-specific Memory Policy — refined from weekly QA feedback with failure-rollback — that keeps only what each user actually cares about. Reports up to +9.0% QA accuracy over a uniform-extraction baseline (Mem0) while shrinking memory volume 9.1%, and diagnoses that the bottleneck is <em>inferring</em> preferences from weak/implicit feedback, not <em>following</em> them. Contributes AdaMem-Bench (golden-memory annotations) and the Memory Efficiency Ratio (MER).</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.21144" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-19559">
+    <span class="role core">Core</span><span class="bt">Uncertainty Decomposition for Clarification Seeking in LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2606.19559</span> · Gregory Matsnev (AI Talent Hub, ITMO Univ.), 2026 · empirical + benchmark · <strong>cite: Matsnev '26</strong></div>
+    <div class="rel">Argues prompt-based uncertainty is the only practically deployable family for black-box interactive agents, and splits the single confidence scalar into separate <em>action confidence</em> and <em>request uncertainty</em> so an agent has a dedicated channel for goal ambiguity and can seek clarification proactively. Improves clarification F1 by 73% over ReAct+UE (averaged over five 2026 backbones), but documents the bundled costs: a small monotonic "capability dilution" of task success, systematic overconfidence, and a finding that product-aggregated confidence is mostly a trajectory-length proxy. Adds two clarification benchmarks.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.19559" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-16576">
+    <span class="role core">Core</span><span class="bt">Can LLM Agents Infer World Models? Evidence from Agentic Automata Learning</span>
+    <div class="meta"><span class="idtag">arXiv:2606.16576</span> · Reef Menaged, Gili Lior, Shauli Ravfogel, Roee Aharoni, Gabriel Stanovsky (Hebrew Univ. of Jerusalem; NYU; Google Research), 2026 · benchmark + empirical · <strong>cite: Menaged+ '26</strong></div>
+    <div class="rel">Recasts classic active automata learning as a scalable agent testbed: a tool-calling agent must uncover a hidden deterministic finite automaton (DFA) through membership and equivalence queries, with classic algorithms (L*, TTT) as exact 100%-solving baselines. Finds that frontier reasoning models can do non-trivial interactive discovery but degrade sharply with state count — no model exceeds 25% success at 8–9 states — and issue increasing fractions of non-informative queries as interactions lengthen. A clean instrument for "does the agent build a world model through interaction, or pattern-match?"</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.16576" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-21553">
+    <span class="role core">Core</span><span class="bt">Dissecting Agentic RAG: A Component Ablation for Multi-Hop QA with a Local 7B Model</span>
+    <div class="meta"><span class="idtag">arXiv:2606.21553</span> · Sheroz Shaikh (independent researcher), 2026 · empirical (controlled ablation) · <strong>cite: Shaikh '26</strong></div>
+    <div class="rel">A controlled, significance-tested ablation of an agentic-RAG pipeline run entirely on a local Qwen2.5-7B over HotpotQA. The headline: most of the benefit comes from running a short retrieval loop <em>at all</em>, not from adaptivity or depth — fixed hybrid retrieval beats the full rule-based adaptive router by +1.8 EM, and two iterations capture 95% of the gain of five. Surfaces a concrete failure mode (entity-firing heuristics over-route to BM25) and a practical rule: keep reranking, drop decomposition first under latency pressure. Reproducible, no proprietary APIs.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.21553" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Safety &amp; Robustness — the agent as an attack surface</h2>
+
+  <div class="bibentry" id="p-2606-20023">
+    <span class="role core">Core</span><span class="bt">When Lower Privileges Suffice: Investigating Over-Privileged Tool Selection in LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2606.20023</span> · Kaiyue Yang, Yuyan Bu, Jingwei Yi, Yuchi Wang et al. (Chinese Academy of Sciences; BAAI; CUHK; Peking Univ.), 2026 · benchmark + empirical · <strong>cite: Yang+ '26</strong></div>
+    <div class="rel">Defines and measures <em>over-privileged tool selection</em> — an agent escalating to a higher-privilege tool when a sufficient lower-privilege one exists — via ToolPrivBench (544 scenarios, 8 domains, 5 risk types). Finds it prevalent and model-dependent (six of eleven 2026 models exceed 30% over-privileged-use rate; Qwen3-8B 64.9%, while Claude 4.6 Sonnet / GPT-5.2 / GLM-5 stay under 10%), amplified by transient tool failures, and <em>not</em> fixed by general safety alignment. Proposes a privilege-aware SFT+GRPO recipe that cuts the rate while preserving capability.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.20023" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-21071">
+    <span class="role core">Core</span><span class="bt">Local LLM Agents as Vulnerable Runtimes: A Source-Code Audit of the Agent Runtime Layer (ClawAudit)</span>
+    <div class="meta"><span class="idtag">arXiv:2606.21071</span> · Zhengsong Zhang, Zongze Li, Jiawei Guo, Haipeng Cai (Univ. at Buffalo, SUNY), 2026 · system + benchmark + empirical · <strong>cite: Zhang+ '26</strong></div>
+    <div class="rel">Argues a local agent is "not merely a model wrapper… it is a privileged software runtime" — prompt builder, parser, tool dispatcher, skill loader, memory writer, network client, permission gate — and that this implementation layer is an unaudited safety boundary. Builds OpenClawBench (446 real source-level advisories) and ClawAudit, a STRIDE-derived static-analysis ruleset that lifts held-out detection recall from ~14–22% (generic Semgrep/CodeQL) to 67–75%, while honestly reporting low live-code precision (~12%). Names the residual gap: vulnerabilities with no syntactic surface. <em>Note: the paper pseudonymizes products as "OpenClaw", "Nanobot", "ClawHub" — preserved as written.</em></div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.21071" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-21445">
+    <span class="role core">Core</span><span class="bt">AutoRAS: Learning Robust Agentic Systems with Primitive Representations</span>
+    <div class="meta"><span class="idtag">arXiv:2606.21445</span> · Yang Yue, Xuancheng Zhu, Yuyang Ma, Guoshun Nan et al. (Beijing Univ. of Posts &amp; Telecom.; Fudan; China Telecom), ICML 2026 · framework + empirical · <strong>cite: Yue+ '26</strong></div>
+    <div class="rel">Automated design of multi-agent systems that makes <em>robustness</em> a first-class objective rather than a post-hoc patch. Represents a system as a sequence of symbolic "primitives" (jointly encoding topology and behavior, including safety primitives), compiled deterministically, and searches the space with a GFlowNet / trajectory-balance optimizer driven by execution-derived safety signals. Reports the highest average clean accuracy (74.27%) and by far the smallest drop under a four-vector attack suite (2.13% vs −14% to −18% for baselines), with a lightweight 4.29M-parameter learned policy over frozen API LLMs. Scopes its claim to "structural robustness within the evaluated threat model."</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.21445" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <h2>Evaluation &amp; Serving — measuring and running agents honestly</h2>
+
+  <div class="bibentry" id="p-2606-19704">
+    <span class="role core">Core</span><span class="bt">Beyond Static Leaderboards: Predictive Validity for the Evaluation of LLM Agents</span>
+    <div class="meta"><span class="idtag">arXiv:2606.19704</span> · Dhaval C. Patel et al. (+60 co-authors; IBM AssetOpsBench; Columbia HPML), EMNLP 2026 submission · position + synthesis · <strong>cite: Patel+ '26</strong></div>
+    <div class="rel">A meta-evaluation position paper: aggregate-score leaderboards "systematically underspecify the dimensions on which deployed agents are evaluated," and the field should rank configurations by <em>predictive validity</em> (does an in-sample ranking transfer out-of-sample?) over a twelve-tier measurement apparatus. Marshals direct rank-instability evidence — a 149-team competition where public-vs-hidden execution rank correlated ρ=−0.13 (indistinguishable from zero) — and consolidates 14 parallel implementation studies. Explicitly runs no new controlled experiments; its strength is "convergent architectural sensitivity," not independent replication.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.19704" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-16802">
+    <span class="role core">Core</span><span class="bt">LabOSBench: Benchmarking Computer Use Agents for Scientific Instrument Control</span>
+    <div class="meta"><span class="idtag">arXiv:2606.16802</span> · Anqi Zou, Han Deng, Chengyu Zhang et al. (Shenzhen Loop Area Inst.; Dalian Univ. of Tech.; CUHK; HKUST), 2026 · benchmark + empirical · <strong>cite: Zou+ '26</strong></div>
+    <div class="rel">Pushes computer-use-agent evaluation into a harder regime — feedback-driven control of scientific instruments — with a lightweight, browser-native benchmark of eight instrument simulators (96 subtasks), Playwright-driven, no OS virtualization, scoring intermediate scientific state (e.g. PSNR on focus) not just final completion. Best agent reaches 0.814 average subtask score (human 0.924), but end-to-end workflow success is only 26.3%, exposing severe error accumulation; "GUI grounding is necessary but not sufficient," and "simply adding an agent loop is not enough." Several subtasks score 0.00 for all twelve methods.</div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.16802" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="bibentry" id="p-2606-21401">
+    <span class="role core">Core</span><span class="bt">SwarmX: Agentic Scheduling for Low-Latency Agentic Systems</span>
+    <div class="meta"><span class="idtag">arXiv:2606.21401</span> · Yeqi Huang, Yanwei Ye, Zhan Lu, Luo Mai et al. (Univ. of Edinburgh); Guomin Chen, Bin Gong, Jialian Li et al. (Tencent), 2026 · system + empirical (production) · <strong>cite: Huang+ '26</strong></div>
+    <div class="rel">The serving-infrastructure layer of agentic systems: because an agentic workflow's inference time and call structure depend on prompt semantics, conventional cluster schedulers misfire. SwarmX turns routers and scalers into lightweight "scheduler agents" that use compact, distribution-aware neural predictors (e.g. a 35M-param semantic model standing in for an 8B target) to cut tail latency — up to 61.5% P95 reduction on structured pipelines and ~2× production throughput under the same SLO, with sub-millisecond-to-30ms predictor overhead. Treats the cluster scheduler itself as an "agent." <em>Note: evaluated workloads named "OpenClaw" and "Coding Agent" run open Qwen3-family models.</em></div>
+    <div class="links"><a href="https://arxiv.org/abs/2606.21401" target="_blank" rel="noopener">arXiv abstract ↗</a></div>
+  </div>
+
+  <div class="pager">
+    <a href="synthesis.html">← Synthesis</a>
+    <a href="index.html">Overview →</a>
+  </div>
+</div>
+
+<footer class="site">SotA Weekly · 15–22 June 2026 · a provenance-cited review of 10 arXiv papers · every chip → the Corpus → arXiv. Amber callouts are author inference, not paper claims.</footer>
+</body>
+</html>
